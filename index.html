@@ -71,7 +71,7 @@ h1,h2,h3,.brand,.stat-num,.nav-label{font-family:'Tajawal',sans-serif;}
 .login-card input{
   width:100%; background:var(--panel); border:1px solid var(--border); border-radius:12px;
   padding:14px 16px; color:var(--text); font-size:14px; margin-bottom:18px; outline:none; font-family:inherit;
-  transition:.2s;
+  transition:.2s; text-align:center; letter-spacing:1px;
 }
 .login-card input:focus{border-color:var(--accent); box-shadow:0 0 12px var(--accent-dim);}
 .login-btn{
@@ -226,7 +226,7 @@ tbody tr:hover{background:#ffffff04;}
 .search-bar svg{width:18px; height:18px; stroke:var(--text-dim2); flex-shrink:0;}
 .search-bar input{background:transparent; border:none; outline:none; color:var(--text); font-size:13.5px; width:100%; font-family:inherit;}
 
-/* النوافذ والتشيك بوكس للصلاحيات */
+/* النوافذ والصلاحيات */
 .modal-bg{position:fixed; inset:0; background:#000000bb; backdrop-filter:blur(6px); display:none; align-items:center; justify-content:center; z-index:1000;}
 .modal-bg.show{display:flex;}
 .modal{background:var(--panel-2); border:1px solid var(--border); border-radius:18px; width:500px; max-width:90vw; padding:24px; box-shadow:0 25px 50px #000c; animation:fade .2s ease; max-height:90vh; overflow-y:auto;}
@@ -255,16 +255,14 @@ tbody tr:hover{background:#ffffff04;}
 </head>
 <body>
 
-<!-- شاشة تسجيل الدخول -->
+<!-- شاشة تسجيل الدخول بالكود السري -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-card">
     <img src="" id="logoPreview" class="login-logo" alt="h4 store">
     <h2>h4 store</h2>
-    <p>بوابة إدارة السيرفرات المتعددة وصلاحيات الموظفين</p>
-    <label class="field-label">اسم المستخدم</label>
-    <input type="text" id="loginUser" placeholder="أدخل اسمك أو يوزر الموظف..." autocomplete="off">
-    <label class="field-label">كلمة المرور</label>
-    <input type="password" id="loginPass" placeholder="••••••••" autocomplete="new-password">
+    <p>أدخل الكود السري الخاص بك لتسجيل الدخول</p>
+    <label class="field-label">الكود السري المباشر</label>
+    <input type="password" id="secretCodeInput" placeholder="أدخل الكود السري..." autocomplete="current-password">
     <button class="login-btn" onclick="attemptLogin()">دخول لوحة التحكم</button>
   </div>
 </div>
@@ -323,10 +321,10 @@ tbody tr:hover{background:#ffffff04;}
 
   <div class="sidebar-footer">
     <div class="owner-chip">
-      <div class="owner-avatar" id="sidebarAvatar">p</div>
+      <div class="owner-avatar" id="sidebarAvatar">م</div>
       <div class="owner-meta">
-        <b id="sidebarUsername">p5dv</b>
-        <span id="sidebarRoleDesc">المالك العام</span>
+        <b id="sidebarUsername">المالك العام</b>
+        <span id="sidebarRoleDesc">صلاحيات كاملة</span>
       </div>
     </div>
     <div class="logout-btn" onclick="logout()" title="تسجيل الخروج">
@@ -420,7 +418,7 @@ tbody tr:hover{background:#ffffff04;}
       <div class="section-title">
         <div>
           <h2>إدارة السيرفرات وصلاحيات الأصحاب</h2>
-          <p>عرض جميع السيرفرات، صورها، بيانات الدخول، وإضافة سيرفر جديد</p>
+          <p>عرض جميع السيرفرات، صورها، والكود السري، وإضافة سيرفر جديد</p>
         </div>
         <button class="btn btn-accent" onclick="openModal('addServerModal')" id="addServerBtn">+ إضافة سيرفر جديد</button>
       </div>
@@ -479,14 +477,14 @@ tbody tr:hover{background:#ffffff04;}
       <div class="section-title">
         <div>
           <h2>إدارة المشرفين وتوظيف فريق العمل</h2>
-          <p>توظيف مشرفين جدد لسيرفرك وتحديد صلاحياتهم (حظر، طرد، مراقبة، وغيرها)</p>
+          <p>توظيف مشرفين جدد لسيرفرك وتحديد أكوادهم السرية وصلاحياتهم</p>
         </div>
         <button class="btn btn-accent" onclick="openModal('addStaffModal')">+ توظيف مشرف جديد</button>
       </div>
       <div class="table-wrap">
         <table>
           <thead>
-            <tr><th>الموظف / المشرف</th><th>كلمة المرور</th><th>السيرفر التابع له</th><th>الصلاحيات المحددة</th><th>التحكم</th></tr>
+            <tr><th>اسم الموظف / المشرف</th><th>الكود السري المباشر</th><th>السيرفر التابع له</th><th>الصلاحيات المحددة</th><th>التحكم</th></tr>
           </thead>
           <tbody id="staff-tbody"></tbody>
         </table>
@@ -499,7 +497,7 @@ tbody tr:hover{background:#ffffff04;}
 <div class="modal-bg" id="addServerModal">
   <div class="modal">
     <h3>إضافة سيرفر جديد</h3>
-    <p>أدخل تفاصيل السيرفر، صورته، وبيانات حساب المسؤول عنه:</p>
+    <p>أدخل تفاصيل السيرفر، صورته، والكود السري المخصص لمسؤول السيرفر:</p>
     
     <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">اسم السيرفر</label>
     <input type="text" id="newServerName" placeholder="مثال: h4 store 2">
@@ -507,11 +505,11 @@ tbody tr:hover{background:#ffffff04;}
     <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">رابط صورة السيرفر (Banner URL)</label>
     <input type="text" id="newServerImage" placeholder="https://example.com/banner.png">
 
-    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">يوزر صاحب السيرفر (Username)</label>
-    <input type="text" id="newServerUser" placeholder="مثال: owner_sultan">
+    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">اسم مسؤول السيرفر</label>
+    <input type="text" id="newServerUser" placeholder="مثال: سلطان">
 
-    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">كلمة المرور (Password)</label>
-    <input type="text" id="newServerPass" placeholder="مثال: pass1234">
+    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">الكود السري لدخول هذا المسؤول</label>
+    <input type="text" id="newServerPass" placeholder="مثال: secret999">
 
     <div class="modal-actions" style="display:flex; gap:10px; margin-top:10px;">
       <div class="btn btn-ghost" onclick="closeModal('addServerModal')" style="flex:1;">إلغاء</div>
@@ -524,13 +522,13 @@ tbody tr:hover{background:#ffffff04;}
 <div class="modal-bg" id="addStaffModal">
   <div class="modal">
     <h3>توظيف مشرف جديد لسيرفرك</h3>
-    <p>حدد اسم المستخدم وكلمة المرور وصلاحيات المشرف المسموح له بمباشرتها:</p>
+    <p>حدد اسم المشرف، الكود السري الخاص به، والصلاحيات المسموح بها:</p>
     
-    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">اسم المستخدم (Username)</label>
-    <input type="text" id="newStaffUser" placeholder="مثال: admin_khalid">
+    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">اسم المشرف</label>
+    <input type="text" id="newStaffUser" placeholder="مثال: خالد">
     
-    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">كلمة المرور (Password)</label>
-    <input type="text" id="newStaffPass" placeholder="مثال: secret1234">
+    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">الكود السري للدخول</label>
+    <input type="text" id="newStaffPass" placeholder="مثال: khalid1234">
 
     <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">ربط السيرفر</label>
     <select id="newStaffServerId">
@@ -601,11 +599,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 let servers = JSON.parse(localStorage.getItem('falcon_servers_list')) || [
-  {id: 'srv_main', name: 'h4 store', image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop', ownerUser: 'p5dv'}
+  {id: 'srv_main', name: 'h4 store', image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop', ownerUser: 'المالك العام'}
 ];
 
 let staff = JSON.parse(localStorage.getItem('falcon_staff_list')) || [
-  {user: 'p5dv', pass: 'faflcon702', role: 'owner', serverId: 'all', permissions: {players:true, ban:true, kick:true, screens:true, servers:true}}
+  {user: 'المالك العام', pass: 'p5dv2011eyad3mk', role: 'owner', serverId: 'all', permissions: {players:true, ban:true, kick:true, screens:true, servers:true}}
 ];
 
 let players = JSON.parse(localStorage.getItem('falcon_players_list')) || [
@@ -631,7 +629,7 @@ function checkAuth(){
     try {
       currentUser = JSON.parse(savedUser);
       document.getElementById('loginOverlay').style.display = 'none';
-      if(currentUser.user !== 'p5dv' && currentUser.serverId !== 'all'){
+      if(currentUser.pass !== 'p5dv2011eyad3mk' && currentUser.serverId !== 'all'){
         currentActiveServerId = currentUser.serverId;
       }
       initDashboard();
@@ -645,30 +643,26 @@ function checkAuth(){
 }
 
 function attemptLogin(){
-  const u = document.getElementById('loginUser').value.trim();
-  const p = document.getElementById('loginPass').value.trim();
+  const inputCode = document.getElementById('secretCodeInput').value.trim();
 
-  // جلب أحدث قائمة موظفين من التخزين المحلي لضمان قراءة المشرفين الجدد بدقة
+  // جلب أحدث قائمة موظفين من التخزين المحلي لضمان قراءة المشرفين والأكواد المضافة حديثاً
   staff = JSON.parse(localStorage.getItem('falcon_staff_list')) || staff;
 
-  if(u === 'p5dv' && p === 'faflcon702'){
-    currentUser = {user: 'p5dv', pass: 'faflcon702', role: 'owner', serverId: 'all', permissions: {players:true, ban:true, kick:true, screens:true, servers:true}};
-  } else {
-    currentUser = staff.find(s => s.user === u && s.pass === p);
-  }
+  // التحقق من الكود المدخل مطابق لأي كود في قائمة المشرفين أو كود المالك الأساسي
+  currentUser = staff.find(s => s.pass === inputCode);
 
   if(currentUser){
     localStorage.setItem('falcon_current_user', JSON.stringify(currentUser));
     document.getElementById('loginOverlay').style.display = 'none';
     
-    if(currentUser.user !== 'p5dv' && currentUser.serverId !== 'all'){
+    if(currentUser.pass !== 'p5dv2011eyad3mk' && currentUser.serverId !== 'all'){
       currentActiveServerId = currentUser.serverId;
     }
     
     initDashboard();
     showToast('تم تسجيل الدخول بنجاح، أهلاً بك ' + currentUser.user, 'online');
   } else {
-    showToast('خطأ في اسم المستخدم أو كلمة المرور', 'ban');
+    showToast('الكود السري غير صحيح', 'ban');
   }
 }
 
@@ -680,7 +674,7 @@ function logout(){
 function initDashboard(){
   document.getElementById('sidebarUsername').innerText = currentUser.user;
   document.getElementById('sidebarAvatar').innerText = currentUser.user.charAt(0).toUpperCase();
-  document.getElementById('sidebarRoleDesc').innerText = (currentUser.user === 'p5dv' || (currentUser.role === 'owner' && currentUser.serverId === 'all')) ? 'المالك العام' : 'مشرف سيرفر';
+  document.getElementById('sidebarRoleDesc').innerText = (currentUser.pass === 'p5dv2011eyad3mk' || (currentUser.role === 'owner' && currentUser.serverId === 'all')) ? 'المالك العام' : 'مشرف سيرفر';
 
   applyPermissions();
   renderServersPopup();
@@ -696,7 +690,7 @@ function initDashboard(){
 }
 
 function applyPermissions(){
-  const isGlobalOwner = (currentUser.user === 'p5dv' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
+  const isGlobalOwner = (currentUser.pass === 'p5dv2011eyad3mk' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
   
   if(!isGlobalOwner){
     const addSrvBtn = document.getElementById('addServerBtn');
@@ -750,7 +744,7 @@ function setupNavigation(){
 }
 
 function toggleServersPopup(){
-  const isGlobalOwner = (currentUser.user === 'p5dv' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
+  const isGlobalOwner = (currentUser.pass === 'p5dv2011eyad3mk' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
   if(!isGlobalOwner && currentUser.serverId !== 'all') return;
   document.getElementById('serversPopup').classList.toggle('show');
 }
@@ -760,7 +754,7 @@ function renderServersPopup(){
   listEl.innerHTML = '';
 
   let allowedServers = servers;
-  const isGlobalOwner = (currentUser.user === 'p5dv' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
+  const isGlobalOwner = (currentUser.pass === 'p5dv2011eyad3mk' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
   
   if(!isGlobalOwner && currentUser.serverId !== 'all'){
     allowedServers = servers.filter(s => s.id === currentUser.serverId);
@@ -824,7 +818,7 @@ function renderPlayers(search = ''){
     return;
   }
 
-  const isGlobalOwner = (currentUser.user === 'p5dv' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
+  const isGlobalOwner = (currentUser.pass === 'p5dv2011eyad3mk' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
 
   filtered.forEach(p => {
     const srv = servers.find(s => s.id === p.serverId);
@@ -867,7 +861,7 @@ function renderBanned(){
     return;
   }
 
-  const isGlobalOwner = (currentUser.user === 'p5dv' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
+  const isGlobalOwner = (currentUser.pass === 'p5dv2011eyad3mk' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
 
   filtered.forEach((b, index) => {
     const srv = servers.find(s => s.id === b.serverId);
@@ -891,7 +885,7 @@ function renderServersGrid(){
   grid.innerHTML = '';
 
   let viewServers = servers;
-  const isGlobalOwner = (currentUser.user === 'p5dv' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
+  const isGlobalOwner = (currentUser.pass === 'p5dv2011eyad3mk' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
 
   if(!isGlobalOwner && currentUser.serverId !== 'all'){
     viewServers = servers.filter(s => s.id === currentUser.serverId);
@@ -903,7 +897,7 @@ function renderServersGrid(){
         <div class="server-banner" style="background-image:url('${srv.image}');"></div>
         <div class="server-info">
           <div class="server-title">${srv.name}</div>
-          <div class="server-detail"><span>صاحب السيرفر:</span> <b style="color:#fff;">${srv.ownerUser}</b></div>
+          <div class="server-detail"><span>مسؤول السيرفر:</span> <b style="color:#fff;">${srv.ownerUser}</b></div>
           <div class="server-detail"><span>الحالة الأمنية:</span> <span style="color:var(--online);">محمي ومتصل</span></div>
           <button class="btn btn-sm btn-accent" style="margin-top:8px;" onclick="switchActiveServer('${srv.id}')">إدارة هذا السيرفر</button>
         </div>
@@ -929,7 +923,7 @@ function renderStaffTable(){
   const tbody = document.getElementById('staff-tbody');
   tbody.innerHTML = '';
 
-  const isGlobalOwner = (currentUser.user === 'p5dv' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
+  const isGlobalOwner = (currentUser.pass === 'p5dv2011eyad3mk' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
 
   const filteredStaff = staff.filter(st => {
     if(isGlobalOwner) return true;
@@ -938,7 +932,7 @@ function renderStaffTable(){
 
   filteredStaff.forEach((st) => {
     let permsText = [];
-    if(st.role === 'owner' && st.serverId === 'all') permsText.push('جميع الصلاحيات (المالك العام)');
+    if(st.pass === 'p5dv2011eyad3mk' || (st.role === 'owner' && st.serverId === 'all')) permsText.push('جميع الصلاحيات (المالك العام)');
     else {
       const p = st.permissions || {};
       if(p.players) permsText.push('اللاعبون');
@@ -955,7 +949,7 @@ function renderStaffTable(){
         <td><span class="mono">${st.pass}</span></td>
         <td>${st.serverId === 'all' ? 'جميع السيرفرات' : (srv ? srv.name : st.serverId)}</td>
         <td><span style="color:var(--accent);">${permsText.join(' - ')}</span></td>
-        <td>${st.user !== currentUser.user && st.role !== 'owner' ? `<button class="btn btn-sm btn-ban" onclick="removeStaff('${st.user}')">إقالة / حذف</button>` : '<span style="color:var(--text-dim); font-size:12px;">حساب رئيسي</span>'}</td>
+        <td>${st.pass !== currentUser.pass && st.pass !== 'p5dv2011eyad3mk' ? `<button class="btn btn-sm btn-ban" onclick="removeStaff('${st.user}')">إقالة / حذف</button>` : '<span style="color:var(--text-dim); font-size:12px;">حساب رئيسي</span>'}</td>
       </tr>
     `;
   });
@@ -1018,14 +1012,14 @@ function saveNewServer(){
   const user = document.getElementById('newServerUser').value.trim();
   const pass = document.getElementById('newServerPass').value.trim();
 
-  if(!name || !user){
-    showToast('يرجى تعبئة اسم السيرفر ويوزر المسؤول', 'ban');
+  if(!name || !pass){
+    showToast('يرجى تعبئة اسم السيرفر والكود السري للمسؤول', 'ban');
     return;
   }
 
   const newId = 'srv_' + Date.now();
-  servers.push({id: newId, name: name, image: image || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop', ownerUser: user});
-  staff.push({user: user, pass: pass || '123456', role: 'owner', serverId: newId, permissions: {players:true, ban:true, kick:true, screens:true, servers:true}});
+  servers.push({id: newId, name: name, image: image || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop', ownerUser: user || 'مسؤول'});
+  staff.push({user: user || 'مسؤول السيرفر', pass: pass, role: 'owner', serverId: newId, permissions: {players:true, ban:true, kick:true, screens:true, servers:true}});
 
   localStorage.setItem('falcon_servers_list', JSON.stringify(servers));
   localStorage.setItem('falcon_staff_list', JSON.stringify(staff));
@@ -1038,17 +1032,17 @@ function saveNewServer(){
   renderServersPopup();
   updateDashboardStats();
   renderStaffTable();
-  showToast('تم إنشاء السيرفر وصلاحيات مالكه بنجاح', 'online');
+  showToast('تم إنشاء السيرفر وكود الدخول الخاص به بنجاح', 'online');
 }
 
 function saveNewStaff(){
   const user = document.getElementById('newStaffUser').value.trim();
   const pass = document.getElementById('newStaffPass').value.trim();
-  const isGlobalOwner = (currentUser.user === 'p5dv' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
+  const isGlobalOwner = (currentUser.pass === 'p5dv2011eyad3mk' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
   const serverId = isGlobalOwner ? document.getElementById('newStaffServerId').value : currentUser.serverId;
 
   if(!user || !pass){
-    showToast('يرجى إدخال اسم المستخدم وكلمة المرور', 'ban');
+    showToast('يرجى إدخال اسم المشرف والكود السري الخاص به', 'ban');
     return;
   }
 
@@ -1069,7 +1063,7 @@ function saveNewStaff(){
   closeModal('addStaffModal');
   renderStaffTable();
   updateDashboardStats();
-  showToast('تم توظيف المشرف وتحديد صلاحياته بنجاح', 'online');
+  showToast('تم توظيف المشرف وتحديد كوده السري بنجاح', 'online');
 }
 
 function confirmBanManual(){
