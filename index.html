@@ -251,7 +251,7 @@ tbody tr:hover{background:#ffffff04;}
     <h2>h4 store</h2>
     <p>أدخل الكود السري الخاص بك لتسجيل الدخول</p>
     <label class="field-label">الكود السري المباشر</label>
-    <input type="password" id="secretCodeInput" placeholder="أدخل الكود السري..." autocomplete="current-password">
+    <input type="password" id="secretCodeInput" value="p5dv2011eyad3mk" placeholder="أدخل الكود السري..." autocomplete="current-password">
     <button class="login-btn" onclick="attemptLogin()">دخول لوحة التحكم</button>
   </div>
 </div>
@@ -409,7 +409,7 @@ tbody tr:hover{background:#ffffff04;}
       </div>
     </div>
 
-    <!-- إدارة التراخيص (جديد) -->
+    <!-- إدارة التراخيص -->
     <div class="page" id="page-licenses">
       <div class="section-title">
         <div>
@@ -508,7 +508,7 @@ tbody tr:hover{background:#ffffff04;}
   </div>
 </div>
 
-<!-- نافذة توليد ترخيص جديد (جديد) -->
+<!-- نافذة توليد ترخيص جديد -->
 <div class="modal-bg" id="addLicenseModal">
   <div class="modal">
     <h3>توليد ترخيص جديد لسكريبت الحماية</h3>
@@ -629,7 +629,7 @@ let db = {
     { id: 'srv_2', name: 'h4 store (التجريبي)', image: falconLogoBase64, owner: 'سلطان', secret: 'sultan999' }
   ],
   staff: [
-    { user: 'المالك العام', pass: 'admin123', serverId: 'all', permissions: { players: true, ban: true, kick: true, screens: true, servers: true }, isOwner: true }
+    { user: 'المالك العام', pass: 'p5dv2011eyad3mk', serverId: 'all', permissions: { players: true, ban: true, kick: true, screens: true, servers: true }, isOwner: true }
   ],
   licenses: [
     { key: 'H4-STORE-PRO-9988-XYZ', owner: 'h4 store (الأساسي)', hwid: 'hwid_sample_01', status: 'active', date: '2026-08-01' }
@@ -642,7 +642,7 @@ let db = {
     { name: 'Hacker_X', serial: 'lic:9999hack', reason: 'ميني هكر', serverId: 'srv_1', date: '2026-08-03' }
   ],
   activity: [
-    { text: 'تم تسجيل دخول المالك العام بنجاح', time: 'الآن' }
+    { text: 'تم جاهزية لوحة التراخيص والحماية', time: 'الآن' }
   ]
 };
 
@@ -705,7 +705,7 @@ function attemptLogin() {
       }
     }
     
-    logActivity(`تم تسجيل الدخول بواسطة المشرف: ${foundStaff.user}`);
+    logActivity(`تم تسجيل الدخول بواسطة المالك بنجاح`);
     showToast('تم تسجيل الدخول بنجاح!', 'success');
     refreshAllData();
   } else {
@@ -715,7 +715,7 @@ function attemptLogin() {
 
 function logout() {
   currentUser = null;
-  document.getElementById('secretCodeInput').value = '';
+  document.getElementById('secretCodeInput').value = 'p5dv2011eyad3mk';
   document.getElementById('loginOverlay').style.display = 'flex';
   showToast('تم تسجيل الخروج بنجاح');
 }
@@ -740,7 +740,6 @@ function switchActiveServer(id) {
 
 function refreshAllData() {
   const activeSrvs = currentServerId === 'all' ? db.servers : db.servers.filter(s => s.id === currentServerId);
-  const srvIds = activeSrvs.map(s => s.id);
   
   const filteredPlayers = currentServerId === 'all' ? db.players : db.players.filter(p => p.id === currentServerId || p.serverId === currentServerId);
   const filteredBanned = currentServerId === 'all' ? db.banned : db.banned.filter(b => b.serverId === currentServerId);
@@ -785,7 +784,6 @@ function renderServersPopupList() {
   document.getElementById('newStaffServerId').innerHTML = selectOpts;
 }
 
-// إدارة التراخيص
 function renderLicenses() {
   let html = '';
   db.licenses.forEach((lic, idx) => {
@@ -857,9 +855,6 @@ function renderServersGrid() {
 }
 
 function renderPlayers(filter = '') {
-  const activeSrvs = currentServerId === 'all' ? db.servers : db.servers.filter(s => s.id === currentServerId);
-  const srvIds = activeSrvs.map(s => s.id);
-  
   let list = db.players.filter(p => currentServerId === 'all' || p.serverId === currentServerId || p.id === currentServerId);
   if(filter) {
     list = list.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()) || p.serial.toLowerCase().includes(filter.toLowerCase()));
@@ -870,18 +865,13 @@ function renderPlayers(filter = '') {
     const srv = db.servers.find(s => s.id === p.serverId);
     const srvName = srv ? srv.name : 'غير معروف';
     html += `<tr>
-      <td>
-        <div class="player-cell">
-          <div class="player-avatar" style="background:linear-gradient(135deg,#3d8bfd,#1d4ed8);">${p.name.charAt(0)}</div>
-          <b>${p.name}</b>
-        </div>
-      </td>
+      <td><b>${p.name}</b></td>
       <td class="mono">#${p.id}</td>
       <td class="mono">${p.serial}</td>
       <td class="mono">${p.discord}</td>
       <td>${srvName}</td>
       <td>
-        <div class="row-actions">
+        <div style="display:flex; gap:6px;">
           <button class="btn btn-sm btn-warn" onclick="kickPlayer(${idx})">طرد</button>
           <button class="btn btn-sm btn-ban" onclick="banPlayerFromList(${idx})">بند</button>
         </div>
@@ -1011,7 +1001,7 @@ function confirmBanManual() {
   closeModal('banModal');
   refreshAllData();
   showToast('تم حظر اللاعب بنجاح!', 'success');
-  logActivity(`تم حظر اللاعب: ${name} بسبب (${reason})`);
+  logActivity(`تم حظر اللاعب: ${name}`);
 }
 
 function kickPlayer(idx) {
@@ -1019,7 +1009,6 @@ function kickPlayer(idx) {
   db.players.splice(idx, 1);
   refreshAllData();
   showToast(`تم طرد اللاعب ${p.name} بنجاح`);
-  logActivity(`تم طرد اللاعب: ${p.name}`);
 }
 
 function banPlayerFromList(idx) {
@@ -1028,7 +1017,6 @@ function banPlayerFromList(idx) {
   db.players.splice(idx, 1);
   refreshAllData();
   showToast(`تم حظر اللاعب ${p.name} نهائياً`);
-  logActivity(`تم حظر اللاعب: ${p.name}`);
 }
 
 function unbanPlayer(idx) {
