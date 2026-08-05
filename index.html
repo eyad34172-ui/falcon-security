@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>h4 store | لوحة التحكم متعددة السيرفرات والصلاحيات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#04070d;
+  --panel:#0a0f1d;
+  --panel-2:#0f1628;
+  --panel-3:#151e34;
+  --border:#1d2942;
+  --text:#f0f4f8;
+  --text-dim:#8b95a9;
+  --text-dim2:#5c6780;
+  --accent:#3d8bfd;
+  --accent-dim:#3d8bfd22;
+  --accent-glow:#3d8bfd44;
+  --warn:#f0b13d;
+  --ban:#f0473d;
+  --online:#3ddc84;
+  --radius:14px;
+}
+*{box-sizing:border-box; margin:0; padding:0; user-select:none; -webkit-user-select:none; -moz-user-select:none; -ms-user-select:none;}
+input, textarea{user-select:text; -webkit-user-select:text;}
+html,body{height:100%;}
+body{
+  background:
+    radial-gradient(circle at 10% 0%, #11366333, transparent 40%),
+    radial-gradient(circle at 90% 100%, #081d3d22, transparent 40%),
+    var(--bg);
+  color:var(--text);
+  font-family:'IBM Plex Sans Arabic','Tajawal',sans-serif;
+  min-height:100vh;
+  display:flex;
+  font-size:14px;
+  overflow:hidden;
+}
+h1,h2,h3,.brand,.stat-num,.nav-label{font-family:'Tajawal',sans-serif;}
+::-webkit-scrollbar{width:6px; height:6px;}
+::-webkit-scrollbar-thumb{background:#1d2942; border-radius:6px;}
+
+/* ---------- شاشة تسجيل الدخول ---------- */
+.login-overlay{
+  position:fixed; inset:0; background:#020408ee; backdrop-filter:blur(16px);
+  z-index:99999; display:flex; align-items:center; justify-content:center;
+  padding:20px;
+}
+.login-card{
+  background:linear-gradient(135deg, #0e1628, #070b14);
+  border:1px solid #28385c; border-radius:26px;
+  width:100%; max-width:460px; padding:45px 35px;
+  box-shadow:0 30px 80px #000c, 0 0 50px #3d8bfd1a;
+  text-align:center; position:relative; overflow:hidden;
+}
+.login-card::before{
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+.login-logo{
+  width:100px; height:100px; border-radius:22px; object-fit:cover;
+  margin:0 auto 18px; display:block; border:2px solid #3d8bfd66;
+  box-shadow:0 0 30px #3d8bfd55; background:#0f1628;
+}
+.login-card h2{font-size:26px; margin-bottom:6px; font-weight:900; color:#fff;}
+.login-card p{font-size:13.5px; color:var(--text-dim); margin-bottom:30px;}
+.login-card .field-label{text-align:right; font-size:12.5px; margin-bottom:8px; color:var(--text-dim); font-weight:700; display:block;}
+.login-card input{
+  width:100%; background:var(--panel); border:1px solid var(--border); border-radius:12px;
+  padding:14px 16px; color:var(--text); font-size:14px; margin-bottom:18px; outline:none; font-family:inherit;
+  transition:.2s;
+}
+.login-card input:focus{border-color:var(--accent); box-shadow:0 0 12px var(--accent-dim);}
+.login-btn{
+  width:100%; padding:14px; border-radius:12px; background:var(--accent); color:#fff;
+  font-size:15px; font-weight:800; border:none; cursor:pointer; transition:.2s;
+  box-shadow:0 6px 22px var(--accent-glow); margin-top:8px; font-family:'Tajawal',sans-serif;
+}
+.login-btn:hover{filter:brightness(1.15); transform:translateY(-1px);}
+
+/* ---------- القائمة الجانبية ---------- */
+.sidebar{
+  width:260px; min-width:260px;
+  background:linear-gradient(180deg,#090e1a,#060912);
+  border-left:1px solid var(--border);
+  display:flex; flex-direction:column;
+  padding:20px 14px; height:100vh; position:sticky; top:0;
+}
+.brand{
+  display:flex; align-items:center; gap:12px;
+  padding:6px 6px 18px 6px; border-bottom:1px solid var(--border); margin-bottom:14px;
+}
+.brand-logo{width:40px; height:40px; border-radius:11px; object-fit:cover; border:1px solid #3d8bfd55; background:#0f1628;}
+.brand-text b{font-size:15px; font-weight:800; display:block; color:#fff;}
+.brand-text span{font-size:11px; color:var(--online); font-weight:600;}
+
+.nav-group-label{font-size:11px; color:var(--text-dim2); font-weight:700; margin:16px 10px 8px; text-transform:uppercase; letter-spacing:.5px;}
+.nav{display:flex; flex-direction:column; gap:3px;}
+.nav-item{
+  display:flex; align-items:center; gap:11px; padding:11px 13px; border-radius:11px;
+  color:var(--text-dim); cursor:pointer; font-size:13.5px; font-weight:600; transition:.15s; border:1px solid transparent;
+}
+.nav-item svg{width:18px; height:18px; stroke:currentColor; flex-shrink:0;}
+.nav-item:hover{background:var(--panel-2); color:var(--text);}
+.nav-item.active{background:var(--accent-dim); color:#fff; border-color:#3d8bfd44; box-shadow:0 4px 15px #3d8bfd15;}
+.nav-item .badge{margin-right:auto; background:var(--panel-3); color:var(--text-dim); font-size:10.5px; padding:2px 8px; border-radius:20px; font-weight:700;}
+.nav-item.active .badge{background:var(--accent); color:#fff;}
+.nav-item.hidden{display:none !important;}
+
+.sidebar-footer{margin-top:auto; padding-top:14px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;}
+.owner-chip{display:flex; align-items:center; gap:10px; padding:9px 10px; background:var(--panel-2); border-radius:12px; border:1px solid var(--border); flex:1;}
+.owner-avatar{width:32px; height:32px; border-radius:9px; background:linear-gradient(135deg,#3d8bfd,#2563eb); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; color:#fff;}
+.owner-meta b{font-size:12.5px; display:block; color:#fff;}
+.owner-meta span{font-size:10.5px; color:var(--online); font-weight:600;}
+.logout-btn{ background:var(--panel-2); border:1px solid var(--border); border-radius:10px; width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--ban); cursor:pointer; transition:.15s; margin-right:8px;}
+.logout-btn:hover{background:var(--ban); color:#fff;}
+
+/* ---------- المحتوى الرئيسي ---------- */
+.main{flex:1; min-width:0; display:flex; flex-direction:column; height:100vh; overflow:hidden;}
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 28px; border-bottom:1px solid var(--border);
+  background:#090e1aee; backdrop-filter:blur(10px); z-index:20; min-height:71px;
+}
+.topbar-title{font-size:17px; font-weight:800; color:#fff;}
+.topbar-sub{font-size:12px; color:var(--text-dim); margin-top:2px;}
+.topbar-right{display:flex; align-items:center; gap:12px; position:relative;}
+
+.servers-dropdown-wrap{position:relative;}
+.servers-top-btn{
+  display:flex; align-items:center; gap:8px; background:var(--accent); color:#fff;
+  border:none; padding:8px 16px; border-radius:20px; font-size:13px; font-weight:800;
+  cursor:pointer; box-shadow:0 4px 15px var(--accent-glow); font-family:'Tajawal',sans-serif; transition:.2s;
+}
+.servers-top-btn:hover{filter:brightness(1.15);}
+.servers-popup{
+  position:absolute; top:45px; left:0; width:260px; background:var(--panel-2);
+  border:1px solid var(--border); border-radius:14px; box-shadow:0 15px 35px #000c;
+  display:none; flex-direction:column; padding:10px; z-index:999; animation:fade .2s ease;
+}
+.servers-popup.show{display:flex;}
+.servers-popup-header{font-size:11.5px; color:var(--text-dim2); font-weight:700; padding:6px 10px; text-transform:uppercase;}
+.server-option-item{
+  display:flex; align-items:center; gap:10px; padding:10px; border-radius:10px;
+  cursor:pointer; transition:.15s; border:1px solid transparent;
+}
+.server-option-item:hover{background:var(--panel-3);}
+.server-option-item.active{background:var(--accent-dim); border-color:#3d8bfd44;}
+.server-option-thumb{width:32px; height:32px; border-radius:8px; object-fit:cover; background:#0f1628;}
+.server-option-info b{font-size:13px; display:block; color:#fff;}
+.server-option-info span{font-size:11px; color:var(--online);}
+
+.pill{
+  display:flex; align-items:center; gap:6px; padding:7px 14px; border-radius:20px; font-size:12px; font-weight:700;
+  background:var(--panel-2); border:1px solid var(--border); color:var(--text-dim);
+}
+.pill.live{color:var(--online); border-color:#3ddc8433;}
+.pill.live::before{content:''; width:7px; height:7px; border-radius:50%; background:var(--online); box-shadow:0 0 8px var(--online); animation:pulse 1.6s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+
+.content{padding:26px 28px; overflow-y:auto; flex:1;}
+.page{display:none; animation:fade .25s ease;}
+.page.active{display:block;}
+@keyframes fade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+.grid{display:grid; gap:18px;}
+.grid-4{grid-template-columns:repeat(4,1fr);}
+.grid-2{grid-template-columns:2fr 1fr;}
+@media(max-width:1100px){.grid-4{grid-template-columns:repeat(2,1fr);} .grid-2{grid-template-columns:1fr;}}
+
+.card{
+  background:linear-gradient(180deg,var(--panel-2),var(--panel));
+  border:1px solid var(--border); border-radius:var(--radius); padding:20px;
+  box-shadow:0 10px 30px #0006;
+}
+.stat-card{display:flex; flex-direction:column; gap:10px;}
+.stat-top{display:flex; align-items:center; justify-content:space-between;}
+.stat-icon{width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center;}
+.stat-icon svg{width:18px; height:18px;}
+.stat-num{font-size:28px; font-weight:900; color:#fff;}
+.stat-label{font-size:12.5px; color:var(--text-dim); font-weight:600;}
+.stat-trend{font-size:11px; font-weight:700; padding:2px 8px; border-radius:6px;}
+.trend-up{color:var(--online); background:#3ddc8418;}
+.trend-down{color:var(--ban); background:#f0473d18;}
+
+.section-title{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;}
+.section-title h2{font-size:16px; font-weight:800; color:#fff;}
+.section-title p{font-size:12px; color:var(--text-dim); margin-top:2px; font-weight:400;}
+
+.btn{
+  display:inline-flex; align-items:center; gap:6px; justify-content:center;
+  padding:9px 16px; border-radius:10px; font-size:13px; font-weight:700;
+  border:1px solid var(--border); background:var(--panel-3); color:var(--text);
+  cursor:pointer; transition:.15s; white-space:nowrap; font-family:'Tajawal',sans-serif;
+}
+.btn svg{width:15px; height:15px;}
+.btn:hover{filter:brightness(1.2); transform:translateY(-1px);}
+.btn-accent{background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:0 4px 15px var(--accent-glow);}
+.btn-warn{background:#f0b13d18; border-color:#f0b13d44; color:var(--warn);}
+.btn-ban{background:#f0473d18; border-color:#f0473d44; color:var(--ban);}
+.btn-sm{padding:6px 12px; font-size:12px;}
+.btn-ghost{background:transparent;}
+
+.table-wrap{overflow-x:auto; border-radius:var(--radius); border:1px solid var(--border); background:var(--panel);}
+table{width:100%; border-collapse:collapse; min-width:900px;}
+thead th{
+  text-align:right; font-size:11.5px; color:var(--text-dim2); font-weight:700;
+  text-transform:uppercase; letter-spacing:.5px; padding:14px 18px;
+  background:var(--panel-2); border-bottom:1px solid var(--border);
+}
+tbody td{padding:14px 18px; border-bottom:1px solid var(--border); font-size:13px; color:var(--text);}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:#ffffff04;}
+.player-cell{display:flex; align-items:center; gap:12px;}
+.player-avatar{width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; color:#fff;}
+.mono{font-family:monospace; font-size:12.5px; color:var(--text-dim);}
+.row-actions{display:flex; gap:8px; flex-wrap:wrap;}
+
+.search-bar{
+  display:flex; align-items:center; gap:12px; background:var(--panel-2);
+  border:1px solid var(--border); border-radius:12px; padding:11px 16px; margin-bottom:18px;
+}
+.search-bar svg{width:18px; height:18px; stroke:var(--text-dim2); flex-shrink:0;}
+.search-bar input{background:transparent; border:none; outline:none; color:var(--text); font-size:13.5px; width:100%; font-family:inherit;}
+
+/* النوافذ والتشيك بوكس للصلاحيات */
+.modal-bg{position:fixed; inset:0; background:#000000bb; backdrop-filter:blur(6px); display:none; align-items:center; justify-content:center; z-index:1000;}
+.modal-bg.show{display:flex;}
+.modal{background:var(--panel-2); border:1px solid var(--border); border-radius:18px; width:500px; max-width:90vw; padding:24px; box-shadow:0 25px 50px #000c; animation:fade .2s ease; max-height:90vh; overflow-y:auto;}
+.modal h3{font-size:17px; margin-bottom:8px; color:#fff;}
+.modal p{font-size:13px; color:var(--text-dim); margin-bottom:18px; line-height:1.7;}
+.modal input, .modal select{width:100%; background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:12px; color:var(--text); font-size:13.5px; margin-bottom:14px; outline:none; font-family:inherit;}
+.modal input:focus, .modal select:focus{border-color:var(--accent);}
+.modal select option{background:var(--panel); color:var(--text);}
+
+.permissions-box{background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:16px; display:flex; flex-direction:column; gap:10px;}
+.permission-item{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text); cursor:pointer;}
+.permission-item input{width:18px; height:18px; margin:0; accent-color:var(--accent); cursor:pointer;}
+
+.toast-wrap{position:fixed; bottom:24px; left:24px; z-index:2000; display:flex; flex-direction:column; gap:10px;}
+.toast{background:var(--panel-2); border:1px solid var(--border); border-radius:12px; padding:14px 18px; font-size:13px; display:flex; align-items:center; gap:12px; min-width:280px; box-shadow:0 15px 35px #000b; animation:slideIn .25s ease;}
+@keyframes slideIn{from{opacity:0; transform:translateX(-20px);} to{opacity:1; transform:translateX(0);}}
+.toast-dot{width:9px; height:9px; border-radius:50%; flex-shrink:0;}
+
+.server-grid-card{display:flex; flex-direction:column; background:linear-gradient(135deg,var(--panel-2),var(--panel)); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; transition:.2s;}
+.server-grid-card:hover{border-color:var(--accent); transform:translateY(-2px);}
+.server-banner{height:110px; background-size:cover; background-position:center; position:relative; border-bottom:1px solid var(--border);}
+.server-info{padding:16px; display:flex; flex-direction:column; gap:10px; flex:1;}
+.server-title{font-size:15px; font-weight:800; color:#fff;}
+.server-detail{font-size:12px; color:var(--text-dim); display:flex; justify-content:space-between;}
+</style>
+</head>
+<body>
+
+<!-- شاشة تسجيل الدخول -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <img src="" id="logoPreview" class="login-logo" alt="h4 store">
+    <h2>h4 store</h2>
+    <p>بوابة إدارة السيرفرات المتعددة وصلاحيات الموظفين</p>
+    <label class="field-label">اسم المستخدم</label>
+    <input type="text" id="loginUser" placeholder="أدخل اسمك أو يوزر الموظف..." autocomplete="off">
+    <label class="field-label">كلمة المرور</label>
+    <input type="password" id="loginPass" placeholder="••••••••" autocomplete="new-password">
+    <button class="login-btn" onclick="attemptLogin()">دخول لوحة التحكم</button>
+  </div>
+</div>
+
+<!-- القائمة الجانبية -->
+<div class="sidebar">
+  <div class="brand">
+    <img src="" class="brand-logo" alt="Logo">
+    <div class="brand-text">
+      <b>h4 store</b>
+      <span id="sidebarStatusText">الشبكة العامة الآمنة</span>
+    </div>
+  </div>
+
+  <div class="nav-group-label">الرئيسية</div>
+  <div class="nav">
+    <div class="nav-item active" data-page="dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+      <span>لوحة القيادة</span>
+    </div>
+  </div>
+
+  <div class="nav-group-label" id="group-servers-label">إدارة السيرفرات</div>
+  <div class="nav">
+    <div class="nav-item" data-page="servers" id="nav-servers-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+      <span>إدارة السيرفرات والمالك</span>
+    </div>
+  </div>
+
+  <div class="nav-group-label">إدارة الأمان واللاعبين</div>
+  <div class="nav">
+    <div class="nav-item" data-page="players" id="nav-players-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><circle cx="17" cy="7" r="2.5"/><path d="M15.5 13.2c2.7.4 4.5 2.4 4.5 4.8"/></svg>
+      <span>اللاعبون المتصلون</span>
+      <span class="badge" id="nav-players-count">0</span>
+    </div>
+    <div class="nav-item" data-page="banned" id="nav-banned-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+      <span>قائمة المبندين (الحظر)</span>
+      <span class="badge" id="nav-banned-count">0</span>
+    </div>
+    <div class="nav-item" data-page="screens" id="nav-screens-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+      <span>مراقبة الشاشات الحية</span>
+    </div>
+  </div>
+
+  <div class="nav-group-label" id="group-staff-label">فريق العمل والصلاحيات</div>
+  <div class="nav">
+    <div class="nav-item" data-page="management" id="nav-management-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v6c0 5 4 9.5 9 10 5-.5 9-5 9-10V6l-9-4Z"/><path d="m9 12 2 2 4-4"/></svg>
+      <span id="staff-nav-label">فريق المشرفين والتوظيف</span>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="owner-chip">
+      <div class="owner-avatar" id="sidebarAvatar">p</div>
+      <div class="owner-meta">
+        <b id="sidebarUsername">p5dv</b>
+        <span id="sidebarRoleDesc">المالك العام</span>
+      </div>
+    </div>
+    <div class="logout-btn" onclick="logout()" title="تسجيل الخروج">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- المحتوى الرئيسي -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="page-title">لوحة القيادة</div>
+      <div class="topbar-sub" id="page-sub">المراقبة اللحظية وإدارة السيرفرات المتعددة</div>
+    </div>
+    <div class="topbar-right">
+      <div class="servers-dropdown-wrap">
+        <button class="servers-top-btn" onclick="toggleServersPopup()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/></svg>
+          <span id="currentActiveServerLabel">h4 store (الأساسي)</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="servers-popup" id="serversPopup">
+          <div class="servers-popup-header">اختر السيرفر المعروض</div>
+          <div id="serversPopupList"></div>
+        </div>
+      </div>
+
+      <div class="pill live" id="serverActiveBadge">h4 store نشط</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- لوحة القيادة -->
+    <div class="page active" id="page-dashboard">
+      <div class="grid grid-4" style="margin-bottom:18px;">
+        <div class="card stat-card">
+          <div class="stat-top">
+            <div class="stat-icon" style="background:#3d8bfd18;"><svg viewBox="0 0 24 24" fill="none" stroke="#3d8bfd" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg></div>
+            <span class="stat-trend trend-up">متصل</span>
+          </div>
+          <div class="stat-num" id="stat-active-players">0</div>
+          <div class="stat-label">اللاعبون المتصلون</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-top">
+            <div class="stat-icon" style="background:#f0473d18;"><svg viewBox="0 0 24 24" fill="none" stroke="#f0473d" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></div>
+            <span class="stat-trend trend-down">حظر</span>
+          </div>
+          <div class="stat-num" id="stat-banned-players">0</div>
+          <div class="stat-label">اللاعبون المبندون</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-top">
+            <div class="stat-icon" style="background:#3ddc8418;"><svg viewBox="0 0 24 24" fill="none" stroke="#3ddc84" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/></svg></div>
+            <span class="stat-trend trend-up">نشط</span>
+          </div>
+          <div class="stat-num" id="stat-servers-count">1</div>
+          <div class="stat-label">عدد السيرفرات المرتبطة</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-top">
+            <div class="stat-icon" style="background:#f0b13d18;"><svg viewBox="0 0 24 24" fill="none" stroke="#f0b13d" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg></div>
+            <span class="stat-trend trend-up">آمن</span>
+          </div>
+          <div class="stat-num" id="stat-staff-count">1</div>
+          <div class="stat-label">فريق الإدارة والموظفين</div>
+        </div>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="section-title"><div><h2>نظرة عامة على حالة السيرفر</h2><p>معدل الحماية والنشاط الأمني اللحظي</p></div></div>
+          <div style="height:230px; display:flex; align-items:center; justify-content:center; color:var(--text-dim); background:var(--panel); border-radius:12px; border:1px solid var(--border);">
+            <div style="text-align:center;">
+              <svg style="width:48px; height:48px; stroke:var(--accent); margin-bottom:10px;" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              <div style="font-weight:700; color:#fff;" id="dashboardActiveServerName">h4 store (السيرفر الأساسي)</div>
+              <div style="font-size:12px; color:var(--online); margin-top:4px;">الحماية متصلة وتعمل بكفاءة تامة</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-title"><div><h2>سجل العمليات الأحدث</h2><p>الإجراءات الأمنية وسجلات البورتال</p></div></div>
+          <div id="activity-feed" style="display:flex; flex-direction:column; gap:12px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- إدارة السيرفرات -->
+    <div class="page" id="page-servers">
+      <div class="section-title">
+        <div>
+          <h2>إدارة السيرفرات وصلاحيات الأصحاب</h2>
+          <p>عرض جميع السيرفرات، صورها، بيانات الدخول، وإضافة سيرفر جديد</p>
+        </div>
+        <button class="btn btn-accent" onclick="openModal('addServerModal')" id="addServerBtn">+ إضافة سيرفر جديد</button>
+      </div>
+      <div class="grid" id="servers-grid-container" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px;"></div>
+    </div>
+
+    <!-- اللاعبون المتصلون -->
+    <div class="page" id="page-players">
+      <div class="search-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="playerSearch" placeholder="بحث سريع باسم اللاعب أو السيريال..." oninput="renderPlayers(this.value)">
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>اللاعب</th><th>ID</th><th>معرف السيريال (HWID)</th><th>معرف الديسكورد</th><th>السيرفر التابع له</th><th>الإجراءات</th></tr>
+          </thead>
+          <tbody id="players-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- اللاعبون المبندون (الحظر) -->
+    <div class="page" id="page-banned">
+      <div class="section-title">
+        <div>
+          <h2>قائمة اللاعبين المحظورين (المبندين)</h2>
+          <p>إدارة الحظر وحظر اللاعبين المخالفين يدوياً في سيرفرك</p>
+        </div>
+        <button class="btn btn-ban" onclick="openModal('banModal')" id="banActionBtn">+ حظر لاعب جديد</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>اسم اللاعب</th><th>السيريال (HWID)</th><th>السبب</th><th>السيرفر</th><th>تاريخ الحظر</th><th>الإجراء</th></tr>
+          </thead>
+          <tbody id="banned-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- مراقبة الشاشات الحية -->
+    <div class="page" id="page-screens">
+      <div class="section-title">
+        <div>
+          <h2>مراقبة شاشات اللاعبين لحظياً</h2>
+          <p>راقب شاشات اللاعبين المتصلين في سيرفرك للكشف عن أي مينيوهات هكر أو برامج خارجية</p>
+        </div>
+        <div class="btn btn-accent" onclick="renderLiveScreens()">تحديث الشاشات الآن</div>
+      </div>
+      <div class="grid" id="screens-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;"></div>
+    </div>
+
+    <!-- إدارة الموظفين وتحديد الصلاحيات -->
+    <div class="page" id="page-management">
+      <div class="section-title">
+        <div>
+          <h2>إدارة المشرفين وتوظيف فريق العمل</h2>
+          <p>توظيف مشرفين جدد لسيرفرك وتحديد صلاحياتهم (حظر، طرد، مراقبة، وغيرها)</p>
+        </div>
+        <button class="btn btn-accent" onclick="openModal('addStaffModal')">+ توظيف مشرف جديد</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>الموظف / المشرف</th><th>كلمة المرور</th><th>السيرفر التابع له</th><th>الصلاحيات المحددة</th><th>التحكم</th></tr>
+          </thead>
+          <tbody id="staff-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- نافذة إضافة سيرفر جديد -->
+<div class="modal-bg" id="addServerModal">
+  <div class="modal">
+    <h3>إضافة سيرفر جديد</h3>
+    <p>أدخل تفاصيل السيرفر، صورته، وبيانات حساب المسؤول عنه:</p>
+    
+    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">اسم السيرفر</label>
+    <input type="text" id="newServerName" placeholder="مثال: h4 store 2">
+
+    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">رابط صورة السيرفر (Banner URL)</label>
+    <input type="text" id="newServerImage" placeholder="https://example.com/banner.png">
+
+    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">يوزر صاحب السيرفر (Username)</label>
+    <input type="text" id="newServerUser" placeholder="مثال: owner_sultan">
+
+    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">كلمة المرور (Password)</label>
+    <input type="text" id="newServerPass" placeholder="مثال: pass1234">
+
+    <div class="modal-actions" style="display:flex; gap:10px; margin-top:10px;">
+      <div class="btn btn-ghost" onclick="closeModal('addServerModal')" style="flex:1;">إلغاء</div>
+      <div class="btn btn-accent" onclick="saveNewServer()" style="flex:1;">حفظ وإنشاء السيرفر</div>
+    </div>
+  </div>
+</div>
+
+<!-- نافذة توظيف مشرف جديد -->
+<div class="modal-bg" id="addStaffModal">
+  <div class="modal">
+    <h3>توظيف مشرف جديد لسيرفرك</h3>
+    <p>حدد اسم المستخدم وكلمة المرور وصلاحيات المشرف المسموح له بمباشرتها:</p>
+    
+    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">اسم المستخدم (Username)</label>
+    <input type="text" id="newStaffUser" placeholder="مثال: admin_khalid">
+    
+    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">كلمة المرور (Password)</label>
+    <input type="text" id="newStaffPass" placeholder="مثال: secret1234">
+
+    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">ربط السيرفر</label>
+    <select id="newStaffServerId">
+      <option value="all">كل السيرفرات (عام)</option>
+    </select>
+
+    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:8px;">الصلاحيات الممنوحة للمشرف:</label>
+    <div class="permissions-box">
+      <label class="permission-item"><input type="checkbox" id="perm_players" checked> عرض اللاعبين المتصلين</label>
+      <label class="permission-item"><input type="checkbox" id="perm_ban" checked> حظر ورفع الحظر عن اللاعبين</label>
+      <label class="permission-item"><input type="checkbox" id="perm_kick" checked> طرد (Kick) اللاعبين المتصلين</label>
+      <label class="permission-item"><input type="checkbox" id="perm_screens" checked> مراقبة الشاشات الحية</label>
+      <label class="permission-item"><input type="checkbox" id="perm_servers"> إدارة وإضافة السيرفرات الجديدة</label>
+    </div>
+
+    <div style="display:flex; gap:10px; margin-top:10px;">
+      <div class="btn btn-ghost" onclick="closeModal('addStaffModal')" style="flex:1;">إلغاء</div>
+      <div class="btn btn-accent" onclick="saveNewStaff()" style="flex:1;">حفظ وتوظيف المشرف</div>
+    </div>
+  </div>
+</div>
+
+<!-- نافذة حظر لاعب يدوياً -->
+<div class="modal-bg" id="banModal">
+  <div class="modal">
+    <h3>حظر لاعب من سيرفرك</h3>
+    <p>أدخل بيانات اللاعب المراد حظره نهائياً:</p>
+    
+    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">اسم اللاعب</label>
+    <input type="text" id="banPlayerName" placeholder="مثال: Hacker_99">
+
+    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">معرف السيريال (HWID)</label>
+    <input type="text" id="banPlayerSerial" placeholder="مثال: lic:55aa11...">
+
+    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">سبب الحظر</label>
+    <input type="text" id="banPlayerReason" placeholder="مثال: استخدام برامج هكر">
+
+    <div style="display:flex; gap:10px; margin-top:10px;">
+      <div class="btn btn-ghost" onclick="closeModal('banModal')" style="flex:1;">إلغاء</div>
+      <div class="btn btn-ban" onclick="confirmBanManual()" style="flex:1;">تأكيد الحظر</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+document.addEventListener('keydown', e => {
+  if (
+    e.key === 'F12' ||
+    (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) ||
+    (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's'))
+  ) {
+    e.preventDefault();
+    return false;
+  }
+});
+
+const falconLogoBase64 = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'><rect width='500' height='500' fill='%230a0f1d'/><circle cx='250' cy='250' r='130' fill='%233d8bfd' opacity='0.15'/><path d='M250 100 L370 190 L250 400 L130 190 Z' fill='none' stroke='%233d8bfd' stroke-width='10'/><path d='M250 150 L310 200 L250 320 L190 200 Z' fill='%233d8bfd' opacity='0.3'/></svg>";
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll('.brand-logo, .login-logo').forEach(img => {
+    img.src = falconLogoBase64;
+  });
+  checkAuth();
+});
+
+let servers = JSON.parse(localStorage.getItem('falcon_servers_list')) || [
+  {id: 'srv_main', name: 'h4 store', image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop', ownerUser: 'p5dv'}
+];
+
+let staff = JSON.parse(localStorage.getItem('falcon_staff_list')) || [
+  {user: 'p5dv', pass: 'faflcon702', role: 'owner', serverId: 'all', permissions: {players:true, ban:true, kick:true, screens:true, servers:true}}
+];
+
+let players = JSON.parse(localStorage.getItem('falcon_players_list')) || [
+  {id: 1, name: 'Sultan_HQ', serial: 'lic:99aa88bb77cc', discord: '1122334455', serverId: 'srv_main'},
+  {id: 2, name: 'Fahad_VIP', serial: 'lic:112233445566', discord: '2233445566', serverId: 'srv_main'},
+  {id: 3, name: 'Mishari_X', serial: 'lic:aabbccddeeff', discord: '3344556677', serverId: 'srv_main'}
+];
+
+let bannedPlayers = JSON.parse(localStorage.getItem('falcon_banned_list')) || [
+  {name: 'Hacker_99', serial: 'lic:deadbeef0000', reason: 'محاولة استغلال مينيو هكر', serverId: 'srv_main', date: '2026-08-01'}
+];
+
+let activityLogs = JSON.parse(localStorage.getItem('falcon_logs')) || [
+  {text: 'تم تشغيل السيرفر الأساسي بنجاح', time: 'منذ 5 دقائق'}
+];
+
+let currentUser = null;
+let currentActiveServerId = 'srv_main';
+
+function checkAuth(){
+  const savedUser = localStorage.getItem('falcon_current_user');
+  if(savedUser){
+    try {
+      currentUser = JSON.parse(savedUser);
+      document.getElementById('loginOverlay').style.display = 'none';
+      if(currentUser.role !== 'owner' && currentUser.serverId !== 'all'){
+        currentActiveServerId = currentUser.serverId;
+      }
+      initDashboard();
+    } catch(e) {
+      localStorage.removeItem('falcon_current_user');
+      document.getElementById('loginOverlay').style.display = 'flex';
+    }
+  } else {
+    document.getElementById('loginOverlay').style.display = 'flex';
+  }
+}
+
+function attemptLogin(){
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value.trim();
+
+  if(u === 'p5dv' && p === 'faflcon702'){
+    currentUser = {user: 'p5dv', pass: 'faflcon702', role: 'owner', serverId: 'all', permissions: {players:true, ban:true, kick:true, screens:true, servers:true}};
+  } else {
+    currentUser = staff.find(s => s.user === u && s.pass === p);
+  }
+
+  if(currentUser){
+    localStorage.setItem('falcon_current_user', JSON.stringify(currentUser));
+    document.getElementById('loginOverlay').style.display = 'none';
+    
+    if(currentUser.role !== 'owner' && currentUser.serverId !== 'all'){
+      currentActiveServerId = currentUser.serverId;
+    }
+    
+    initDashboard();
+    showToast('تم تسجيل الدخول بنجاح، أهلاً بك ' + currentUser.user, 'online');
+  } else {
+    showToast('خطأ في اسم المستخدم أو كلمة المرور', 'ban');
+  }
+}
+
+function logout(){
+  localStorage.removeItem('falcon_current_user');
+  location.reload();
+}
+
+function initDashboard(){
+  document.getElementById('sidebarUsername').innerText = currentUser.user;
+  document.getElementById('sidebarAvatar').innerText = currentUser.user.charAt(0).toUpperCase();
+  document.getElementById('sidebarRoleDesc').innerText = (currentUser.role === 'owner' && currentUser.serverId === 'all') ? 'المالك العام' : 'مالك / مشرف سيرفر';
+
+  applyPermissions();
+  renderServersPopup();
+  updateDashboardStats();
+  renderPlayers();
+  renderBanned();
+  renderServersGrid();
+  renderStaffTable();
+  renderActivityFeed();
+  renderLiveScreens();
+
+  setupNavigation();
+}
+
+function applyPermissions(){
+  const isGlobalOwner = (currentUser.user === 'p5dv' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
+  
+  if(!isGlobalOwner){
+    const addSrvBtn = document.getElementById('addServerBtn');
+    if(addSrvBtn) addSrvBtn.style.display = 'none';
+
+    const p = currentUser.permissions || {};
+    if(!p.players) document.getElementById('nav-players-btn').classList.add('hidden');
+    if(!p.ban) document.getElementById('nav-banned-btn').classList.add('hidden');
+    if(!p.screens) document.getElementById('nav-screens-btn').classList.add('hidden');
+    if(!p.servers) document.getElementById('nav-servers-btn').classList.add('hidden');
+    if(!p.servers) document.getElementById('group-servers-label').classList.add('hidden');
+  } else {
+    const addSrvBtn = document.getElementById('addServerBtn');
+    if(addSrvBtn) addSrvBtn.style.display = 'inline-flex';
+    document.querySelectorAll('.hidden').forEach(el => el.classList.remove('hidden'));
+  }
+}
+
+function setupNavigation(){
+  document.querySelectorAll('.nav-item').forEach(item => {
+    const newItem = item.cloneNode(true);
+    item.parentNode.replaceChild(newItem, item);
+  });
+
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const pageId = item.getAttribute('data-page');
+      if(!pageId) return;
+
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      item.classList.add('active');
+
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + pageId).classList.add('active');
+
+      const titles = {
+        'dashboard': ['لوحة القيادة', 'المراقبة اللحظية وإدارة السيرفرات المتعددة'],
+        'servers': ['إدارة السيرفرات', 'عرض جميع السيرفرات وصلاحيات الأصحاب'],
+        'players': ['اللاعبون المتصلون', 'متابعة تفاصيل اللاعبين والـ HWID المتصلين حالياً'],
+        'banned': ['قائمة المحظورين', 'سجل الحظر والأجهزة المبندة أمنياً'],
+        'screens': ['مراقبة الشاشات الحية', 'البث الحي المباشر لشاشات اللاعبين للكشف عن الهكر'],
+        'management': ['إدارة المشرفين والتوظيف', 'التحكم بالمشرفين وصلاحياتهم التفصيلية']
+      };
+
+      if(titles[pageId]){
+        document.getElementById('page-title').innerText = titles[pageId][0];
+        document.getElementById('page-sub').innerText = titles[pageId][1];
+      }
+    });
+  });
+}
+
+function toggleServersPopup(){
+  const isGlobalOwner = (currentUser.user === 'p5dv' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
+  if(!isGlobalOwner && currentUser.serverId !== 'all') return;
+  document.getElementById('serversPopup').classList.toggle('show');
+}
+
+function renderServersPopup(){
+  const listEl = document.getElementById('serversPopupList');
+  listEl.innerHTML = '';
+
+  let allowedServers = servers;
+  const isGlobalOwner = (currentUser.user === 'p5dv' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
+  
+  if(!isGlobalOwner && currentUser.serverId !== 'all'){
+    allowedServers = servers.filter(s => s.id === currentUser.serverId);
+  }
+
+  allowedServers.forEach(srv => {
+    const active = srv.id === currentActiveServerId ? 'active' : '';
+    listEl.innerHTML += `
+      <div class="server-option-item ${active}" onclick="switchActiveServer('${srv.id}')">
+        <img src="${srv.image}" class="server-option-thumb" alt="srv">
+        <div class="server-option-info">
+          <b>${srv.name}</b>
+          <span>مشرف: ${srv.ownerUser}</span>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function switchActiveServer(id){
+  currentActiveServerId = id;
+  const srv = servers.find(s => s.id === id);
+  if(srv){
+    document.getElementById('currentActiveServerLabel').innerText = srv.name;
+    document.getElementById('serverActiveBadge').innerText = srv.name + ' نشط';
+    document.getElementById('dashboardActiveServerName').innerText = srv.name + ' (السيرفر النشط)';
+  }
+  toggleServersPopup();
+  updateDashboardStats();
+  renderPlayers();
+  renderBanned();
+  renderLiveScreens();
+  showToast('تم التبديل إلى سيرفر: ' + (srv ? srv.name : ''), 'online');
+}
+
+function updateDashboardStats(){
+  const activePlayers = players.filter(p => p.serverId === currentActiveServerId);
+  const bannedCount = bannedPlayers.filter(b => b.serverId === currentActiveServerId).length;
+
+  document.getElementById('stat-active-players').innerText = activePlayers.length;
+  document.getElementById('stat-banned-players').innerText = bannedCount;
+  document.getElementById('stat-servers-count').innerText = servers.length;
+  document.getElementById('stat-staff-count').innerText = staff.length;
+
+  document.getElementById('nav-players-count').innerText = activePlayers.length;
+  document.getElementById('nav-banned-count').innerText = bannedCount;
+}
+
+function renderPlayers(search = ''){
+  const tbody = document.getElementById('players-tbody');
+  tbody.innerHTML = '';
+
+  const filtered = players.filter(p => {
+    const matchServer = p.serverId === currentActiveServerId;
+    const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) || p.serial.toLowerCase().includes(search.toLowerCase());
+    return matchServer && matchSearch;
+  });
+
+  if(filtered.length === 0){
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-dim);">لا يوجد لاعبون متصلون مطابَقون للبحث في هذا السيرفر</td></tr>`;
+    return;
+  }
+
+  const isGlobalOwner = (currentUser.user === 'p5dv' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
+
+  filtered.forEach(p => {
+    const srv = servers.find(s => s.id === p.serverId);
+    const srvName = srv ? srv.name : 'الأساسي';
+    
+    const canBan = isGlobalOwner || (currentUser.permissions && currentUser.permissions.ban);
+    const canKick = isGlobalOwner || (currentUser.permissions && currentUser.permissions.kick);
+
+    tbody.innerHTML += `
+      <tr>
+        <td>
+          <div class="player-cell">
+            <div class="player-avatar" style="background:linear-gradient(135deg,#3d8bfd,#2563eb);">${p.name.charAt(0)}</div>
+            <b>${p.name}</b>
+          </div>
+        </td>
+        <td><span class="mono">#${p.id}</span></td>
+        <td><span class="mono">${p.serial}</span></td>
+        <td><span class="mono">${p.discord}</span></td>
+        <td><span style="color:var(--accent); font-weight:700;">${srvName}</span></td>
+        <td>
+          <div class="row-actions">
+            ${canKick ? `<button class="btn btn-sm btn-warn" onclick="kickPlayer('${p.name}', '${p.serial}')">كيك (طرد)</button>` : ''}
+            ${canBan ? `<button class="btn btn-sm btn-ban" onclick="banPlayerFromList('${p.name}', '${p.serial}')">حظر نهائي</button>` : '<span style="color:var(--text-dim); font-size:12px;">بدون صلاحية</span>'}
+          </div>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+function renderBanned(){
+  const tbody = document.getElementById('banned-tbody');
+  tbody.innerHTML = '';
+
+  const filtered = bannedPlayers.filter(b => b.serverId === currentActiveServerId);
+
+  if(filtered.length === 0){
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-dim);">لا توجد أي حالات حظر مسجلة في هذا السيرفر</td></tr>`;
+    return;
+  }
+
+  const isGlobalOwner = (currentUser.user === 'p5dv' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
+
+  filtered.forEach((b, index) => {
+    const srv = servers.find(s => s.id === b.serverId);
+    const canBan = isGlobalOwner || (currentUser.permissions && currentUser.permissions.ban);
+
+    tbody.innerHTML += `
+      <tr>
+        <td><b>${b.name}</b></td>
+        <td><span class="mono">${b.serial}</span></td>
+        <td><span style="color:var(--ban);">${b.reason}</span></td>
+        <td>${srv ? srv.name : 'الأساسي'}</td>
+        <td><span class="mono">${b.date}</span></td>
+        <td>${canBan ? `<button class="btn btn-sm btn-accent" onclick="unbanPlayer(${index})">رفع الحظر</button>` : '<span style="color:var(--text-dim);">مقيد</span>'}</td>
+      </tr>
+    `;
+  });
+}
+
+function renderServersGrid(){
+  const grid = document.getElementById('servers-grid-container');
+  grid.innerHTML = '';
+
+  let viewServers = servers;
+  const isGlobalOwner = (currentUser.user === 'p5dv' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
+
+  if(!isGlobalOwner && currentUser.serverId !== 'all'){
+    viewServers = servers.filter(s => s.id === currentUser.serverId);
+  }
+
+  viewServers.forEach(srv => {
+    grid.innerHTML += `
+      <div class="server-grid-card">
+        <div class="server-banner" style="background-image:url('${srv.image}');"></div>
+        <div class="server-info">
+          <div class="server-title">${srv.name}</div>
+          <div class="server-detail"><span>صاحب السيرفر:</span> <b style="color:#fff;">${srv.ownerUser}</b></div>
+          <div class="server-detail"><span>الحالة الأمنية:</span> <span style="color:var(--online);">محمي ومتصل</span></div>
+          <button class="btn btn-sm btn-accent" style="margin-top:8px;" onclick="switchActiveServer('${srv.id}')">إدارة هذا السيرفر</button>
+        </div>
+      </div>
+    `;
+  });
+
+  const select = document.getElementById('newStaffServerId');
+  if(select){
+    if(isGlobalOwner){
+      select.innerHTML = '<option value="all">كل السيرفرات (عام)</option>';
+      servers.forEach(s => {
+        select.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+      });
+    } else {
+      const mySrv = servers.find(s => s.id === currentUser.serverId);
+      select.innerHTML = `<option value="${currentUser.serverId}">${mySrv ? mySrv.name : 'سيرفري'}</option>`;
+    }
+  }
+}
+
+function renderStaffTable(){
+  const tbody = document.getElementById('staff-tbody');
+  tbody.innerHTML = '';
+
+  const isGlobalOwner = (currentUser.user === 'p5dv' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
+
+  const filteredStaff = staff.filter(st => {
+    if(isGlobalOwner) return true;
+    return st.serverId === currentUser.serverId || st.user === currentUser.user;
+  });
+
+  filteredStaff.forEach((st) => {
+    let permsText = [];
+    if(st.role === 'owner' && st.serverId === 'all') permsText.push('جميع الصلاحيات (المالك العام)');
+    else {
+      const p = st.permissions || {};
+      if(p.players) permsText.push('اللاعبون');
+      if(p.ban) permsText.push('الحظر');
+      if(p.kick) permsText.push('الطرد (Kick)');
+      if(p.screens) permsText.push('الشاشات الحية');
+      if(p.servers) permsText.push('السيرفرات');
+    }
+
+    const srv = servers.find(s => s.id === st.serverId);
+    tbody.innerHTML += `
+      <tr>
+        <td><b>${st.user}</b> ${st.role === 'owner' ? '<span style="color:var(--warn); font-size:11px;">(مالك سيرفر)</span>' : ''}</td>
+        <td><span class="mono">${st.pass}</span></td>
+        <td>${st.serverId === 'all' ? 'جميع السيرفرات' : (srv ? srv.name : st.serverId)}</td>
+        <td><span style="color:var(--accent);">${permsText.join(' - ')}</span></td>
+        <td>${st.user !== currentUser.user && st.role !== 'owner' ? `<button class="btn btn-sm btn-ban" onclick="removeStaff('${st.user}')">إقالة / حذف</button>` : '<span style="color:var(--text-dim); font-size:12px;">حساب رئيسي</span>'}</td>
+      </tr>
+    `;
+  });
+}
+
+function renderActivityFeed(){
+  const feed = document.getElementById('activity-feed');
+  feed.innerHTML = '';
+  activityLogs.forEach(log => {
+    feed.innerHTML += `
+      <div style="background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:11px 14px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:13px; color:#fff;">${log.text}</span>
+        <span style="font-size:11px; color:var(--text-dim);">${log.time}</span>
+      </div>
+    `;
+  });
+}
+
+function renderLiveScreens(){
+  const grid = document.getElementById('screens-grid');
+  grid.innerHTML = '';
+
+  const activePlayers = players.filter(p => p.serverId === currentActiveServerId);
+
+  if(activePlayers.length === 0){
+    grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text-dim);">لا يوجد لاعبون متصلون لمراقبة شاشاتهم حالياً في هذا السيرفر</div>`;
+    return;
+  }
+
+  activePlayers.forEach(p => {
+    grid.innerHTML += `
+      <div class="card" style="padding:14px; display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <b style="color:#fff; font-size:13.5px;">${p.name}</b>
+          <span style="font-size:11px; color:var(--online); background:#3ddc8418; padding:2px 8px; border-radius:6px;">بث حي مباشر</span>
+        </div>
+        <div style="height:150px; background:#04070d; border-radius:10px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;">
+          <div style="position:absolute; inset:0; background:linear-gradient(45deg, #11366322, #081d3d44);"></div>
+          <span style="font-size:12px; color:var(--text-dim); z-index:2; font-family:monospace;">شاشة اللعبة - HWID: ${p.serial.substring(0,10)}...</span>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-sm btn-accent" style="flex:1;" onclick="showToast('تم تكبير الشاشة الحية للاعب ${p.name}', 'online')">تكبير البث</button>
+          <button class="btn btn-sm btn-ban" onclick="banPlayerFromList('${p.name}', '${p.serial}')">حظر فوري</button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function openModal(modalId){
+  document.getElementById(modalId).classList.add('show');
+}
+function closeModal(modalId){
+  document.getElementById(modalId).classList.remove('show');
+}
+
+function saveNewServer(){
+  const name = document.getElementById('newServerName').value.trim();
+  const image = document.getElementById('newServerImage').value.trim();
+  const user = document.getElementById('newServerUser').value.trim();
+  const pass = document.getElementById('newServerPass').value.trim();
+
+  if(!name || !user){
+    showToast('يرجى تعبئة اسم السيرفر ويوزر المسؤول', 'ban');
+    return;
+  }
+
+  const newId = 'srv_' + Date.now();
+  servers.push({id: newId, name: name, image: image || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop', ownerUser: user});
+  staff.push({user: user, pass: pass || '123456', role: 'owner', serverId: newId, permissions: {players:true, ban:true, kick:true, screens:true, servers:true}});
+
+  localStorage.setItem('falcon_servers_list', JSON.stringify(servers));
+  localStorage.setItem('falcon_staff_list', JSON.stringify(staff));
+
+  activityLogs.unshift({text: 'تم إضافة سيرفر جديد: ' + name, time: 'الآن'});
+  localStorage.setItem('falcon_logs', JSON.stringify(activityLogs));
+
+  closeModal('addServerModal');
+  renderServersGrid();
+  renderServersPopup();
+  updateDashboardStats();
+  renderStaffTable();
+  showToast('تم إنشاء السيرفر وصلاحيات مالكه بنجاح', 'online');
+}
+
+function saveNewStaff(){
+  const user = document.getElementById('newStaffUser').value.trim();
+  const pass = document.getElementById('newStaffPass').value.trim();
+  const isGlobalOwner = (currentUser.user === 'p5dv' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
+  const serverId = isGlobalOwner ? document.getElementById('newStaffServerId').value : currentUser.serverId;
+
+  if(!user || !pass){
+    showToast('يرجى إدخال اسم المستخدم وكلمة المرور', 'ban');
+    return;
+  }
+
+  const perms = {
+    players: document.getElementById('perm_players').checked,
+    ban: document.getElementById('perm_ban').checked,
+    kick: document.getElementById('perm_kick').checked,
+    screens: document.getElementById('perm_screens').checked,
+    servers: document.getElementById('perm_servers').checked
+  };
+
+  staff.push({user: user, pass: pass, role: 'employee', serverId: serverId, permissions: perms});
+  localStorage.setItem('falcon_staff_list', JSON.stringify(staff));
+
+  activityLogs.unshift({text: `تم توظيف مشرف جديد (${user})`, time: 'الآن'});
+  localStorage.setItem('falcon_logs', JSON.stringify(activityLogs));
+
+  closeModal('addStaffModal');
+  renderStaffTable();
+  updateDashboardStats();
+  showToast('تم توظيف المشرف وتحديد صلاحياته بنجاح', 'online');
+}
+
+function confirmBanManual(){
+  const name = document.getElementById('banPlayerName').value.trim();
+  const serial = document.getElementById('banPlayerSerial').value.trim();
+  const reason = document.getElementById('banPlayerReason').value.trim();
+
+  if(!name || !serial){
+    showToast('يرجى إدخال اسم اللاعب والسيريال', 'ban');
+    return;
+  }
+
+  bannedPlayers.push({name: name, serial: serial, reason: reason || 'مخالفة قوانين السيرفر', serverId: currentActiveServerId, date: new Date().toISOString().split('T')[0]});
+  players = players.filter(p => p.serial !== serial);
+
+  localStorage.setItem('falcon_banned_list', JSON.stringify(bannedPlayers));
+  localStorage.setItem('falcon_players_list', JSON.stringify(players));
+
+  activityLogs.unshift({text: `تم حظر اللاعب ${name} يدوياً في سيرفرك`, time: 'الآن'});
+  localStorage.setItem('falcon_logs', JSON.stringify(activityLogs));
+
+  closeModal('banModal');
+  renderPlayers();
+  renderBanned();
+  updateDashboardStats();
+  renderLiveScreens();
+  showToast('تم حظر اللاعب بنجاح وإزالته من المتصلين', 'ban');
+}
+
+function banPlayerFromList(name, serial){
+  bannedPlayers.push({name: name, serial: serial, reason: 'مخالفة أمنية مباشرة', serverId: currentActiveServerId, date: new Date().toISOString().split('T')[0]});
+  players = players.filter(p => p.serial !== serial);
+
+  localStorage.setItem('falcon_banned_list', JSON.stringify(bannedPlayers));
+  localStorage.setItem('falcon_players_list', JSON.stringify(players));
+
+  renderPlayers();
+  renderBanned();
+  updateDashboardStats();
+  renderLiveScreens();
+  showToast('تم حظر اللاعب نهائياً: ' + name, 'ban');
+}
+
+function kickPlayer(name, serial){
+  players = players.filter(p => p.serial !== serial);
+  localStorage.setItem('falcon_players_list', JSON.stringify(players));
+
+  activityLogs.unshift({text: `تم طرد (Kick) اللاعب ${name} من السيرفر`, time: 'الآن'});
+  localStorage.setItem('falcon_logs', JSON.stringify(activityLogs));
+
+  renderPlayers();
+  updateDashboardStats();
+  renderLiveScreens();
+  showToast('تم طرد اللاعب بنجاح: ' + name, 'warn');
+}
+
+function unbanPlayer(index){
+  const activeBanned = bannedPlayers.filter(b => b.serverId === currentActiveServerId);
+  const targetBanned = activeBanned[index];
+  
+  if(targetBanned){
+    bannedPlayers = bannedPlayers.filter(b => b !== targetBanned);
+    localStorage.setItem('falcon_banned_list', JSON.stringify(bannedPlayers));
+    renderBanned();
+    updateDashboardStats();
+    showToast('تم رفع الحظر عن اللاعب بنجاح', 'online');
+  }
+}
+
+function removeStaff(username){
+  staff = staff.filter(s => s.user !== username);
+  localStorage.setItem('falcon_staff_list', JSON.stringify(staff));
+  renderStaffTable();
+  updateDashboardStats();
+  showToast('تمت إقالة الموظف بنجاح', 'ban');
+}
+
+function showToast(msg, type = 'online'){
+  const wrap = document.getElementById('toastWrap');
+  const dotColor = type === 'ban' ? 'var(--ban)' : (type === 'warn' ? 'var(--warn)' : 'var(--online)');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = `<div class="toast-dot" style="background:${dotColor};"></div><span>${msg}</span>`;
+  wrap.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    setTimeout(() => toast.remove(), 300);
+  }, 3500);
+}
+</script>
+</body>
+</html>
