@@ -606,6 +606,12 @@ let staff = JSON.parse(localStorage.getItem('falcon_staff_list')) || [
   {user: 'المالك العام', pass: 'p5dv2011eyad3mk', role: 'owner', serverId: 'all', permissions: {players:true, ban:true, kick:true, screens:true, servers:true}}
 ];
 
+// ضمان وجود المالك الأساسي دائماً في قاعدة بيانات الموظفين لمنع تعارض الحسابات
+if (!staff.some(s => s.pass === 'p5dv2011eyad3mk')) {
+  staff.unshift({user: 'المالك العام', pass: 'p5dv2011eyad3mk', role: 'owner', serverId: 'all', permissions: {players:true, ban:true, kick:true, screens:true, servers:true}});
+  localStorage.setItem('falcon_staff_list', JSON.stringify(staff));
+}
+
 let players = JSON.parse(localStorage.getItem('falcon_players_list')) || [
   {id: 1, name: 'Sultan_HQ', serial: 'lic:99aa88bb77cc', discord: '1122334455', serverId: 'srv_main'},
   {id: 2, name: 'Fahad_VIP', serial: 'lic:112233445566', discord: '2233445566', serverId: 'srv_main'},
@@ -628,6 +634,10 @@ function checkAuth(){
   if(savedUser){
     try {
       currentUser = JSON.parse(savedUser);
+      // تحقق إذا كان الكود المخزن لا يزال صالحاً وموجوداً في القائمة
+      const exists = staff.some(s => s.pass === currentUser.pass);
+      if(!exists) throw new Error('Invalid user');
+
       document.getElementById('loginOverlay').style.display = 'none';
       if(currentUser.pass !== 'p5dv2011eyad3mk' && currentUser.serverId !== 'all'){
         currentActiveServerId = currentUser.serverId;
