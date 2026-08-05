@@ -43,7 +43,7 @@ h1,h2,h3,.brand,.stat-num,.nav-label{font-family:'Tajawal',sans-serif;}
 ::-webkit-scrollbar{width:6px; height:6px;}
 ::-webkit-scrollbar-thumb{background:#1d2942; border-radius:6px;}
 
-/* ---------- شاشة تسجيل الدخول ---------- */
+/* ---------- شاشة تسجيل الدخول بالكود السري فقط ---------- */
 .login-overlay{
   position:fixed; inset:0; background:#020408ee; backdrop-filter:blur(16px);
   z-index:99999; display:flex; align-items:center; justify-content:center;
@@ -255,7 +255,7 @@ tbody tr:hover{background:#ffffff04;}
 </head>
 <body>
 
-<!-- شاشة تسجيل الدخول بالكود السري -->
+<!-- شاشة تسجيل الدخول بالكود السري المباشر -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-card">
     <img src="" id="logoPreview" class="login-logo" alt="h4 store">
@@ -645,10 +645,7 @@ function checkAuth(){
 function attemptLogin(){
   const inputCode = document.getElementById('secretCodeInput').value.trim();
 
-  // جلب أحدث قائمة موظفين من التخزين المحلي لضمان قراءة المشرفين والأكواد المضافة حديثاً
   staff = JSON.parse(localStorage.getItem('falcon_staff_list')) || staff;
-
-  // التحقق من الكود المدخل مطابق لأي كود في قائمة المشرفين أو كود المالك الأساسي
   currentUser = staff.find(s => s.pass === inputCode);
 
   if(currentUser){
