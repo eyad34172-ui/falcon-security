@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>h4 store | لوحة التحكم متعددة السيرفرات وصلاحيات الموظفين</title>
+<title>h4 store | لوحة التحكم متعددة السيرفرات والتراخيص</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -43,7 +43,6 @@ h1,h2,h3,.brand,.stat-num,.nav-label{font-family:'Tajawal',sans-serif;}
 ::-webkit-scrollbar{width:6px; height:6px;}
 ::-webkit-scrollbar-thumb{background:#1d2942; border-radius:6px;}
 
-/* ---------- شاشة تسجيل الدخول بالكود السري فقط ---------- */
 .login-overlay{
   position:fixed; inset:0; background:#020408ee; backdrop-filter:blur(16px);
   z-index:99999; display:flex; align-items:center; justify-content:center;
@@ -81,7 +80,6 @@ h1,h2,h3,.brand,.stat-num,.nav-label{font-family:'Tajawal',sans-serif;}
 }
 .login-btn:hover{filter:brightness(1.15); transform:translateY(-1px);}
 
-/* ---------- القائمة الجانبية ---------- */
 .sidebar{
   width:260px; min-width:260px;
   background:linear-gradient(180deg,#090e1a,#060912);
@@ -108,7 +106,6 @@ h1,h2,h3,.brand,.stat-num,.nav-label{font-family:'Tajawal',sans-serif;}
 .nav-item.active{background:var(--accent-dim); color:#fff; border-color:#3d8bfd44; box-shadow:0 4px 15px #3d8bfd15;}
 .nav-item .badge{margin-right:auto; background:var(--panel-3); color:var(--text-dim); font-size:10.5px; padding:2px 8px; border-radius:20px; font-weight:700;}
 .nav-item.active .badge{background:var(--accent); color:#fff;}
-.nav-item.hidden{display:none !important;}
 
 .sidebar-footer{margin-top:auto; padding-top:14px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;}
 .owner-chip{display:flex; align-items:center; gap:10px; padding:9px 10px; background:var(--panel-2); border-radius:12px; border:1px solid var(--border); flex:1;}
@@ -118,7 +115,6 @@ h1,h2,h3,.brand,.stat-num,.nav-label{font-family:'Tajawal',sans-serif;}
 .logout-btn{ background:var(--panel-2); border:1px solid var(--border); border-radius:10px; width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--ban); cursor:pointer; transition:.15s; margin-right:8px;}
 .logout-btn:hover{background:var(--ban); color:#fff;}
 
-/* ---------- المحتوى الرئيسي ---------- */
 .main{flex:1; min-width:0; display:flex; flex-direction:column; height:100vh; overflow:hidden;}
 .topbar{
   display:flex; align-items:center; justify-content:space-between;
@@ -139,7 +135,7 @@ h1,h2,h3,.brand,.stat-num,.nav-label{font-family:'Tajawal',sans-serif;}
 .servers-popup{
   position:absolute; top:45px; left:0; width:260px; background:var(--panel-2);
   border:1px solid var(--border); border-radius:14px; box-shadow:0 15px 35px #000c;
-  display:none; flex-direction:column; padding:10px; z-index:999; animation:fade .2s ease;
+  display:none; flex-direction:column; padding:10px; z-index:999;
 }
 .servers-popup.show{display:flex;}
 .servers-popup-header{font-size:11.5px; color:var(--text-dim2); font-weight:700; padding:6px 10px; text-transform:uppercase;}
@@ -214,10 +210,7 @@ thead th{
 tbody td{padding:14px 18px; border-bottom:1px solid var(--border); font-size:13px; color:var(--text);}
 tbody tr:last-child td{border-bottom:none;}
 tbody tr:hover{background:#ffffff04;}
-.player-cell{display:flex; align-items:center; gap:12px;}
-.player-avatar{width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; color:#fff;}
 .mono{font-family:monospace; font-size:12.5px; color:var(--text-dim);}
-.row-actions{display:flex; gap:8px; flex-wrap:wrap;}
 
 .search-bar{
   display:flex; align-items:center; gap:12px; background:var(--panel-2);
@@ -226,7 +219,6 @@ tbody tr:hover{background:#ffffff04;}
 .search-bar svg{width:18px; height:18px; stroke:var(--text-dim2); flex-shrink:0;}
 .search-bar input{background:transparent; border:none; outline:none; color:var(--text); font-size:13.5px; width:100%; font-family:inherit;}
 
-/* النوافذ والصلاحيات */
 .modal-bg{position:fixed; inset:0; background:#000000bb; backdrop-filter:blur(6px); display:none; align-items:center; justify-content:center; z-index:1000;}
 .modal-bg.show{display:flex;}
 .modal{background:var(--panel-2); border:1px solid var(--border); border-radius:18px; width:500px; max-width:90vw; padding:24px; box-shadow:0 25px 50px #000c; animation:fade .2s ease; max-height:90vh; overflow-y:auto;}
@@ -241,9 +233,7 @@ tbody tr:hover{background:#ffffff04;}
 .permission-item input{width:18px; height:18px; margin:0; accent-color:var(--accent); cursor:pointer;}
 
 .toast-wrap{position:fixed; bottom:24px; left:24px; z-index:2000; display:flex; flex-direction:column; gap:10px;}
-.toast{background:var(--panel-2); border:1px solid var(--border); border-radius:12px; padding:14px 18px; font-size:13px; display:flex; align-items:center; gap:12px; min-width:280px; box-shadow:0 15px 35px #000b; animation:slideIn .25s ease;}
-@keyframes slideIn{from{opacity:0; transform:translateX(-20px);} to{opacity:1; transform:translateX(0);}}
-.toast-dot{width:9px; height:9px; border-radius:50%; flex-shrink:0;}
+.toast{background:var(--panel-2); border:1px solid var(--border); border-radius:12px; padding:14px 18px; font-size:13px; display:flex; align-items:center; gap:12px; min-width:280px; box-shadow:0 15px 35px #000b;}
 
 .server-grid-card{display:flex; flex-direction:column; background:linear-gradient(135deg,var(--panel-2),var(--panel)); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; transition:.2s;}
 .server-grid-card:hover{border-color:var(--accent); transform:translateY(-2px);}
@@ -255,7 +245,6 @@ tbody tr:hover{background:#ffffff04;}
 </head>
 <body>
 
-<!-- شاشة تسجيل الدخول بالكود السري المباشر -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-card">
     <img src="" id="logoPreview" class="login-logo" alt="h4 store">
@@ -267,7 +256,6 @@ tbody tr:hover{background:#ffffff04;}
   </div>
 </div>
 
-<!-- القائمة الجانبية -->
 <div class="sidebar">
   <div class="brand">
     <img src="" class="brand-logo" alt="Logo">
@@ -282,6 +270,15 @@ tbody tr:hover{background:#ffffff04;}
     <div class="nav-item active" data-page="dashboard">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
       <span>لوحة القيادة</span>
+    </div>
+  </div>
+
+  <div class="nav-group-label">إدارة التراخيص للحماية</div>
+  <div class="nav">
+    <div class="nav-item" data-page="licenses">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.78 7.78 5.5 5.5 0 0 1 7.78-7.78zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+      <span>تراخيص السيرفرات والسكربتات</span>
+      <span class="badge" id="nav-licenses-count">0</span>
     </div>
   </div>
 
@@ -333,7 +330,6 @@ tbody tr:hover{background:#ffffff04;}
   </div>
 </div>
 
-<!-- المحتوى الرئيسي -->
 <div class="main">
   <div class="topbar">
     <div>
@@ -390,8 +386,8 @@ tbody tr:hover{background:#ffffff04;}
             <div class="stat-icon" style="background:#f0b13d18;"><svg viewBox="0 0 24 24" fill="none" stroke="#f0b13d" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg></div>
             <span class="stat-trend trend-up">آمن</span>
           </div>
-          <div class="stat-num" id="stat-staff-count">1</div>
-          <div class="stat-label">فريق الإدارة والموظفين</div>
+          <div class="stat-num" id="stat-licenses-count-card">1</div>
+          <div class="stat-label">التراخيص المفعلة</div>
         </div>
       </div>
 
@@ -402,14 +398,33 @@ tbody tr:hover{background:#ffffff04;}
             <div style="text-align:center;">
               <svg style="width:48px; height:48px; stroke:var(--accent); margin-bottom:10px;" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
               <div style="font-weight:700; color:#fff;" id="dashboardActiveServerName">h4 store (السيرفر الأساسي)</div>
-              <div style="font-size:12px; color:var(--online); margin-top:4px;">الحماية متصلة وتعمل بكفاءة تامة</div>
+              <div style="font-size:12px; color:var(--online); margin-top:4px;">الحماية والتراخيص متصلة وتعمل بكفاءة تامة</div>
             </div>
           </div>
         </div>
         <div class="card">
-          <div class="section-title"><div><h2>سجل العمليات الأحدث</h2><p>الإجراءات الأمنية وسجلات البورتال</p></div></div>
+          <div class="section-title"><div><h2>سجل العمليات الأحدث</h2><p>الإجراءات الأمنية وسجلات التراخيص</p></div></div>
           <div id="activity-feed" style="display:flex; flex-direction:column; gap:12px;"></div>
         </div>
+      </div>
+    </div>
+
+    <!-- إدارة التراخيص (جديد) -->
+    <div class="page" id="page-licenses">
+      <div class="section-title">
+        <div>
+          <h2>إدارة التراخيص وربط سكريبت الحماية</h2>
+          <p>توليد مفاتيح التراخيص، متابعة السيرفرات المصرح لها، وحظر المفاتيح المنتهية</p>
+        </div>
+        <button class="btn btn-accent" onclick="openModal('addLicenseModal')">+ توليد ترخيص جديد</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>مفتاح الترخيص (License Key)</th><th>صاحب السيرفر / العميل</th><th>معرف السيريال (HWID)</th><th>الحالة</th><th>تاريخ الإصدار</th><th>الإجراءات</th></tr>
+          </thead>
+          <tbody id="licenses-tbody"></tbody>
+        </table>
       </div>
     </div>
 
@@ -420,7 +435,7 @@ tbody tr:hover{background:#ffffff04;}
           <h2>إدارة السيرفرات وصلاحيات الأصحاب</h2>
           <p>عرض جميع السيرفرات، صورها، والكود السري، وإضافة سيرفر جديد</p>
         </div>
-        <button class="btn btn-accent" onclick="openModal('addServerModal')" id="addServerBtn">+ إضافة سيرفر جديد</button>
+        <button class="btn btn-accent" onclick="openModal('addServerModal')">+ إضافة سيرفر جديد</button>
       </div>
       <div class="grid" id="servers-grid-container" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px;"></div>
     </div>
@@ -441,14 +456,14 @@ tbody tr:hover{background:#ffffff04;}
       </div>
     </div>
 
-    <!-- اللاعبون المبندون (الحظر) -->
+    <!-- اللاعبون المبندون -->
     <div class="page" id="page-banned">
       <div class="section-title">
         <div>
           <h2>قائمة اللاعبين المحظورين (المبندين)</h2>
           <p>إدارة الحظر وحظر اللاعبين المخالفين يدوياً في سيرفرك</p>
         </div>
-        <button class="btn btn-ban" onclick="openModal('banModal')" id="banActionBtn">+ حظر لاعب جديد</button>
+        <button class="btn btn-ban" onclick="openModal('banModal')">+ حظر لاعب جديد</button>
       </div>
       <div class="table-wrap">
         <table>
@@ -465,19 +480,19 @@ tbody tr:hover{background:#ffffff04;}
       <div class="section-title">
         <div>
           <h2>مراقبة شاشات اللاعبين لحظياً</h2>
-          <p>راقب شاشات اللاعبين المتصلين في سيرفرك للكشف عن أي مينيوهات هكر أو برامج خارجية</p>
+          <p>راقب شاشات اللاعبين المتصلين للكشف عن أي مينيوهات هكر أو برامج خارجية</p>
         </div>
         <div class="btn btn-accent" onclick="renderLiveScreens()">تحديث الشاشات الآن</div>
       </div>
       <div class="grid" id="screens-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;"></div>
     </div>
 
-    <!-- إدارة الموظفين وتحديد الصلاحيات -->
+    <!-- إدارة الموظفين -->
     <div class="page" id="page-management">
       <div class="section-title">
         <div>
           <h2>إدارة المشرفين وتوظيف فريق العمل</h2>
-          <p>توظيف مشرفين جدد لسيرفرك وتحديد أكوادهم السرية وصلاحياتهم</p>
+          <p>توظيف مشرفين جدد وتحديد أكوادهم السرية وصلاحياتهم</p>
         </div>
         <button class="btn btn-accent" onclick="openModal('addStaffModal')">+ توظيف مشرف جديد</button>
       </div>
@@ -489,6 +504,25 @@ tbody tr:hover{background:#ffffff04;}
           <tbody id="staff-tbody"></tbody>
         </table>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- نافذة توليد ترخيص جديد (جديد) -->
+<div class="modal-bg" id="addLicenseModal">
+  <div class="modal">
+    <h3>توليد ترخيص جديد لسكريبت الحماية</h3>
+    <p>أدخل اسم العميل أو السيرفر المراد إصدار مفتاح الترخيص له:</p>
+    
+    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">اسم العميل / السيرفر</label>
+    <input type="text" id="newLicenseOwner" placeholder="مثال: سيرفر دريم لاند">
+
+    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">معرف السيريال المرتبط (HWID - اختياري)</label>
+    <input type="text" id="newLicenseHwid" placeholder="اتركه فارغاً للربط التلقائي عند أول دخول">
+
+    <div style="display:flex; gap:10px; margin-top:10px;">
+      <div class="btn btn-ghost" onclick="closeModal('addLicenseModal')" style="flex:1;">إلغاء</div>
+      <div class="btn btn-accent" onclick="saveNewLicense()" style="flex:1;">توليد وإصدار المفتاح</div>
     </div>
   </div>
 </div>
@@ -511,7 +545,7 @@ tbody tr:hover{background:#ffffff04;}
     <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">الكود السري لدخول هذا المسؤول</label>
     <input type="text" id="newServerPass" placeholder="مثال: secret999">
 
-    <div class="modal-actions" style="display:flex; gap:10px; margin-top:10px;">
+    <div style="display:flex; gap:10px; margin-top:10px;">
       <div class="btn btn-ghost" onclick="closeModal('addServerModal')" style="flex:1;">إلغاء</div>
       <div class="btn btn-accent" onclick="saveNewServer()" style="flex:1;">حفظ وإنشاء السيرفر</div>
     </div>
@@ -577,13 +611,8 @@ tbody tr:hover{background:#ffffff04;}
 
 <script>
 document.addEventListener('contextmenu', e => e.preventDefault());
-
 document.addEventListener('keydown', e => {
-  if (
-    e.key === 'F12' ||
-    (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) ||
-    (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's'))
-  ) {
+  if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c'].includes(e.key)) || (e.ctrlKey && ['U','u','S','s'].includes(e.key))) {
     e.preventDefault();
     return false;
   }
@@ -591,575 +620,470 @@ document.addEventListener('keydown', e => {
 
 const falconLogoBase64 = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'><rect width='500' height='500' fill='%230a0f1d'/><circle cx='250' cy='250' r='130' fill='%233d8bfd' opacity='0.15'/><path d='M250 100 L370 190 L250 400 L130 190 Z' fill='none' stroke='%233d8bfd' stroke-width='10'/><path d='M250 150 L310 200 L250 320 L190 200 Z' fill='%233d8bfd' opacity='0.3'/></svg>";
 
+let currentUser = null;
+let currentServerId = 'all';
+
+let db = {
+  servers: [
+    { id: 'srv_1', name: 'h4 store (الأساسي)', image: falconLogoBase64, owner: 'المالك العام', secret: 'admin123' },
+    { id: 'srv_2', name: 'h4 store (التجريبي)', image: falconLogoBase64, owner: 'سلطان', secret: 'sultan999' }
+  ],
+  staff: [
+    { user: 'المالك العام', pass: 'admin123', serverId: 'all', permissions: { players: true, ban: true, kick: true, screens: true, servers: true }, isOwner: true }
+  ],
+  licenses: [
+    { key: 'H4-STORE-PRO-9988-XYZ', owner: 'h4 store (الأساسي)', hwid: 'hwid_sample_01', status: 'active', date: '2026-08-01' }
+  ],
+  players: [
+    { name: 'فهد الغامدي', id: 1, serial: 'lic:77abc991', discord: '12948192', serverId: 'srv_1' },
+    { name: 'راشد القحطاني', id: 2, serial: 'lic:88ff2112', discord: '99281023', serverId: 'srv_2' }
+  ],
+  banned: [
+    { name: 'Hacker_X', serial: 'lic:9999hack', reason: 'ميني هكر', serverId: 'srv_1', date: '2026-08-03' }
+  ],
+  activity: [
+    { text: 'تم تسجيل دخول المالك العام بنجاح', time: 'الآن' }
+  ]
+};
+
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll('.brand-logo, .login-logo').forEach(img => {
     img.src = falconLogoBase64;
   });
-  checkAuth();
-});
-
-let servers = JSON.parse(localStorage.getItem('falcon_servers_list')) || [
-  {id: 'srv_main', name: 'h4 store', image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop', ownerUser: 'المالك العام'}
-];
-
-let staff = JSON.parse(localStorage.getItem('falcon_staff_list')) || [
-  {user: 'المالك العام', pass: 'p5dv2011eyad3mk', role: 'owner', serverId: 'all', permissions: {players:true, ban:true, kick:true, screens:true, servers:true}}
-];
-
-// ضمان وجود المالك الأساسي دائماً في قاعدة بيانات الموظفين لمنع تعارض الحسابات
-if (!staff.some(s => s.pass === 'p5dv2011eyad3mk')) {
-  staff.unshift({user: 'المالك العام', pass: 'p5dv2011eyad3mk', role: 'owner', serverId: 'all', permissions: {players:true, ban:true, kick:true, screens:true, servers:true}});
-  localStorage.setItem('falcon_staff_list', JSON.stringify(staff));
-}
-
-let players = JSON.parse(localStorage.getItem('falcon_players_list')) || [
-  {id: 1, name: 'Sultan_HQ', serial: 'lic:99aa88bb77cc', discord: '1122334455', serverId: 'srv_main'},
-  {id: 2, name: 'Fahad_VIP', serial: 'lic:112233445566', discord: '2233445566', serverId: 'srv_main'},
-  {id: 3, name: 'Mishari_X', serial: 'lic:aabbccddeeff', discord: '3344556677', serverId: 'srv_main'}
-];
-
-let bannedPlayers = JSON.parse(localStorage.getItem('falcon_banned_list')) || [
-  {name: 'Hacker_99', serial: 'lic:deadbeef0000', reason: 'محاولة استغلال مينيو هكر', serverId: 'srv_main', date: '2026-08-01'}
-];
-
-let activityLogs = JSON.parse(localStorage.getItem('falcon_logs')) || [
-  {text: 'تم تشغيل السيرفر الأساسي بنجاح', time: 'منذ 5 دقائق'}
-];
-
-let currentUser = null;
-let currentActiveServerId = 'srv_main';
-
-function checkAuth(){
-  const savedUser = localStorage.getItem('falcon_current_user');
-  if(savedUser){
-    try {
-      currentUser = JSON.parse(savedUser);
-      // تحقق إذا كان الكود المخزن لا يزال صالحاً وموجوداً في القائمة
-      const exists = staff.some(s => s.pass === currentUser.pass);
-      if(!exists) throw new Error('Invalid user');
-
-      document.getElementById('loginOverlay').style.display = 'none';
-      if(currentUser.pass !== 'p5dv2011eyad3mk' && currentUser.serverId !== 'all'){
-        currentActiveServerId = currentUser.serverId;
-      }
-      initDashboard();
-    } catch(e) {
-      localStorage.removeItem('falcon_current_user');
-      document.getElementById('loginOverlay').style.display = 'flex';
-    }
-  } else {
-    document.getElementById('loginOverlay').style.display = 'flex';
-  }
-}
-
-function attemptLogin(){
-  const inputCode = document.getElementById('secretCodeInput').value.trim();
-
-  staff = JSON.parse(localStorage.getItem('falcon_staff_list')) || staff;
-  currentUser = staff.find(s => s.pass === inputCode);
-
-  if(currentUser){
-    localStorage.setItem('falcon_current_user', JSON.stringify(currentUser));
-    document.getElementById('loginOverlay').style.display = 'none';
-    
-    if(currentUser.pass !== 'p5dv2011eyad3mk' && currentUser.serverId !== 'all'){
-      currentActiveServerId = currentUser.serverId;
-    }
-    
-    initDashboard();
-    showToast('تم تسجيل الدخول بنجاح، أهلاً بك ' + currentUser.user, 'online');
-  } else {
-    showToast('الكود السري غير صحيح', 'ban');
-  }
-}
-
-function logout(){
-  localStorage.removeItem('falcon_current_user');
-  location.reload();
-}
-
-function initDashboard(){
-  document.getElementById('sidebarUsername').innerText = currentUser.user;
-  document.getElementById('sidebarAvatar').innerText = currentUser.user.charAt(0).toUpperCase();
-  document.getElementById('sidebarRoleDesc').innerText = (currentUser.pass === 'p5dv2011eyad3mk' || (currentUser.role === 'owner' && currentUser.serverId === 'all')) ? 'المالك العام' : 'مشرف سيرفر';
-
-  applyPermissions();
-  renderServersPopup();
-  updateDashboardStats();
-  renderPlayers();
-  renderBanned();
-  renderServersGrid();
-  renderStaffTable();
-  renderActivityFeed();
-  renderLiveScreens();
-
-  setupNavigation();
-}
-
-function applyPermissions(){
-  const isGlobalOwner = (currentUser.pass === 'p5dv2011eyad3mk' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
   
-  if(!isGlobalOwner){
-    const addSrvBtn = document.getElementById('addServerBtn');
-    if(addSrvBtn) addSrvBtn.style.display = 'none';
-
-    const p = currentUser.permissions || {};
-    if(!p.players) document.getElementById('nav-players-btn').classList.add('hidden');
-    if(!p.ban) document.getElementById('nav-banned-btn').classList.add('hidden');
-    if(!p.screens) document.getElementById('nav-screens-btn').classList.add('hidden');
-    if(!p.servers) document.getElementById('nav-servers-btn').classList.add('hidden');
-    if(!p.servers) document.getElementById('group-servers-label').classList.add('hidden');
-  } else {
-    const addSrvBtn = document.getElementById('addServerBtn');
-    if(addSrvBtn) addSrvBtn.style.display = 'inline-flex';
-    document.querySelectorAll('.hidden').forEach(el => el.classList.remove('hidden'));
-  }
-}
-
-function setupNavigation(){
-  document.querySelectorAll('.nav-item').forEach(item => {
-    const newItem = item.cloneNode(true);
-    item.parentNode.replaceChild(newItem, item);
-  });
-
   document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', () => {
       const pageId = item.getAttribute('data-page');
-      if(!pageId) return;
-
+      
+      if (pageId === 'servers' && !hasPermission('servers')) {
+        showToast('ليس لديك صلاحية لإدارة السيرفرات', 'error');
+        return;
+      }
+      
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      item.classList.add('active');
-
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      
+      item.classList.add('active');
       document.getElementById('page-' + pageId).classList.add('active');
-
+      
       const titles = {
-        'dashboard': ['لوحة القيادة', 'المراقبة اللحظية وإدارة السيرفرات المتعددة'],
-        'servers': ['إدارة السيرفرات', 'عرض جميع السيرفرات وصلاحيات الأصحاب'],
-        'players': ['اللاعبون المتصلون', 'متابعة تفاصيل اللاعبين والـ HWID المتصلين حالياً'],
-        'banned': ['قائمة المحظورين', 'سجل الحظر والأجهزة المبندة أمنياً'],
-        'screens': ['مراقبة الشاشات الحية', 'البث الحي المباشر لشاشات اللاعبين للكشف عن الهكر'],
-        'management': ['إدارة المشرفين والتوظيف', 'التحكم بالمشرفين وصلاحياتهم التفصيلية']
+        dashboard: ['لوحة القيادة', 'المراقبة اللحظية وإدارة السيرفرات المتعددة'],
+        licenses: ['إدارة التراخيص', 'توليد مفاتيح التراخيص وربط سكريبت الحماية'],
+        servers: ['إدارة السيرفرات', 'عرض وتعديل سيرفرات الشبكة'],
+        players: ['اللاعبون المتصلون', 'متابعة اللاعبين المتواجدين حالياً'],
+        banned: ['قائمة الحظر', 'إدارة اللاعبين المحظورين'],
+        screens: ['مراقبة الشاشات الحية', 'كشف برامج الهاك لحظياً'],
+        management: ['إدارة المشرفين', 'توظيف وتحديد صلاحيات طاقم العمل']
       };
-
-      if(titles[pageId]){
+      
+      if(titles[pageId]) {
         document.getElementById('page-title').innerText = titles[pageId][0];
         document.getElementById('page-sub').innerText = titles[pageId][1];
       }
     });
   });
+  
+  refreshAllData();
+});
+
+function attemptLogin() {
+  const val = document.getElementById('secretCodeInput').value.trim();
+  const foundStaff = db.staff.find(s => s.pass === val);
+  
+  if (foundStaff) {
+    currentUser = foundStaff;
+    document.getElementById('loginOverlay').style.display = 'none';
+    
+    document.getElementById('sidebarUsername').innerText = foundStaff.user;
+    document.getElementById('sidebarAvatar').innerText = foundStaff.user.charAt(0);
+    document.getElementById('sidebarRoleDesc').innerText = foundStaff.isOwner ? 'صلاحيات كاملة' : 'مشرف معتمد';
+    
+    if(!foundStaff.isOwner) {
+      if(!foundStaff.permissions.servers) {
+        document.getElementById('nav-servers-btn').classList.add('hidden');
+        document.getElementById('group-servers-label').style.display = 'none';
+      }
+    }
+    
+    logActivity(`تم تسجيل الدخول بواسطة المشرف: ${foundStaff.user}`);
+    showToast('تم تسجيل الدخول بنجاح!', 'success');
+    refreshAllData();
+  } else {
+    showToast('الكود السري غير صحيح!', 'error');
+  }
 }
 
-function toggleServersPopup(){
-  const isGlobalOwner = (currentUser.pass === 'p5dv2011eyad3mk' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
-  if(!isGlobalOwner && currentUser.serverId !== 'all') return;
+function logout() {
+  currentUser = null;
+  document.getElementById('secretCodeInput').value = '';
+  document.getElementById('loginOverlay').style.display = 'flex';
+  showToast('تم تسجيل الخروج بنجاح');
+}
+
+function toggleServersPopup() {
   document.getElementById('serversPopup').classList.toggle('show');
 }
 
-function renderServersPopup(){
-  const listEl = document.getElementById('serversPopupList');
-  listEl.innerHTML = '';
-
-  let allowedServers = servers;
-  const isGlobalOwner = (currentUser.pass === 'p5dv2011eyad3mk' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
+function switchActiveServer(id) {
+  currentServerId = id;
+  const srv = db.servers.find(s => s.id === id);
+  const name = id === 'all' ? 'كل السيرفرات (عام)' : (srv ? srv.name : 'السيرفر الأساسي');
   
-  if(!isGlobalOwner && currentUser.serverId !== 'all'){
-    allowedServers = servers.filter(s => s.id === currentUser.serverId);
-  }
-
-  allowedServers.forEach(srv => {
-    const active = srv.id === currentActiveServerId ? 'active' : '';
-    listEl.innerHTML += `
-      <div class="server-option-item ${active}" onclick="switchActiveServer('${srv.id}')">
-        <img src="${srv.image}" class="server-option-thumb" alt="srv">
-        <div class="server-option-info">
-          <b>${srv.name}</b>
-          <span>مشرف: ${srv.ownerUser}</span>
-        </div>
-      </div>
-    `;
-  });
+  document.getElementById('currentActiveServerLabel').innerText = name;
+  document.getElementById('serverActiveBadge').innerText = name + ' نشط';
+  document.getElementById('dashboardActiveServerName').innerText = name;
+  
+  toggleServersPopup();
+  refreshAllData();
+  showToast(`تم التبديل إلى: ${name}`);
 }
 
-function switchActiveServer(id){
-  currentActiveServerId = id;
-  const srv = servers.find(s => s.id === id);
-  if(srv){
-    document.getElementById('currentActiveServerLabel').innerText = srv.name;
-    document.getElementById('serverActiveBadge').innerText = srv.name + ' نشط';
-    document.getElementById('dashboardActiveServerName').innerText = srv.name + ' (السيرفر النشط)';
-  }
-  toggleServersPopup();
-  updateDashboardStats();
+function refreshAllData() {
+  const activeSrvs = currentServerId === 'all' ? db.servers : db.servers.filter(s => s.id === currentServerId);
+  const srvIds = activeSrvs.map(s => s.id);
+  
+  const filteredPlayers = currentServerId === 'all' ? db.players : db.players.filter(p => p.id === currentServerId || p.serverId === currentServerId);
+  const filteredBanned = currentServerId === 'all' ? db.banned : db.banned.filter(b => b.serverId === currentServerId);
+  
+  document.getElementById('stat-active-players').innerText = filteredPlayers.length;
+  document.getElementById('stat-banned-players').innerText = filteredBanned.length;
+  document.getElementById('stat-servers-count').innerText = db.servers.length;
+  document.getElementById('stat-licenses-count-card').innerText = db.licenses.length;
+  
+  document.getElementById('nav-players-count').innerText = filteredPlayers.length;
+  document.getElementById('nav-banned-count').innerText = filteredBanned.length;
+  document.getElementById('nav-licenses-count').innerText = db.licenses.length;
+  
+  renderServersPopupList();
+  renderLicenses();
+  renderServersGrid();
   renderPlayers();
   renderBanned();
   renderLiveScreens();
-  showToast('تم التبديل إلى سيرفر: ' + (srv ? srv.name : ''), 'online');
+  renderStaff();
 }
 
-function updateDashboardStats(){
-  const activePlayers = players.filter(p => p.serverId === currentActiveServerId);
-  const bannedCount = bannedPlayers.filter(b => b.serverId === currentActiveServerId).length;
-
-  document.getElementById('stat-active-players').innerText = activePlayers.length;
-  document.getElementById('stat-banned-players').innerText = bannedCount;
-  document.getElementById('stat-servers-count').innerText = servers.length;
-  document.getElementById('stat-staff-count').innerText = staff.length;
-
-  document.getElementById('nav-players-count').innerText = activePlayers.length;
-  document.getElementById('nav-banned-count').innerText = bannedCount;
+function renderServersPopupList() {
+  let html = `<div class="server-option-item ${currentServerId==='all'?'active':''}" onclick="switchActiveServer('all')">
+    <div class="server-option-thumb" style="display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;">🌐</div>
+    <div class="server-option-info"><b>جميع السيرفرات</b><span>عرض عام</span></div>
+  </div>`;
+  
+  db.servers.forEach(srv => {
+    html += `<div class="server-option-item ${currentServerId===srv.id?'active':''}" onclick="switchActiveServer('${srv.id}')">
+      <img src="${srv.image}" class="server-option-thumb">
+      <div class="server-option-info"><b>${srv.name}</b><span>المالك: ${srv.owner}</span></div>
+    </div>`;
+  });
+  
+  document.getElementById('serversPopupList').innerHTML = html;
+  
+  let selectOpts = `<option value="all">كل السيرفرات (عام)</option>`;
+  db.servers.forEach(srv => {
+    selectOpts += `<option value="${srv.id}">${srv.name}</option>`;
+  });
+  document.getElementById('newStaffServerId').innerHTML = selectOpts;
 }
 
-function renderPlayers(search = ''){
-  const tbody = document.getElementById('players-tbody');
-  tbody.innerHTML = '';
-
-  const filtered = players.filter(p => {
-    const matchServer = p.serverId === currentActiveServerId;
-    const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) || p.serial.toLowerCase().includes(search.toLowerCase());
-    return matchServer && matchSearch;
-  });
-
-  if(filtered.length === 0){
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-dim);">لا يوجد لاعبون متصلون مطابَقون للبحث في هذا السيرفر</td></tr>`;
-    return;
-  }
-
-  const isGlobalOwner = (currentUser.pass === 'p5dv2011eyad3mk' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
-
-  filtered.forEach(p => {
-    const srv = servers.find(s => s.id === p.serverId);
-    const srvName = srv ? srv.name : 'الأساسي';
-    
-    const canBan = isGlobalOwner || (currentUser.permissions && currentUser.permissions.ban);
-    const canKick = isGlobalOwner || (currentUser.permissions && currentUser.permissions.kick);
-
-    tbody.innerHTML += `
-      <tr>
-        <td>
-          <div class="player-cell">
-            <div class="player-avatar" style="background:linear-gradient(135deg,#3d8bfd,#2563eb);">${p.name.charAt(0)}</div>
-            <b>${p.name}</b>
-          </div>
-        </td>
-        <td><span class="mono">#${p.id}</span></td>
-        <td><span class="mono">${p.serial}</span></td>
-        <td><span class="mono">${p.discord}</span></td>
-        <td><span style="color:var(--accent); font-weight:700;">${srvName}</span></td>
-        <td>
-          <div class="row-actions">
-            ${canKick ? `<button class="btn btn-sm btn-warn" onclick="kickPlayer('${p.name}', '${p.serial}')">كيك (طرد)</button>` : ''}
-            ${canBan ? `<button class="btn btn-sm btn-ban" onclick="banPlayerFromList('${p.name}', '${p.serial}')">حظر نهائي</button>` : '<span style="color:var(--text-dim); font-size:12px;">بدون صلاحية</span>'}
-          </div>
-        </td>
-      </tr>
-    `;
-  });
-}
-
-function renderBanned(){
-  const tbody = document.getElementById('banned-tbody');
-  tbody.innerHTML = '';
-
-  const filtered = bannedPlayers.filter(b => b.serverId === currentActiveServerId);
-
-  if(filtered.length === 0){
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-dim);">لا توجد أي حالات حظر مسجلة في هذا السيرفر</td></tr>`;
-    return;
-  }
-
-  const isGlobalOwner = (currentUser.pass === 'p5dv2011eyad3mk' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
-
-  filtered.forEach((b, index) => {
-    const srv = servers.find(s => s.id === b.serverId);
-    const canBan = isGlobalOwner || (currentUser.permissions && currentUser.permissions.ban);
-
-    tbody.innerHTML += `
-      <tr>
-        <td><b>${b.name}</b></td>
-        <td><span class="mono">${b.serial}</span></td>
-        <td><span style="color:var(--ban);">${b.reason}</span></td>
-        <td>${srv ? srv.name : 'الأساسي'}</td>
-        <td><span class="mono">${b.date}</span></td>
-        <td>${canBan ? `<button class="btn btn-sm btn-accent" onclick="unbanPlayer(${index})">رفع الحظر</button>` : '<span style="color:var(--text-dim);">مقيد</span>'}</td>
-      </tr>
-    `;
-  });
-}
-
-function renderServersGrid(){
-  const grid = document.getElementById('servers-grid-container');
-  grid.innerHTML = '';
-
-  let viewServers = servers;
-  const isGlobalOwner = (currentUser.pass === 'p5dv2011eyad3mk' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
-
-  if(!isGlobalOwner && currentUser.serverId !== 'all'){
-    viewServers = servers.filter(s => s.id === currentUser.serverId);
-  }
-
-  viewServers.forEach(srv => {
-    grid.innerHTML += `
-      <div class="server-grid-card">
-        <div class="server-banner" style="background-image:url('${srv.image}');"></div>
-        <div class="server-info">
-          <div class="server-title">${srv.name}</div>
-          <div class="server-detail"><span>مسؤول السيرفر:</span> <b style="color:#fff;">${srv.ownerUser}</b></div>
-          <div class="server-detail"><span>الحالة الأمنية:</span> <span style="color:var(--online);">محمي ومتصل</span></div>
-          <button class="btn btn-sm btn-accent" style="margin-top:8px;" onclick="switchActiveServer('${srv.id}')">إدارة هذا السيرفر</button>
-        </div>
-      </div>
-    `;
-  });
-
-  const select = document.getElementById('newStaffServerId');
-  if(select){
-    if(isGlobalOwner){
-      select.innerHTML = '<option value="all">كل السيرفرات (عام)</option>';
-      servers.forEach(s => {
-        select.innerHTML += `<option value="${s.id}">${s.name}</option>`;
-      });
-    } else {
-      const mySrv = servers.find(s => s.id === currentUser.serverId);
-      select.innerHTML = `<option value="${currentUser.serverId}">${mySrv ? mySrv.name : 'سيرفري'}</option>`;
-    }
-  }
-}
-
-function renderStaffTable(){
-  const tbody = document.getElementById('staff-tbody');
-  tbody.innerHTML = '';
-
-  const isGlobalOwner = (currentUser.pass === 'p5dv2011eyad3mk' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
-
-  const filteredStaff = staff.filter(st => {
-    if(isGlobalOwner) return true;
-    return st.serverId === currentUser.serverId || st.user === currentUser.user;
-  });
-
-  filteredStaff.forEach((st) => {
-    let permsText = [];
-    if(st.pass === 'p5dv2011eyad3mk' || (st.role === 'owner' && st.serverId === 'all')) permsText.push('جميع الصلاحيات (المالك العام)');
-    else {
-      const p = st.permissions || {};
-      if(p.players) permsText.push('اللاعبون');
-      if(p.ban) permsText.push('الحظر');
-      if(p.kick) permsText.push('الطرد (Kick)');
-      if(p.screens) permsText.push('الشاشات الحية');
-      if(p.servers) permsText.push('السيرفرات');
-    }
-
-    const srv = servers.find(s => s.id === st.serverId);
-    tbody.innerHTML += `
-      <tr>
-        <td><b>${st.user}</b> ${st.role === 'owner' ? '<span style="color:var(--warn); font-size:11px;">(مالك سيرفر)</span>' : ''}</td>
-        <td><span class="mono">${st.pass}</span></td>
-        <td>${st.serverId === 'all' ? 'جميع السيرفرات' : (srv ? srv.name : st.serverId)}</td>
-        <td><span style="color:var(--accent);">${permsText.join(' - ')}</span></td>
-        <td>${st.pass !== currentUser.pass && st.pass !== 'p5dv2011eyad3mk' ? `<button class="btn btn-sm btn-ban" onclick="removeStaff('${st.user}')">إقالة / حذف</button>` : '<span style="color:var(--text-dim); font-size:12px;">حساب رئيسي</span>'}</td>
-      </tr>
-    `;
-  });
-}
-
-function renderActivityFeed(){
-  const feed = document.getElementById('activity-feed');
-  feed.innerHTML = '';
-  activityLogs.forEach(log => {
-    feed.innerHTML += `
-      <div style="background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:11px 14px; display:flex; justify-content:space-between; align-items:center;">
-        <span style="font-size:13px; color:#fff;">${log.text}</span>
-        <span style="font-size:11px; color:var(--text-dim);">${log.time}</span>
-      </div>
-    `;
-  });
-}
-
-function renderLiveScreens(){
-  const grid = document.getElementById('screens-grid');
-  grid.innerHTML = '';
-
-  const activePlayers = players.filter(p => p.serverId === currentActiveServerId);
-
-  if(activePlayers.length === 0){
-    grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text-dim);">لا يوجد لاعبون متصلون لمراقبة شاشاتهم حالياً في هذا السيرفر</div>`;
-    return;
-  }
-
-  activePlayers.forEach(p => {
-    grid.innerHTML += `
-      <div class="card" style="padding:14px; display:flex; flex-direction:column; gap:10px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <b style="color:#fff; font-size:13.5px;">${p.name}</b>
-          <span style="font-size:11px; color:var(--online); background:#3ddc8418; padding:2px 8px; border-radius:6px;">بث حي مباشر</span>
-        </div>
-        <div style="height:150px; background:#04070d; border-radius:10px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;">
-          <div style="position:absolute; inset:0; background:linear-gradient(45deg, #11366322, #081d3d44);"></div>
-          <span style="font-size:12px; color:var(--text-dim); z-index:2; font-family:monospace;">شاشة اللعبة - HWID: ${p.serial.substring(0,10)}...</span>
-        </div>
+// إدارة التراخيص
+function renderLicenses() {
+  let html = '';
+  db.licenses.forEach((lic, idx) => {
+    let statusBadge = lic.status === 'active' ? '<span style="color:var(--online)">● نشط</span>' : '<span style="color:var(--ban)">● موقوف</span>';
+    html += `<tr>
+      <td class="mono"><b>${lic.key}</b></td>
+      <td>${lic.owner}</td>
+      <td class="mono">${lic.hwid || 'غير مرتبط بعد'}</td>
+      <td>${statusBadge}</td>
+      <td class="mono">${lic.date}</td>
+      <td>
         <div style="display:flex; gap:8px;">
-          <button class="btn btn-sm btn-accent" style="flex:1;" onclick="showToast('تم تكبير الشاشة الحية للاعب ${p.name}', 'online')">تكبير البث</button>
-          <button class="btn btn-sm btn-ban" onclick="banPlayerFromList('${p.name}', '${p.serial}')">حظر فوري</button>
+          <button class="btn btn-sm" onclick="navigator.clipboard.writeText('${lic.key}');showToast('تم نسخ مفتاح الترخيص!')">نسخ المفتاح</button>
+          <button class="btn btn-sm btn-ban" onclick="revokeLicense(${idx})">إلغاء</button>
         </div>
-      </div>
-    `;
+      </td>
+    </tr>`;
   });
+  document.getElementById('licenses-tbody').innerHTML = html || `<tr><td colspan="6" style="text-align:center; color:var(--text-dim);">لا توجد تراخيص مسجلة</td></tr>`;
 }
 
-function openModal(modalId){
-  document.getElementById(modalId).classList.add('show');
-}
-function closeModal(modalId){
-  document.getElementById(modalId).classList.remove('show');
-}
-
-function saveNewServer(){
-  const name = document.getElementById('newServerName').value.trim();
-  const image = document.getElementById('newServerImage').value.trim();
-  const user = document.getElementById('newServerUser').value.trim();
-  const pass = document.getElementById('newServerPass').value.trim();
-
-  if(!name || !pass){
-    showToast('يرجى تعبئة اسم السيرفر والكود السري للمسؤول', 'ban');
+function saveNewLicense() {
+  const owner = document.getElementById('newLicenseOwner').value.trim();
+  const hwid = document.getElementById('newLicenseHwid').value.trim();
+  
+  if(!owner) {
+    showToast('يرجى إدخال اسم العميل أو السيرفر', 'error');
     return;
   }
-
-  const newId = 'srv_' + Date.now();
-  servers.push({id: newId, name: name, image: image || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop', ownerUser: user || 'مسؤول'});
-  staff.push({user: user || 'مسؤول السيرفر', pass: pass, role: 'owner', serverId: newId, permissions: {players:true, ban:true, kick:true, screens:true, servers:true}});
-
-  localStorage.setItem('falcon_servers_list', JSON.stringify(servers));
-  localStorage.setItem('falcon_staff_list', JSON.stringify(staff));
-
-  activityLogs.unshift({text: 'تم إضافة سيرفر جديد: ' + name, time: 'الآن'});
-  localStorage.setItem('falcon_logs', JSON.stringify(activityLogs));
-
-  closeModal('addServerModal');
-  renderServersGrid();
-  renderServersPopup();
-  updateDashboardStats();
-  renderStaffTable();
-  showToast('تم إنشاء السيرفر وكود الدخول الخاص به بنجاح', 'online');
+  
+  const randomKey = 'H4-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-SEC';
+  
+  db.licenses.push({
+    key: randomKey,
+    owner: owner,
+    hwid: hwid || '',
+    status: 'active',
+    date: new Date().toISOString().split('T')[0]
+  });
+  
+  closeModal('addLicenseModal');
+  refreshAllData();
+  showToast('تم توليد ترخيص الحماية بنجاح!', 'success');
+  logActivity(`تم إصدار ترخيص حماية جديد لـ: ${owner}`);
+  
+  document.getElementById('newLicenseOwner').value = '';
+  document.getElementById('newLicenseHwid').value = '';
 }
 
-function saveNewStaff(){
+function revokeLicense(idx) {
+  db.licenses.splice(idx, 1);
+  refreshAllData();
+  showToast('تم حذف وإلغاء الترخيص بنجاح');
+}
+
+function renderServersGrid() {
+  let html = '';
+  db.servers.forEach(srv => {
+    html += `<div class="server-grid-card">
+      <div class="server-banner" style="background-image:url('${srv.image}')"></div>
+      <div class="server-info">
+        <div class="server-title">${srv.name}</div>
+        <div class="server-detail"><span>مسؤول السيرفر:</span> <b>${srv.owner}</b></div>
+        <div class="server-detail"><span>الكود السري:</span> <b class="mono">******</b></div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('servers-grid-container').innerHTML = html;
+}
+
+function renderPlayers(filter = '') {
+  const activeSrvs = currentServerId === 'all' ? db.servers : db.servers.filter(s => s.id === currentServerId);
+  const srvIds = activeSrvs.map(s => s.id);
+  
+  let list = db.players.filter(p => currentServerId === 'all' || p.serverId === currentServerId || p.id === currentServerId);
+  if(filter) {
+    list = list.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()) || p.serial.toLowerCase().includes(filter.toLowerCase()));
+  }
+  
+  let html = '';
+  list.forEach((p, idx) => {
+    const srv = db.servers.find(s => s.id === p.serverId);
+    const srvName = srv ? srv.name : 'غير معروف';
+    html += `<tr>
+      <td>
+        <div class="player-cell">
+          <div class="player-avatar" style="background:linear-gradient(135deg,#3d8bfd,#1d4ed8);">${p.name.charAt(0)}</div>
+          <b>${p.name}</b>
+        </div>
+      </td>
+      <td class="mono">#${p.id}</td>
+      <td class="mono">${p.serial}</td>
+      <td class="mono">${p.discord}</td>
+      <td>${srvName}</td>
+      <td>
+        <div class="row-actions">
+          <button class="btn btn-sm btn-warn" onclick="kickPlayer(${idx})">طرد</button>
+          <button class="btn btn-sm btn-ban" onclick="banPlayerFromList(${idx})">بند</button>
+        </div>
+      </td>
+    </tr>`;
+  });
+  document.getElementById('players-tbody').innerHTML = html || `<tr><td colspan="6" style="text-align:center; color:var(--text-dim);">لا يوجد لاعبون متصلون حالياً</td></tr>`;
+}
+
+function renderBanned() {
+  let list = currentServerId === 'all' ? db.banned : db.banned.filter(b => b.serverId === currentServerId);
+  let html = '';
+  list.forEach((b, idx) => {
+    const srv = db.servers.find(s => s.id === b.serverId);
+    html += `<tr>
+      <td><b>${b.name}</b></td>
+      <td class="mono">${b.serial}</td>
+      <td><span style="color:var(--ban);">${b.reason}</span></td>
+      <td>${srv ? srv.name : 'عام'}</td>
+      <td class="mono">${b.date}</td>
+      <td><button class="btn btn-sm btn-accent" onclick="unbanPlayer(${idx})">رفع البند</button></td>
+    </tr>`;
+  });
+  document.getElementById('banned-tbody').innerHTML = html || `<tr><td colspan="6" style="text-align:center; color:var(--text-dim);">لا توجد أي حالات حظر مسجلة</td></tr>`;
+}
+
+function renderLiveScreens() {
+  const list = currentServerId === 'all' ? db.players : db.players.filter(p => p.serverId === currentServerId);
+  let html = '';
+  list.forEach(p => {
+    html += `<div class="card" style="padding:14px; display:flex; flex-direction:column; gap:10px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <b>${p.name}</b>
+        <span style="font-size:11px; color:var(--online)">● بث حي</span>
+      </div>
+      <div style="height:140px; background:#020408; border-radius:10px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border); position:relative; overflow:hidden;">
+        <div style="position:absolute; inset:0; background:radial-gradient(circle, #3d8bfd11, transparent); opacity:0.5;"></div>
+        <div style="text-align:center; color:var(--text-dim2); font-size:12px;">
+          <svg style="width:32px;height:32px;stroke:var(--accent);margin-bottom:6px;" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          <div>شاشة اللاعب آمنة</div>
+        </div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('screens-grid').innerHTML = html || `<div style="color:var(--text-dim); grid-column:1/-1; text-align:center;">لا يوجد لاعبون لبث شاشاتهم</div>`;
+}
+
+function renderStaff() {
+  let html = '';
+  db.staff.forEach((st, idx) => {
+    const srv = db.servers.find(s => s.id === st.serverId);
+    const srvName = st.serverId === 'all' ? 'جميع السيرفرات' : (srv ? srv.name : 'غير معروف');
+    html += `<tr>
+      <td><b>${st.user}</b></td>
+      <td class="mono">${st.pass}</td>
+      <td>${srvName}</td>
+      <td><span style="color:var(--online);">صلاحيات مخصصة معتمدة</span></td>
+      <td>${idx !== 0 ? `<button class="btn btn-sm btn-ban" onclick="removeStaff(${idx})">إزالة</button>` : '<span style="color:var(--text-dim);">المالك الأساسي</span>'}</td>
+    </tr>`;
+  });
+  document.getElementById('staff-tbody').innerHTML = html;
+}
+
+function saveNewServer() {
+  const name = document.getElementById('newServerName').value.trim();
+  const image = document.getElementById('newServerImage').value.trim() || falconLogoBase64;
+  const owner = document.getElementById('newServerUser').value.trim();
+  const secret = document.getElementById('newServerPass').value.trim();
+  
+  if(!name || !owner || !secret) {
+    showToast('يرجى تعبئة كافة الحقول المطلوبة', 'error');
+    return;
+  }
+  
+  const newId = 'srv_' + Date.now();
+  db.servers.push({ id: newId, name, image, owner, secret });
+  
+  closeModal('addServerModal');
+  refreshAllData();
+  showToast('تم إنشاء السيرفر بنجاح!', 'success');
+  logActivity(`تمت إضافة سيرفر جديد: ${name}`);
+  
+  document.getElementById('newServerName').value = '';
+  document.getElementById('newServerImage').value = '';
+  document.getElementById('newServerUser').value = '';
+  document.getElementById('newServerPass').value = '';
+}
+
+function saveNewStaff() {
   const user = document.getElementById('newStaffUser').value.trim();
   const pass = document.getElementById('newStaffPass').value.trim();
-  const isGlobalOwner = (currentUser.pass === 'p5dv2011eyad3mk' || (currentUser.role === 'owner' && currentUser.serverId === 'all'));
-  const serverId = isGlobalOwner ? document.getElementById('newStaffServerId').value : currentUser.serverId;
-
-  if(!user || !pass){
-    showToast('يرجى إدخال اسم المشرف والكود السري الخاص به', 'ban');
+  const serverId = document.getElementById('newStaffServerId').value;
+  
+  if(!user || !pass) {
+    showToast('يرجى إدخال اسم المشرف والكود السري', 'error');
     return;
   }
-
-  const perms = {
+  
+  const permissions = {
     players: document.getElementById('perm_players').checked,
     ban: document.getElementById('perm_ban').checked,
     kick: document.getElementById('perm_kick').checked,
     screens: document.getElementById('perm_screens').checked,
     servers: document.getElementById('perm_servers').checked
   };
-
-  staff.push({user: user, pass: pass, role: 'employee', serverId: serverId, permissions: perms});
-  localStorage.setItem('falcon_staff_list', JSON.stringify(staff));
-
-  activityLogs.unshift({text: `تم توظيف مشرف جديد (${user})`, time: 'الآن'});
-  localStorage.setItem('falcon_logs', JSON.stringify(activityLogs));
-
+  
+  db.staff.push({ user, pass, serverId, permissions, isOwner: false });
   closeModal('addStaffModal');
-  renderStaffTable();
-  updateDashboardStats();
-  showToast('تم توظيف المشرف وتحديد كوده السري بنجاح', 'online');
+  refreshAllData();
+  showToast('تم توظيف المشرف بنجاح!', 'success');
+  logActivity(`تم توظيف مشرف جديد: ${user}`);
 }
 
-function confirmBanManual(){
+function confirmBanManual() {
   const name = document.getElementById('banPlayerName').value.trim();
   const serial = document.getElementById('banPlayerSerial').value.trim();
   const reason = document.getElementById('banPlayerReason').value.trim();
-
-  if(!name || !serial){
-    showToast('يرجى إدخال اسم اللاعب والسيريال', 'ban');
+  
+  if(!name || !serial || !reason) {
+    showToast('يرجى إكمال بيانات الحظر', 'error');
     return;
   }
-
-  bannedPlayers.push({name: name, serial: serial, reason: reason || 'مخالفة قوانين السيرفر', serverId: currentActiveServerId, date: new Date().toISOString().split('T')[0]});
-  players = players.filter(p => p.serial !== serial);
-
-  localStorage.setItem('falcon_banned_list', JSON.stringify(bannedPlayers));
-  localStorage.setItem('falcon_players_list', JSON.stringify(players));
-
-  activityLogs.unshift({text: `تم حظر اللاعب ${name} يدوياً في سيرفرك`, time: 'الآن'});
-  localStorage.setItem('falcon_logs', JSON.stringify(activityLogs));
-
-  closeModal('banModal');
-  renderPlayers();
-  renderBanned();
-  updateDashboardStats();
-  renderLiveScreens();
-  showToast('تم حظر اللاعب بنجاح وإزالته من المتصلين', 'ban');
-}
-
-function banPlayerFromList(name, serial){
-  bannedPlayers.push({name: name, serial: serial, reason: 'مخالفة أمنية مباشرة', serverId: currentActiveServerId, date: new Date().toISOString().split('T')[0]});
-  players = players.filter(p => p.serial !== serial);
-
-  localStorage.setItem('falcon_banned_list', JSON.stringify(bannedPlayers));
-  localStorage.setItem('falcon_players_list', JSON.stringify(players));
-
-  renderPlayers();
-  renderBanned();
-  updateDashboardStats();
-  renderLiveScreens();
-  showToast('تم حظر اللاعب نهائياً: ' + name, 'ban');
-}
-
-function kickPlayer(name, serial){
-  players = players.filter(p => p.serial !== serial);
-  localStorage.setItem('falcon_players_list', JSON.stringify(players));
-
-  activityLogs.unshift({text: `تم طرد (Kick) اللاعب ${name} من السيرفر`, time: 'الآن'});
-  localStorage.setItem('falcon_logs', JSON.stringify(activityLogs));
-
-  renderPlayers();
-  updateDashboardStats();
-  renderLiveScreens();
-  showToast('تم طرد اللاعب بنجاح: ' + name, 'warn');
-}
-
-function unbanPlayer(index){
-  const activeBanned = bannedPlayers.filter(b => b.serverId === currentActiveServerId);
-  const targetBanned = activeBanned[index];
   
-  if(targetBanned){
-    bannedPlayers = bannedPlayers.filter(b => b !== targetBanned);
-    localStorage.setItem('falcon_banned_list', JSON.stringify(bannedPlayers));
-    renderBanned();
-    updateDashboardStats();
-    showToast('تم رفع الحظر عن اللاعب بنجاح', 'online');
-  }
+  db.banned.push({ name, serial, reason, serverId: currentServerId, date: new Date().toISOString().split('T')[0] });
+  db.players = db.players.filter(p => p.serial !== serial);
+  
+  closeModal('banModal');
+  refreshAllData();
+  showToast('تم حظر اللاعب بنجاح!', 'success');
+  logActivity(`تم حظر اللاعب: ${name} بسبب (${reason})`);
 }
 
-function removeStaff(username){
-  staff = staff.filter(s => s.user !== username);
-  localStorage.setItem('falcon_staff_list', JSON.stringify(staff));
-  renderStaffTable();
-  updateDashboardStats();
-  showToast('تمت إقالة الموظف بنجاح', 'ban');
+function kickPlayer(idx) {
+  const p = db.players[idx];
+  db.players.splice(idx, 1);
+  refreshAllData();
+  showToast(`تم طرد اللاعب ${p.name} بنجاح`);
+  logActivity(`تم طرد اللاعب: ${p.name}`);
 }
 
-function showToast(msg, type = 'online'){
+function banPlayerFromList(idx) {
+  const p = db.players[idx];
+  db.banned.push({ name: p.name, serial: p.serial, reason: 'مخالفة قوانين السيرفر', serverId: p.serverId, date: new Date().toISOString().split('T')[0] });
+  db.players.splice(idx, 1);
+  refreshAllData();
+  showToast(`تم حظر اللاعب ${p.name} نهائياً`);
+  logActivity(`تم حظر اللاعب: ${p.name}`);
+}
+
+function unbanPlayer(idx) {
+  db.banned.splice(idx, 1);
+  refreshAllData();
+  showToast('تم رفع البند عن اللاعب بنجاح');
+}
+
+function removeStaff(idx) {
+  db.staff.splice(idx, 1);
+  refreshAllData();
+  showToast('تم إزالة المشرف بنجاح');
+}
+
+function hasPermission(perm) {
+  if(!currentUser) return false;
+  if(currentUser.isOwner) return true;
+  return currentUser.permissions[perm] === true;
+}
+
+function openModal(id) {
+  document.getElementById(id).classList.add('show');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('show');
+}
+
+function logActivity(text) {
+  db.activity.unshift({ text, time: 'منذ لحظات' });
+  if(db.activity.length > 5) db.activity.pop();
+  renderActivityFeed();
+}
+
+function renderActivityFeed() {
+  let html = '';
+  db.activity.forEach(act => {
+    html += `<div style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:var(--panel); border:1px solid var(--border); border-radius:10px; font-size:12.5px;">
+      <span>${act.text}</span>
+      <span style="color:var(--text-dim2); font-size:11px;">${act.time}</span>
+    </div>`;
+  });
+  document.getElementById('activity-feed').innerHTML = html;
+}
+
+function showToast(message, type = 'success') {
   const wrap = document.getElementById('toastWrap');
-  const dotColor = type === 'ban' ? 'var(--ban)' : (type === 'warn' ? 'var(--warn)' : 'var(--online)');
   const toast = document.createElement('div');
   toast.className = 'toast';
-  toast.innerHTML = `<div class="toast-dot" style="background:${dotColor};"></div><span>${msg}</span>`;
+  toast.innerHTML = `<div style="width:8px; height:8px; border-radius:50%; background:${type==='error'?'var(--ban)':'var(--online)'};"></div><span>${message}</span>`;
   wrap.appendChild(toast);
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    setTimeout(() => toast.remove(), 300);
-  }, 3500);
+  setTimeout(() => toast.remove(), 3000);
 }
+
+renderActivityFeed();
 </script>
 </body>
 </html>
