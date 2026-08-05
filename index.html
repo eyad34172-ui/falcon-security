@@ -648,6 +648,9 @@ function attemptLogin(){
   const u = document.getElementById('loginUser').value.trim();
   const p = document.getElementById('loginPass').value.trim();
 
+  // جلب أحدث قائمة موظفين من التخزين المحلي لضمان قراءة المشرفين الجدد
+  staff = JSON.parse(localStorage.getItem('falcon_staff_list')) || staff;
+
   if(u === 'p5dv' && p === 'faflcon702'){
     currentUser = {user: 'p5dv', pass: 'faflcon702', role: 'owner', serverId: 'all', permissions: {players:true, ban:true, kick:true, screens:true, servers:true}};
   } else {
