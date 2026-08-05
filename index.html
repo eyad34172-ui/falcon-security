@@ -631,7 +631,7 @@ function checkAuth(){
     try {
       currentUser = JSON.parse(savedUser);
       document.getElementById('loginOverlay').style.display = 'none';
-      if(currentUser.role !== 'owner' && currentUser.serverId !== 'all'){
+      if(currentUser.user !== 'p5dv' && currentUser.serverId !== 'all'){
         currentActiveServerId = currentUser.serverId;
       }
       initDashboard();
@@ -648,7 +648,7 @@ function attemptLogin(){
   const u = document.getElementById('loginUser').value.trim();
   const p = document.getElementById('loginPass').value.trim();
 
-  // جلب أحدث قائمة موظفين من التخزين المحلي لضمان قراءة المشرفين الجدد
+  // جلب أحدث قائمة موظفين من التخزين المحلي لضمان قراءة المشرفين الجدد بدقة
   staff = JSON.parse(localStorage.getItem('falcon_staff_list')) || staff;
 
   if(u === 'p5dv' && p === 'faflcon702'){
@@ -661,7 +661,7 @@ function attemptLogin(){
     localStorage.setItem('falcon_current_user', JSON.stringify(currentUser));
     document.getElementById('loginOverlay').style.display = 'none';
     
-    if(currentUser.role !== 'owner' && currentUser.serverId !== 'all'){
+    if(currentUser.user !== 'p5dv' && currentUser.serverId !== 'all'){
       currentActiveServerId = currentUser.serverId;
     }
     
@@ -680,7 +680,7 @@ function logout(){
 function initDashboard(){
   document.getElementById('sidebarUsername').innerText = currentUser.user;
   document.getElementById('sidebarAvatar').innerText = currentUser.user.charAt(0).toUpperCase();
-  document.getElementById('sidebarRoleDesc').innerText = (currentUser.role === 'owner' && currentUser.serverId === 'all') ? 'المالك العام' : 'مالك / مشرف سيرفر';
+  document.getElementById('sidebarRoleDesc').innerText = (currentUser.user === 'p5dv' || (currentUser.role === 'owner' && currentUser.serverId === 'all')) ? 'المالك العام' : 'مشرف سيرفر';
 
   applyPermissions();
   renderServersPopup();
