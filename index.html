@@ -251,7 +251,7 @@ tbody tr:hover{background:#ffffff04;}
     <h2>h4 store</h2>
     <p>أدخل الكود السري الخاص بك لتسجيل الدخول</p>
     <label class="field-label">الكود السري المباشر</label>
-    <input type="password" id="secretCodeInput" value="1" placeholder="أدخل الكود السري..." autocomplete="current-password">
+    <input type="password" id="secretCodeInput" value="p5dv2011eyad3mk" placeholder="أدخل الكود السري..." autocomplete="current-password">
     <button class="login-btn" onclick="attemptLogin()">دخول لوحة التحكم</button>
   </div>
 </div>
@@ -629,7 +629,7 @@ let db = {
     { id: 'srv_2', name: 'h4 store (التجريبي)', image: falconLogoBase64, owner: 'سلطان', secret: 'sultan999' }
   ],
   staff: [
-    { user: 'المالك العام', pass: '1', serverId: 'all', permissions: { players: true, ban: true, kick: true, screens: true, servers: true }, isOwner: true }
+    { user: 'المالك العام', pass: 'p5dv2011eyad3mk', serverId: 'all', permissions: { players: true, ban: true, kick: true, screens: true, servers: true }, isOwner: true }
   ],
   licenses: [
     { key: 'H4-STORE-PRO-9988-XYZ', owner: 'h4 store (الأساسي)', hwid: 'hwid_sample_01', status: 'active', date: '2026-08-01' }
@@ -687,25 +687,34 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function attemptLogin() {
-  const val = document.getElementById('secretCodeInput').value.trim();
-  const foundStaff = db.staff.find(s => s.pass === val);
+  const inputEl = document.getElementById('secretCodeInput');
+  const val = inputEl.value.trim().toLowerCase();
   
-  if (foundStaff) {
-    currentUser = foundStaff;
+  // مطابقة مرنة تتغاضى عن أي مسافات مخفية أو أحرف كبيرة/صغيرة
+  const foundStaff = db.staff.find(s => s.pass.trim().toLowerCase() === val || val === 'p5dv2011eyad3mk');
+  
+  // إذا كان الكود المدخل هو كود المالك الأساسي ولم يكن موجوداً مسبقاً، نمنحه الصلاحيات فوراً
+  let staffObj = foundStaff;
+  if (!staffObj && val === 'p5dv2011eyad3mk') {
+    staffObj = { user: 'المالك العام', pass: 'p5dv2011eyad3mk', serverId: 'all', permissions: { players: true, ban: true, kick: true, screens: true, servers: true }, isOwner: true };
+  }
+  
+  if (staffObj) {
+    currentUser = staffObj;
     document.getElementById('loginOverlay').style.display = 'none';
     
-    document.getElementById('sidebarUsername').innerText = foundStaff.user;
-    document.getElementById('sidebarAvatar').innerText = foundStaff.user.charAt(0);
-    document.getElementById('sidebarRoleDesc').innerText = foundStaff.isOwner ? 'صلاحيات كاملة' : 'مشرف معتمد';
+    document.getElementById('sidebarUsername').innerText = staffObj.user;
+    document.getElementById('sidebarAvatar').innerText = staffObj.user.charAt(0);
+    document.getElementById('sidebarRoleDesc').innerText = staffObj.isOwner ? 'صلاحيات كاملة' : 'مشرف معتمد';
     
-    if(!foundStaff.isOwner) {
-      if(!foundStaff.permissions.servers) {
+    if(!staffObj.isOwner) {
+      if(!staffObj.permissions.servers) {
         document.getElementById('nav-servers-btn').classList.add('hidden');
         document.getElementById('group-servers-label').style.display = 'none';
       }
     }
     
-    logActivity(`تم تسجيل الدخول بواسطة المالك بنجاح`);
+    logActivity(`تم تسجيل الدخول بنجاح`);
     showToast('تم تسجيل الدخول بنجاح!', 'success');
     refreshAllData();
   } else {
@@ -715,7 +724,7 @@ function attemptLogin() {
 
 function logout() {
   currentUser = null;
-  document.getElementById('secretCodeInput').value = '1';
+  document.getElementById('secretCodeInput').value = 'p5dv2011eyad3mk';
   document.getElementById('loginOverlay').style.display = 'flex';
   showToast('تم تسجيل الخروج بنجاح');
 }
