@@ -2,6 +2,139 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
+  <title>h4 store - لوحة الإدارة المتكاملة</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #0b0f19; --panel: #111827; --accent: #3b82f6; --border: #1e293b; --text: #f8fafc; --dim: #94a3b8; --ban: #ef4444; --warn: #f59e0b; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
+    body { background: transparent; display: none; height: 100vh; align-items: center; justify-content: center; }
+    .main-container { width: 950px; background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 24px; color: var(--text); box-shadow: 0 25px 50px rgba(0,0,0,0.8); }
+    
+    .login-box { text-align: center; padding: 30px; }
+    .login-box input { padding: 12px; width: 300px; background: var(--bg); border: 1px solid var(--border); color: #fff; border-radius: 8px; text-align: center; margin-bottom: 15px; font-size: 16px; outline: none; }
+    
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+    .header h2 { color: var(--accent); }
+    
+    table { width: 100%; border-collapse: collapse; text-align: right; font-size: 13px; }
+    th { background: rgba(255,255,255,0.03); padding: 10px; color: var(--dim); border-bottom: 1px solid var(--border); }
+    td { padding: 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    
+    .btn { padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; border: none; color: #fff; }
+    .btn-accent { background: var(--accent); }
+    .btn-warn { background: var(--warn); }
+    .btn-ban { background: var(--ban); }
+    .mono { font-family: monospace; font-size: 11px; color: var(--dim); }
+  </style>
+</head>
+<body>
+
+  <!-- شاشة تسجيل الدخول -->
+  <div class="main-container" id="loginScreen">
+    <div class="login-box">
+      <h2>لوحة تحكم السيرفرات الحية</h2>
+      <p style="color:var(--dim); margin-bottom:20px;">أدخل كود المالك (تجربة: owner_h4_2026)</p>
+      <input type="password" id="ownerCode" placeholder="أدخل كود المالك السري..."><br>
+      <button class="btn btn-accent" style="padding:10px 30px;" onclick="tryLogin()">دخول للوحة</button>
+    </div>
+  </div>
+
+  <!-- لوحة إدارة اللاعبين الحقيقية -->
+  <div class="main-container" id="dashboardScreen" style="display:none;">
+    <div class="header">
+      <h2>إدارة اللاعبين والعقوبات المباشرة (فايفام)</h2>
+      <button class="btn btn-ban" onclick="closeUI()">إغلاق اللوحة (ESC)</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>اللاعب / ID</th>
+          <th>الرخصة (License)</th>
+          <th>ديسكورد ID</th>
+          <th>ستيم ID</th>
+          <th>إجراءات الكيك والباند الفعلي</th>
+        </tr>
+      </thead>
+      <tbody id="playersTableBody">
+        <tr><td colspan="5" style="text-align:center; color:var(--dim);">جاري التحميل...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    let activeCode = "";
+
+    window.addEventListener('message', function(event) {
+      let item = event.data;
+      if (item.action === "togglePanel") {
+        if (item.status) {
+          document.body.style.display = "flex";
+          if(activeCode !== "") {
+            fetch(`https://h4-admin/requestRefresh`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ code: activeCode })
+            });
+          }
+        } else {
+          document.body.style.display = "none";
+        }
+      } else if (item.action === "updatePlayers") {
+        let html = "";
+        if(item.players.length === 0) {
+          html = `<tr><td colspan="5" style="text-align:center; color:var(--dim);">لا يوجد لاعبين متصلين حالياً</td></tr>`;
+        } else {
+          item.players.forEach(p => {
+            html += `<tr>
+              <td><b>${p.name}</b><br><span class="mono">ID: #${p.id}</span></td>
+              <td><span class="mono">${p.license}</span></td>
+              <td><span class="mono">${p.discord}</span></td>
+              <td><span class="mono">${p.steam}</span></td>
+              <td>
+                <div style="display:flex; gap:8px;">
+                  <button class="btn btn-warn" onclick="kickPlayer(${p.id}, '${p.name}')">كيك (طرد)</button>
+                  <button class="btn btn-ban" onclick="banPlayer(${p.id}, '${p.name}')">باند (حظر)</button>
+                </div>
+              </td>
+            </tr>`;
+          });
+        }
+        document.getElementById('playersTableBody').innerHTML = html;
+      }
+    });
+
+    function tryLogin() {
+      let code = document.getElementById('ownerCode').value.trim();
+      if(code === "owner_h4_2026" || code === "owner_falcon_99") {
+        activeCode = code;
+        document.getElementById('loginScreen').style.display = "none";
+        document.getElementById('dashboardScreen').style.display = "block";
+        
+        fetch(`https://h4-admin/requestRefresh`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: activeCode })
+        });
+      } else {
+        alert("كود المالك غير صحيح!");
+      }
+    }
+
+    function kickPlayer(id, name) {
+      let reason = prompt(`أدخل سبب طرد اللاعب (${name}):`, "مخالفة القوانين");
+      if(reason !== null) {
+        fetch(`https://h4-admin/kickPlayer`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: id, reason: reason })
+        });
+      }
+    }
+
+    function banPlayer(id, name) {<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>h4 store - لوحة إدارة سيرفرات FiveM المتكاملة</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -22,7 +155,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
     body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; overflow-x: hidden; }
 
-    /* شاشة تسجيل الدخول */
+    /* شاشة تسجيل الدخول للموقع */
     .login-overlay { position: fixed; inset: 0; background: rgba(11, 15, 25, 0.95); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
     .login-card { background: var(--panel); border: 1px solid var(--border); padding: 40px; border-radius: 20px; width: 100%; max-width: 440px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
     .login-card h2 { color: var(--accent); margin-bottom: 8px; font-size: 26px; font-weight: 900; }
@@ -106,7 +239,7 @@
   <div class="login-overlay" id="loginOverlay">
     <div class="login-card">
       <h2 id="loginTitle">نظام إدارة السيرفرات</h2>
-      <p>أدخل كود المالك الخاص بسيرفرك للتحكم باللاعبين والمراقبة<br><span style="color:var(--accent); font-size:11px;">(تجربة: owner_h4_2026 أو owner_falcon_99)</span></p>
+      <p>أدخل كود المالك الخاص بسيرفرك للتحكم باللاعبين والمراقبة<br><span style="color:var(--accent); font-size:11px;">(أكواد التجربة: owner_h4_2026 أو owner_falcon_99)</span></p>
       <input type="password" id="secretCodeInput" class="login-input" placeholder="أدخل كود المالك السري...">
       <button class="btn btn-accent" style="width:100%; justify-content:center; padding: 12px;" onclick="attemptLogin()">دخول لوحة السيرفر</button>
     </div>
@@ -179,7 +312,7 @@
         </div>
         <div class="card">
           <div class="card-header"><h3 id="welcomeServerTitle">مرحباً بك في لوحة تحكم سيرفرك</h3></div>
-          <p style="color: var(--text-dim); font-size: 13.5px; margin-bottom: 15px;">من هنا يمكنك متابعة تفاصيل اللاعبين بالكامل (Steam, Discord, License) وتنفيذ إجراءات الباند والكيك ومراقبة الشاشات.</p>
+          <p style="color: var(--text-dim); font-size: 13.5px; margin-bottom: 15px;">من هنا يمكنك متابعة تفاصيل اللاعبين بالكامل وتنفيذ إجراءات الباند والكيك ومراقبة الشاشات بشكل فوري.</p>
           <button class="btn btn-accent" onclick="triggerImmediateUpdate()">تحديث بيانات السيرفر الآن</button>
         </div>
       </div>
@@ -264,7 +397,6 @@
   <div class="toast-wrap" id="toastWrap"></div>
 
   <script>
-    // قاعدة بيانات السيرفرات مستقلة لكل مالك مع تفاصيل اللاعبين كاملة
     const serversDatabase = {
       "owner_h4_2026": {
         serverId: "srv_h4_01",
@@ -465,6 +597,23 @@
       toast.innerHTML = `<span>${msg}</span>`;
       wrap.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
+    }
+  </script>
+</body>
+</html>
+      let reason = prompt(`أدخل سبب الحظر النهائي (Ban) للاعب (${name}):`, "هاك / تخريب");
+      if(reason !== null) {
+        fetch(`https://h4-admin/banPlayer`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: id, reason: reason })
+        });
+      }
+    }
+
+    function closeUI() {
+      fetch(`https://h4-admin/closeUI`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+      document.body.style.display = "none";
     }
   </script>
 </body>
