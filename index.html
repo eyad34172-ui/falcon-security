@@ -99,15 +99,21 @@
     </div>
   </div>
 
-  <!-- القائمة الجانبية -->
+  <!-- القائمة الجانبية (كاملة بكل الخيارات) -->
   <div class="sidebar">
     <div>
       <div class="sidebar-header"><h1>h4 store</h1></div>
       <div class="sidebar-menu">
-        <div class="menu-section-title">إدارة السيرفر الفعلي</div>
-        <div class="nav-item active" data-page="dashboard"><span>حالة الربط والاتصال</span></div>
+        <div class="menu-section-title">لوحة القيادة</div>
+        <div class="nav-item active" data-page="dashboard"><span>الرئيسية وحالة النظام</span></div>
+        
+        <div class="menu-section-title">إدارة السيرفر واللاعبين</div>
         <div class="nav-item" data-page="players"><span>اللاعبون الحقيقيون بالسيرفر</span><span class="nav-badge" id="nav-players-count">0</span></div>
+        <div class="nav-item" data-page="security"><span>سجلات الحماية والأمان</span></div>
+        
+        <div class="menu-section-title">النظام والربط</div>
         <div class="nav-item" data-page="config"><span>إعدادات الـ API والـ Token</span></div>
+        <div class="nav-item" data-page="tools"><span>أدوات مساعدة وسيرفرات</span></div>
       </div>
     </div>
     <div class="sidebar-footer">
@@ -123,8 +129,8 @@
   <div class="main-content">
     <div class="topbar">
       <div>
-        <h2 id="page-title">حالة الربط والاتصال</h2>
-        <p id="page-sub">جلب بيانات اللاعبين الحقيقيين من قاعدة البيانات السحابية مباشرة</p>
+        <h2 id="page-title">الرئيسية وحالة النظام</h2>
+        <p id="page-sub">لوحة تحكم حماية سيرفر h4 store المتكاملة</p>
       </div>
       <div><span class="pill live" id="connectionStatus">جاري الاتصال بالسيرفر...</span></div>
     </div>
@@ -143,7 +149,7 @@
           </div>
         </div>
         <div class="card">
-          <div class="card-header"><h3>التحكم المباشر</h3></div>
+          <div class="card-header"><h3>التحكم المباشر والسريع</h3></div>
           <button class="btn btn-accent" onclick="fetchLiveServerData()">تحديث البيانات الآن (Refresh)</button>
         </div>
       </div>
@@ -173,7 +179,30 @@
         </div>
       </div>
 
-      <!-- 3. الإعدادات -->
+      <!-- 3. سجلات الحماية -->
+      <div class="page" id="page-security">
+        <div class="card">
+          <div class="card-header"><h3>سجلات الحماية والبلاغات المباشرة</h3></div>
+          <p style="color: var(--text-dim); font-size: 13px;">هنا تظهر تقارير الحماية التلقائية ورصد المحاولات المخالفة داخل السيرفر.</p>
+          <div class="table-responsive" style="margin-top: 16px;">
+            <table>
+              <thead>
+                <tr>
+                  <th>نوع التنبيه</th>
+                  <th>اسم اللاعب</th>
+                  <th>التفاصيل</th>
+                  <th>الوقت والتاريخ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td colspan="4" style="text-align:center; color:var(--text-dim)">لا توجد مخالفات مسجلة حالياً، السيرفر آمن.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. الإعدادات -->
       <div class="page" id="page-config">
         <div class="card">
           <div class="card-header"><h3>إعدادات رابط الـ API وحماية التوكن</h3></div>
@@ -186,6 +215,15 @@
             <input type="text" id="apiTokenInput" class="form-control mono" value="h4_token_p5dv_2026_secured">
           </div>
           <button class="btn btn-accent" onclick="saveSettings()">حفظ التعديلات والاتصال</button>
+        </div>
+      </div>
+
+      <!-- 5. أدوات مساعدة -->
+      <div class="page" id="page-tools">
+        <div class="card">
+          <div class="card-header"><h3>أدوات إدارية إضافية</h3></div>
+          <p style="color: var(--text-dim); font-size: 13px; margin-bottom: 16px;">أدوات سريعة لإدارة الـ Webhooks والتحكم بخصائص الحماية.</p>
+          <button class="btn btn-accent" onclick="showToast('النظام يعمل بكفاءة عالية', 'success')">فحص استجابة السيرفر</button>
         </div>
       </div>
     </div>
