@@ -73,12 +73,19 @@
     .btn-accent:hover { background: #2563eb; }
     .btn-ban { background: rgba(239, 68, 68, 0.15); color: var(--ban); border: 1px solid rgba(239, 68, 68, 0.3); }
     .btn-ban:hover { background: var(--ban); color: #fff; }
+    .btn-warn { background: rgba(245, 158, 11, 0.15); color: var(--warn); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .btn-warn:hover { background: var(--warn); color: #fff; }
     .btn-sm { padding: 5px 10px; font-size: 11.5px; }
 
     .form-group { margin-bottom: 16px; text-align: right; }
     .form-group label { display: block; font-size: 12.5px; color: var(--text-dim); margin-bottom: 6px; font-weight: 600; }
     .form-control { width: 100%; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 13px; outline: none; }
     .form-control:focus { border-color: var(--accent); }
+
+    /* الشات العام */
+    .chat-box { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; height: 380px; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+    .chat-msg { background: var(--panel); border: 1px solid var(--border); padding: 10px 14px; border-radius: 10px; font-size: 13px; }
+    .chat-msg b { color: var(--accent); margin-left: 8px; }
 
     .screens-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
     .map-container { width: 100%; height: 450px; background: #070a12; border: 1px solid var(--border); border-radius: 12px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
@@ -111,8 +118,9 @@
         <div class="menu-section-title">لوحة القيادة</div>
         <div class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard', this)"><span>الرئيسية وحالة النظام</span></div>
         
-        <div class="menu-section-title">المراقبة الحية</div>
-        <div class="nav-item" data-page="players" onclick="switchPage('players', this)"><span>اللاعبون المتصلون</span><span class="nav-badge" id="nav-players-count">0</span></div>
+        <div class="menu-section-title">المراقبة الحية والشات</div>
+        <div class="nav-item" data-page="players" onclick="switchPage('players', this)"><span>اللاعبون والتحكم بهم</span><span class="nav-badge" id="nav-players-count">0</span></div>
+        <div class="nav-item" data-page="chat" onclick="switchPage('chat', this)"><span>شات السيرفر المباشر</span></div>
         <div class="nav-item" data-page="screens" onclick="switchPage('screens', this)"><span>مراقبة الشاشات (Live Cam)</span></div>
         <div class="nav-item" data-page="map" onclick="switchPage('map', this)"><span>خريطة اللاعبين (Live Map)</span></div>
 
@@ -163,19 +171,19 @@
         </div>
       </div>
 
-      <!-- 2. اللاعبون المتصلون -->
+      <!-- 2. اللاعبون والتحكم بهم -->
       <div class="page" id="page-players">
         <div class="card">
-          <div class="card-header"><h3>قائمة اللاعبين المتواجدين الآن داخل سيرفرك</h3></div>
+          <div class="card-header"><h3>قائمة اللاعبين المتواجدين مع أزرار التحكم والـ Ban/Kick</h3></div>
           <div class="table-responsive">
             <table>
               <thead>
                 <tr>
-                  <th>اسم اللاعب الحقيقي</th>
+                  <th>اسم اللاعب</th>
                   <th>ID السيرفر</th>
                   <th>سيريال الـ License</th>
                   <th>ديسكورد ID</th>
-                  <th>الحالة</th>
+                  <th>الإجراءات السريعة</th>
                 </tr>
               </thead>
               <tbody id="real-players-tbody">
@@ -186,47 +194,59 @@
         </div>
       </div>
 
-      <!-- 3. مراقبة الشاشات -->
+      <!-- 3. شات السيرفر المباشر -->
+      <div class="page" id="page-chat">
+        <div class="card">
+          <div class="card-header"><h3>محادثات الشات العام داخل السيرفر (Live Chat)</h3></div>
+          <div class="chat-box" id="chatBoxContainer">
+            <div class="chat-msg"><b>النظام:</b> مرحباً بك في لوحة تحكم سيرفر h4 store. الرسائل تظهر هنا لحظياً.</div>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <input type="text" id="adminChatInput" class="form-control" placeholder="اكتب رسالة إدارية عامة للاعبين...">
+            <button class="btn btn-accent" onclick="sendAdminChat()">إرسال</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. مراقبة الشاشات -->
       <div class="page" id="page-screens">
         <div class="card">
           <div class="card-header"><h3>مراقبة لقطات الشاشات الحية (Screenshots)</h3></div>
-          <p style="color: var(--text-dim); font-size: 13px; margin-bottom: 20px;">هنا تظهر لقطات شاشات اللاعبين المرفوعة تلقائياً في حال الاشتباه أو التبليغ.</p>
           <div class="screens-grid" id="screensGridContainer">
             <div style="color: var(--text-dim); font-size: 13px; grid-column: 1/-1; text-align: center; padding: 40px;">لا توجد لقطات شاشات مرفوعة حالياً</div>
           </div>
         </div>
       </div>
 
-      <!-- 4. خريطة اللاعبين -->
+      <!-- 5. خريطة اللاعبين -->
       <div class="page" id="page-map">
         <div class="card">
           <div class="card-header"><h3>خريطة لوس سانتوس الحية (Live Map Radar)</h3></div>
-          <p style="color: var(--text-dim); font-size: 13px; margin-bottom: 16px;">تتبع أماكن تواجد اللاعبين وتمركزهم داخل خريطة السيرفر لحظياً.</p>
           <div class="map-container" id="mapContainer">
             <div class="map-radar-bg"></div>
-            <div style="color: var(--text-dim); z-index: 2; font-size: 13px;">الخريطة متصلة ببيانات السيرفر (لا يوجد لاعبون في نطاق الرادار حالياً)</div>
+            <div style="color: var(--text-dim); z-index: 2; font-size: 13px;">الخريطة متصلة ببيانات السيرفر</div>
           </div>
         </div>
       </div>
 
-      <!-- 5. التحكم بالسيرفر والإجراءات -->
+      <!-- 6. التحكم بالسيرفر والإجراءات -->
       <div class="page" id="page-control">
         <div class="card">
-          <div class="card-header"><h3>لوحة التحكم الإداري السريع</h3></div>
+          <div class="card-header"><h3>لوحة التحكم الإداري العام</h3></div>
           <div style="display: flex; gap: 12px; flex-wrap: wrap;">
             <button class="btn btn-accent" onclick="showToast('تم إرسال تنبيه عام لجميع اللاعبين', 'success')">إرسال تنبيه عام (Announcement)</button>
             <button class="btn btn-ban" onclick="showToast('تم تنظيف الكاش والسيارات المتروكة بنجاح', 'success')">تنظيف الكاش والسيارات (Clear Area)</button>
-            <button class="btn btn-accent" onclick="showToast('تم إعادة تحميل إعدادات الحماية', 'info')">إعادة تحميل إعدادات الحماية</button>
+            <button class="btn btn-warn" onclick="showToast('تم إعادة تحميل سكريبتات الحماية', 'warn')">إعادة تحميل الحماية</button>
           </div>
         </div>
       </div>
 
-      <!-- 6. إدارة الموظفين والصلاحيات -->
+      <!-- 7. إدارة الموظفين والصلاحيات -->
       <div class="page" id="page-staff">
         <div class="card">
           <div class="card-header">
             <h3>قائمة المشرفين والإداريين المصرح لهم</h3>
-            <button class="btn btn-accent btn-sm" onclick="showToast('خاصية إضافة مشرف قريباً', 'info')">+ إضافة مشرف جديد</button>
+            <button class="btn btn-accent btn-sm" onclick="addStaffMember()">+ إضافة مشرف جديد</button>
           </div>
           <div class="table-responsive">
             <table>
@@ -235,21 +255,24 @@
                   <th>اسم المشرف</th>
                   <th>الرتبة الإدارية</th>
                   <th>صلاحيات الوصول</th>
-                  <th>حالة الحساب</th>
+                  <th>الحالة</th>
+                  <th>تحكم</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="staffTableBody">
                 <tr>
                   <td><b>p5dv</b></td>
                   <td><span class="pill live">مالك السيرفر (Owner)</span></td>
                   <td>تحكم كامل وصلاحيات مطلقة</td>
                   <td style="color: var(--online)">نشط</td>
+                  <td>-</td>
                 </tr>
                 <tr>
                   <td><b>eyad</b></td>
                   <td><span class="pill" style="background: rgba(59,130,246,0.15); color: var(--accent);">مطور / برمجة</span></td>
                   <td>صلاحيات تقنية وربط الـ API</td>
                   <td style="color: var(--online)">نشط</td>
+                  <td><button class="btn btn-sm btn-ban" onclick="showToast('لا يمكن حذف المطور الرئيسي', 'error')">حذف</button></td>
                 </tr>
               </tbody>
             </table>
@@ -257,7 +280,7 @@
         </div>
       </div>
 
-      <!-- 7. سجلات الأمان -->
+      <!-- 8. سجلات الأمان -->
       <div class="page" id="page-security">
         <div class="card">
           <div class="card-header"><h3>سجلات الحماية والبلاغات المباشرة</h3></div>
@@ -279,7 +302,7 @@
         </div>
       </div>
 
-      <!-- 8. الإعدادات -->
+      <!-- 9. الإعدادات -->
       <div class="page" id="page-config">
         <div class="card">
           <div class="card-header"><h3>إعدادات رابط الـ API وحماية التوكن</h3></div>
@@ -359,7 +382,8 @@
       
       const titles = {
         'dashboard': ['الرئيسية وحالة النظام', 'لوحة حماية وتحكم سيرفر h4 store المتكاملة'],
-        'players': ['اللاعبون المتصلون', 'قائمة اللاعبين الحقيقيين المتواجدين الآن'],
+        'players': ['اللاعبون والتحكم بهم', 'قائمة اللاعبين الحقيقيين مع أزرار الإجراءات السريعة'],
+        'chat': ['شات السيرفر المباشر', 'متابعة رسائل الشات العام وإرسال رسائل إدارية'],
         'screens': ['مراقبة الشاشات (Live Cam)', 'لقطات شاشات اللاعبين المباشرة'],
         'map': ['خريطة اللاعبين (Live Map)', 'تتبع حركة ومواقع اللاعبين لحظياً'],
         'control': ['التحكم بالسيرفر والإجراءات', 'أوامر التحكم والإدارة السريعة'],
@@ -390,7 +414,12 @@
                 <td>#${p.id}</td>
                 <td><span class="mono">${p.serial || 'غير متوفر'}</span></td>
                 <td><span class="mono">${p.discord || 'غير متوفر'}</span></td>
-                <td><span class="pill live">متصل الآن</span></td>
+                <td>
+                  <div style="display:flex; gap:6px;">
+                    <button class="btn btn-sm btn-warn" onclick="playerAction('طرد', '${p.name}')">طرد</button>
+                    <button class="btn btn-sm btn-ban" onclick="playerAction('باند', '${p.name}')">باند</button>
+                  </div>
+                </td>
               </tr>`;
             }
           });
@@ -413,6 +442,38 @@
         document.getElementById('connectionStatus').style.background = "rgba(239, 68, 68, 0.15)";
         document.getElementById('connectionStatus').style.color = "var(--ban)";
       }
+    }
+
+    function playerAction(actionType, playerName) {
+      showToast(`تم تطبيق إجراء (${actionType}) بنجاح على اللاعب: ${playerName}`, actionType === 'باند' ? 'error' : 'success');
+    }
+
+    function sendAdminChat() {
+      const input = document.getElementById('adminChatInput');
+      const val = input.value.trim();
+      if(!val) return;
+      
+      const chatBox = document.getElementById('chatBoxContainer');
+      chatBox.innerHTML += `<div class="chat-msg"><b>[الإدارة] p5dv:</b> ${val}</div>`;
+      input.value = '';
+      chatBox.scrollTop = chatBox.scrollHeight;
+      showToast('تم إرسال الرسالة إلى شات السيرفر', 'success');
+    }
+
+    function addStaffMember() {
+      const staffName = prompt("أدخل اسم المشرف الجديد:");
+      if(!staffName) return;
+      const staffRole = prompt("أدخل رتبة المشرف (مثال: مراقب عام، مشرف دعم):");
+      
+      const tbody = document.getElementById('staffTableBody');
+      tbody.innerHTML += `<tr>
+        <td><b>${staffName}</b></td>
+        <td><span class="pill" style="background:rgba(59,130,246,0.15); color:var(--accent);">${staffRole || 'مشرف'}</span></td>
+        <td>صلاحيات إدارية محدودة</td>
+        <td style="color: var(--online)">نشط</td>
+        <td><button class="btn btn-sm btn-ban" onclick="this.closest('tr').remove(); showToast('تمت ازالة المشرف', 'info')">حذف</button></td>
+      </tr>`;
+      showToast('تم إضافة المشرف بنجاح', 'success');
     }
 
     function showToast(msg, type = 'info') {
