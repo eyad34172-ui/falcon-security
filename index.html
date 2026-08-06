@@ -197,7 +197,8 @@
     let session = {
       isLoggedIn: false,
       ownerCode: 'p5dv2011eyad3mk',
-      apiUrl: localStorage.getItem('h4_real_api') || '',
+      // ضع رابط الـ Firebase الخاص بك هنا مباشرة كرابط افتراضي للـ API:
+      apiUrl: localStorage.getItem('h4_real_api') || 'https://falcon-70270-default-rtdb.firebaseio.com/live_players.json',
       apiToken: localStorage.getItem('h4_real_token') || 'h4_token_p5dv_2026_secured'
     };
 
