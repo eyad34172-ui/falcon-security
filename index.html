@@ -408,7 +408,7 @@
         <input type="text" id="banPlayerName" class="form-control" placeholder="اسم اللاعب...">
       </div>
       <div class="form-group">
-        <label>سيريال الحهاز (HWID / License)</label>
+        <label>سيريال الجهاز (HWID / License)</label>
         <input type="text" id="banPlayerSerial" class="form-control" placeholder="lic:xxxxx...">
       </div>
       <div class="form-group">
@@ -417,7 +417,7 @@
       </div>
       <div style="display:flex; gap:10px; margin-top:20px;">
         <button class="btn btn-ghost" style="flex:1;" onclick="closeModal('banModal')">إلغاء</button>
-        <button class="btn btn-ban" style="flex:1;" onclick="saveNewBan()">تنفذ الحظر</button>
+        <button class="btn btn-ban" style="flex:1;" onclick="saveNewBan()">تنفيذ الحظر</button>
       </div>
     </div>
   </div>
@@ -623,126 +623,267 @@
     function renderLicenses() {
       let html = '';
       db.licenses.forEach((lic, idx) => {
-        html += `<tr><td><span class="mono">${lic.key}</span></td><td><b>${lic.owner}</b></td><td><span class="mono">${lic.hwid}</span></td><td><span style="color:var(--online)">● مفعل</span></td><td>${lic.date}</td><td><button class="btn btn-sm btn-ban" onclick="deleteLicense(${idx})">حذف</button></td></tr>`;
+        html += `<tr>
+          <td><span class="mono">${lic.key}</span></td>
+          <td><b>${lic.owner}</b></td>
+          <td><span class="mono">${lic.hwid}</span></td>
+          <td><span style="color:var(--online)">● مفعل</span></td>
+          <td>${lic.date}</td>
+          <td><button class="btn btn-sm btn-ban" onclick="deleteLicense(${idx})">حذف</button></td>
+        </tr>`;
       });
-      document.getElementById('licenses-tbody').innerHTML = html;
+      document.getElementById('licenses-tbody').innerHTML = html || '<tr><td colspan="6" style="text-align:center; color:var(--text-dim)">لا توجد تراخيص مسجلة</td></tr>';
     }
-
-    function saveNewLicense() {
-      const owner = document.getElementById('newLicenseOwner').value.trim();
-      if (!owner) { showToast('أدخل اسم العميل', 'error'); return; }
-      const key = 'H4-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-      db.licenses.unshift({ key, owner, hwid: 'pending', date: new Date().toISOString().split('T')[0] });
-      closeModal('addLicenseModal');
-      renderLicenses();
-      updateStaticUI();
-      showToast('تم توليد الترخيص بنجاح', 'success');
-      saveToStorage();
-    }
-
-    function deleteLicense(idx) { db.licenses.splice(idx, 1); renderLicenses(); updateStaticUI(); saveToStorage(); }
 
     function renderServersGrid() {
       let html = '';
       db.servers.forEach((srv, idx) => {
-        html += `<div class="server-grid-card"><div class="server-banner" style="background-image:url('${srv.banner}')"></div><div class="server-info"><div class="server-title">${srv.name}</div><div class="server-detail"><span>المالك:</span> <b>${srv.owner}</b></div><button class="btn btn-sm btn-accent" style="margin-top:10px;" onclick="selectActiveServer('${srv.id}')">تفعيل العرض</button></div></div>`;
+        html += `<div class="server-grid-card">
+          <div class="server-banner" style="background-image: url('${srv.banner}')"></div>
+          <div class="server-info">
+            <div>
+              <div class="server-title">${srv.name}</div>
+              <div class="server-detail"><span>المالك:</span> <b>${srv.owner}</b></div>
+              <div class="server-detail"><span>الكود السري:</span> <span class="mono">${srv.code}</span></div>
+            </div>
+            <div style="display:flex; gap:8px; margin-top:12px;">
+              <button class="btn btn-sm btn-ghost" style="flex:1;" onclick="selectActiveServer('${srv.id}')">اختيار للمراقبة</button>
+              <button class="btn btn-sm btn-ban" onclick="deleteServer(${idx})">حذف</button>
+            </div>
+          </div>
+        </div>`;
       });
-      document.getElementById('servers-grid-container').innerHTML = html;
-    }
-
-    function saveNewServer() {
-      const name = document.getElementById('newServerName').value.trim();
-      const owner = document.getElementById('newServerUser').value.trim();
-      const code = document.getElementById('newServerPass').value.trim();
-      if (!name || !owner || !code) { showToast('املأ الحقول المطلوبة', 'error'); return; }
-      db.servers.push({ id: 'srv_' + Date.now(), name, banner: document.getElementById('newServerImage').value || '', owner, code });
-      closeModal('addServerModal');
-      renderServersGrid();
-      updateServersPopupList();
-      showToast('تم إضافة السيرفر', 'success');
-      saveToStorage();
+      document.getElementById('servers-grid-container').innerHTML = html || '<div style="color:var(--text-dim); text-align:center; grid-column:1/-1;">لا توجد سيرفرات مرتبطة</div>';
     }
 
     function renderPlayers(query) {
+      let filtered = db.activeServerId === 'all' ? db.players : db.players.filter(p => p.serverId === db.activeServerId);
+      if (query) {
+        filtered = filtered.filter(p => p.name.toLowerCase().includes(query.toLowerCase()) || p.serial.toLowerCase().includes(query.toLowerCase()));
+      }
       let html = '';
-      const list = db.activeServerId === 'all' ? db.players : db.players.filter(p => p.serverId === db.activeServerId);
-      list.forEach((p, idx) => {
-        if (query && !p.name.includes(query)) return;
-        html += `<tr><td><b>${p.name}</b></td><td>#${p.id}</td><td><span class="mono">${p.serial}</span></td><td>${p.discord}</td><td><button class="btn btn-sm btn-ban" onclick="quickBanPlayer('${p.name}', '${p.serial}')">حظر</button></td></tr>`;
+      filtered.forEach((p, idx) => {
+        const srvName = db.servers.find(s => s.id === p.serverId)?.name || 'غير معروف';
+        html += `<tr>
+          <td><b>${p.name}</b></td>
+          <td>#${p.id}</td>
+          <td><span class="mono">${p.serial}</span></td>
+          <td><span class="mono">${p.discord}</span></td>
+          <td>${srvName}</td>
+          <td>
+            <button class="btn btn-sm btn-warn" onclick="kickPlayer(${idx})">طرد</button>
+            <button class="btn btn-sm btn-ban" onclick="banPlayerFromList(${idx})">حظر</button>
+          </td>
+        </tr>`;
       });
-      document.getElementById('players-tbody').innerHTML = html;
-    }
-
-    function quickBanPlayer(name, serial) {
-      db.banned.unshift({ name, serial, reason: 'حظر يدوي', server: 'الشبكة', date: new Date().toISOString().split('T')[0] });
-      db.players = db.players.filter(p => p.serial !== serial);
-      renderPlayers('');
-      updateStaticUI();
-      showToast('تم حظر اللاعب بنجاح', 'success');
-      saveToStorage();
+      document.getElementById('players-tbody').innerHTML = html || '<tr><td colspan="6" style="text-align:center; color:var(--text-dim)">لا يوجد لاعبون متصلون حالياً</td></tr>';
     }
 
     function renderBanned() {
       let html = '';
       db.banned.forEach((b, idx) => {
-        html += `<tr><td><b>${b.name}</b></td><td><span class="mono">${b.serial}</span></td><td><span style="color:var(--ban);">${b.reason}</span></td><td>${b.date}</td><td><button class="btn btn-sm btn-accent" onclick="unbanPlayer(${idx})">رفع الحظر</button></td></tr>`;
+        html += `<tr>
+          <td><b>${b.name}</b></td>
+          <td><span class="mono">${b.serial}</span></td>
+          <td><span style="color:var(--ban);">${b.reason}</span></td>
+          <td>${b.server}</td>
+          <td>${b.date}</td>
+          <td><button class="btn btn-sm btn-accent" onclick="removeBan(${idx})">رفع الحظر</button></td>
+        </tr>`;
       });
-      document.getElementById('banned-tbody').innerHTML = html;
+      document.getElementById('banned-tbody').innerHTML = html || '<tr><td colspan="6" style="text-align:center; color:var(--text-dim)">قائمة المحظورين فارغة</td></tr>';
     }
-
-    function saveNewBan() {
-      const name = document.getElementById('banPlayerName').value.trim();
-      const serial = document.getElementById('banPlayerSerial').value.trim();
-      if (!name || !serial) { showToast('أدخل البيانات', 'error'); return; }
-      db.banned.unshift({ name, serial, reason: document.getElementById('banPlayerReason').value || 'هكر', server: 'الشبكة', date: new Date().toISOString().split('T')[0] });
-      closeModal('banModal');
-      renderBanned();
-      updateStaticUI();
-      showToast('تم الحظر', 'success');
-      saveToStorage();
-    }
-
-    function unbanPlayer(idx) { db.banned.splice(idx, 1); renderBanned(); updateStaticUI(); saveToStorage(); }
 
     function renderLiveScreens() {
+      let filtered = db.activeServerId === 'all' ? db.players : db.players.filter(p => p.serverId === db.activeServerId);
       let html = '';
-      db.players.forEach(p => {
-        html += `<div class="card" style="padding:12px;"><div style="font-weight:700; margin-bottom:8px;">${p.name}</div><div style="height:120px; background:#000; border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--text-dim);">بث مباشر محاكي</div></div>`;
+      filtered.forEach(p => {
+        html += `<div style="background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <b>${p.name}</b>
+            <span class="pill live">بث حي نشط</span>
+          </div>
+          <div style="height:140px; background:#000; border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--text-dim); font-size:12px; border:1px solid var(--border);">
+            شاشة المراقبة المباشرة (Anti-Cheat)
+          </div>
+        </div>`;
       });
-      document.getElementById('screens-grid').innerHTML = html || '<div style="color:var(--text-dim)">لا يوجد لاعبون</div>';
+      document.getElementById('screens-grid').innerHTML = html || '<div style="color:var(--text-dim); grid-column:1/-1; text-align:center;">لا يوجد لاعبون لعرض شاشاتهم حالياً</div>';
     }
 
     function renderStaff() {
       let html = '';
       db.staff.forEach((st, idx) => {
-        html += `<tr><td><b>${st.name}</b></td><td><span class="mono">${st.pass}</span></td><td><button class="btn btn-sm btn-ban" onclick="deleteStaff(${idx})">إلغاء</button></td></tr>`;
+        const sName = st.serverId === 'all' ? 'جميع السيرفرات' : (db.servers.find(s => s.id === st.serverId)?.name || 'خاص');
+        html += `<tr>
+          <td><b>${st.name}</b></td>
+          <td><span class="mono">${st.pass}</span></td>
+          <td>${sName}</td>
+          <td>إدارة شاملة ومراقبة</td>
+          <td><button class="btn btn-sm btn-ban" onclick="deleteStaff(${idx})">حذف</button></td>
+        </tr>`;
       });
-      document.getElementById('staff-tbody').innerHTML = html;
+      document.getElementById('staff-tbody').innerHTML = html || '<tr><td colspan="5" style="text-align:center; color:var(--text-dim)">لا يوجد مشرفون مسجلون</td></tr>';
+    }
+
+    function saveNewLicense() {
+      const owner = document.getElementById('newLicenseOwner').value.trim();
+      const hwid = document.getElementById('newLicenseHwid').value.trim() || 'pending_bind_' + Math.floor(Math.random() * 9000);
+      if (!owner) { showToast('الرجاء إدخال اسم العميل أو السيرفر', 'error'); return; }
+      
+      const newKey = 'H4-LICENSE-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+      db.licenses.push({ key: newKey, owner, hwid, date: new Date().toISOString().split('T')[0], status: 'active' });
+      db.activity.unshift({ text: `تم توليد ترخيص جديد لصالح: ${owner}`, time: 'الآن' });
+      saveToStorage();
+      closeModal('addLicenseModal');
+      renderLicenses();
+      updateStaticUI();
+      showToast('تم توليد مفتاح الترخيص بنجاح', 'success');
+      document.getElementById('newLicenseOwner').value = '';
+      document.getElementById('newLicenseHwid').value = '';
+    }
+
+    function deleteLicense(idx) {
+      db.licenses.splice(idx, 1);
+      saveToStorage();
+      renderLicenses();
+      updateStaticUI();
+      showToast('تم حذف الترخيص', 'info');
+    }
+
+    function saveNewServer() {
+      const name = document.getElementById('newServerName').value.trim();
+      const banner = document.getElementById('newServerImage').value.trim() || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80';
+      const owner = document.getElementById('newServerUser').value.trim();
+      const pass = document.getElementById('newServerPass').value.trim();
+      if (!name || !owner || !pass) { showToast('الرجاء ملء الحقول المطلوبة', 'error'); return; }
+
+      const id = 'srv_' + Math.random().toString(36).substring(2, 7);
+      db.servers.push({ id, name, banner, owner, code: pass });
+      db.activity.unshift({ text: `تم ربط سيرفر جديد بنجاح: ${name}`, time: 'الآن' });
+      saveToStorage();
+      closeModal('addServerModal');
+      renderServersGrid();
+      updateServersPopupList();
+      updateDashboardStats();
+      showToast('تم ربط السيرفر بنجاح', 'success');
+      document.getElementById('newServerName').value = '';
+      document.getElementById('newServerImage').value = '';
+      document.getElementById('newServerUser').value = '';
+      document.getElementById('newServerPass').value = '';
+    }
+
+    function deleteServer(idx) {
+      if (db.servers.length <= 1) { showToast('لا يمكنك حذف السيرفر الأساسي الأخير', 'error'); return; }
+      db.servers.splice(idx, 1);
+      saveToStorage();
+      renderServersGrid();
+      updateServersPopupList();
+      showToast('تم حذف السيرفر من الشبكة', 'info');
+    }
+
+    function saveNewBan() {
+      const name = document.getElementById('banPlayerName').value.trim();
+      const serial = document.getElementById('banPlayerSerial').value.trim();
+      const reason = document.getElementById('banPlayerReason').value.trim() || 'مخالفة قوانين الحماية';
+      if (!name || !serial) { showToast('الرجاء كتابة اسم اللاعب والسيريال', 'error'); return; }
+
+      db.banned.unshift({ name, serial, reason, server: 'شبكة h4 store', date: new Date().toISOString().split('T')[0] });
+      db.players = db.players.filter(p => p.serial !== serial);
+      db.activity.unshift({ text: `تم حظر اللاعب نهائياً: ${name}`, time: 'الآن' });
+      saveToStorage();
+      closeModal('banModal');
+      renderBanned();
+      updateStaticUI();
+      showToast('تم حظر اللاعب ونقله لقائمة المبندين', 'success');
+      document.getElementById('banPlayerName').value = '';
+      document.getElementById('banPlayerSerial').value = '';
+      document.getElementById('banPlayerReason').value = '';
+    }
+
+    function removeBan(idx) {
+      db.banned.splice(idx, 1);
+      saveToStorage();
+      renderBanned();
+      updateStaticUI();
+      showToast('تم رفع الحظر عن اللاعب', 'success');
+    }
+
+    function kickPlayer(idx) {
+      const p = db.players[idx];
+      db.players.splice(idx, 1);
+      saveToStorage();
+      renderPlayers('');
+      updateStaticUI();
+      showToast(`تم طرد اللاعب ${p.name} من السيرفر`, 'info');
+    }
+
+    function banPlayerFromList(idx) {
+      const p = db.players[idx];
+      db.banned.unshift({ name: p.name, serial: p.serial, reason: 'حظر مباشر من لوحة التحكم', server: 'h4 store', date: new Date().toISOString().split('T')[0] });
+      db.players.splice(idx, 1);
+      saveToStorage();
+      renderPlayers('');
+      updateStaticUI();
+      showToast(`تم حظر اللاعب ${p.name} بنجاح`, 'success');
     }
 
     function saveNewStaff() {
       const name = document.getElementById('newStaffUser').value.trim();
       const pass = document.getElementById('newStaffPass').value.trim();
-      if (!name || !pass) { showToast('أدخل البيانات', 'error'); return; }
-      db.staff.push({ name, pass, serverId: 'all', permissions: {} });
+      const serverId = document.getElementById('newStaffServerId').value;
+      if (!name || !pass) { showToast('الرجاء إدخال اسم المشرف والكود السري', 'error'); return; }
+
+      db.staff.push({
+        name,
+        pass,
+        serverId,
+        permissions: {
+          players: document.getElementById('perm_players').checked,
+          ban: document.getElementById('perm_ban').checked,
+          kick: document.getElementById('perm_kick').checked,
+          screens: document.getElementById('perm_screens').checked,
+          servers: document.getElementById('perm_servers').checked
+        }
+      });
+      saveToStorage();
       closeModal('addStaffModal');
       renderStaff();
-      showToast('تم إضافة المشرف', 'success');
-      saveToStorage();
+      showToast('تم توظيف المشرف بنجاح', 'success');
+      document.getElementById('newStaffUser').value = '';
+      document.getElementById('newStaffPass').value = '';
     }
 
-    function deleteStaff(idx) { db.staff.splice(idx, 1); renderStaff(); saveToStorage(); }
+    function deleteStaff(idx) {
+      db.staff.splice(idx, 1);
+      saveToStorage();
+      renderStaff();
+      showToast('تم إزالة المشرف', 'info');
+    }
 
-    function openModal(id) { document.getElementById(id).classList.add('show'); }
+    function populateStaffServerSelect() {
+      const sel = document.getElementById('newStaffServerId');
+      let html = '<option value="all">كل السيرفرات (عام)</option>';
+      db.servers.forEach(s => {
+        html += `<option value="${s.id}">${s.name}</option>`;
+      });
+      sel.innerHTML = html;
+    }
+
+    function openModal(id) {
+      if (id === 'addStaffModal') populateStaffServerSelect();
+      document.getElementById(id).classList.add('show');
+    }
     function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
     function showToast(msg, type = 'info') {
       const wrap = document.getElementById('toastWrap');
-      const t = document.createElement('div');
-      t.className = 'toast';
-      t.innerHTML = `<div style="font-size:13px; font-weight:600;">${msg}</div>`;
-      wrap.appendChild(t);
-      setTimeout(() => t.remove(), 3000);
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.style.borderColor = type === 'success' ? 'var(--online)' : (type === 'error' ? 'var(--ban)' : 'var(--accent)');
+      toast.innerHTML = `<span>${msg}</span>`;
+      wrap.appendChild(toast);
+      setTimeout(() => { toast.remove(); }, 3000);
     }
   </script>
 </body>
