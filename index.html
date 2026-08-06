@@ -209,7 +209,7 @@
         session.isLoggedIn = true;
         document.getElementById('loginOverlay').style.display = 'none';
         fetchLiveServerData();
-        setInterval(fetchLiveServerData, 5000); // تحديث تلقائي كل 5 ثوانٍ
+        setInterval(fetchLiveServerData, 5000);
       }
     });
 
@@ -253,7 +253,7 @@
         const data = await response.json();
         
         let html = '';
-        if(data && data.players && Array.isArray(data.players) && data.players.length > 0) {
+        if(data && data.players && Array.isArray(data.players) && data.count > 0 && data.players.length > 0) {
           data.players.forEach(p => {
             if (p.name && p.id) {
               html += `<tr>
