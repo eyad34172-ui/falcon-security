@@ -2,141 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>h4 store - لوحة الإدارة المتكاملة</title>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
-  <style>
-    :root { --bg: #0b0f19; --panel: #111827; --accent: #3b82f6; --border: #1e293b; --text: #f8fafc; --dim: #94a3b8; --ban: #ef4444; --warn: #f59e0b; }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
-    body { background: transparent; display: none; height: 100vh; align-items: center; justify-content: center; }
-    .main-container { width: 950px; background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 24px; color: var(--text); box-shadow: 0 25px 50px rgba(0,0,0,0.8); }
-    
-    .login-box { text-align: center; padding: 30px; }
-    .login-box input { padding: 12px; width: 300px; background: var(--bg); border: 1px solid var(--border); color: #fff; border-radius: 8px; text-align: center; margin-bottom: 15px; font-size: 16px; outline: none; }
-    
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-    .header h2 { color: var(--accent); }
-    
-    table { width: 100%; border-collapse: collapse; text-align: right; font-size: 13px; }
-    th { background: rgba(255,255,255,0.03); padding: 10px; color: var(--dim); border-bottom: 1px solid var(--border); }
-    td { padding: 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-    
-    .btn { padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; border: none; color: #fff; }
-    .btn-accent { background: var(--accent); }
-    .btn-warn { background: var(--warn); }
-    .btn-ban { background: var(--ban); }
-    .mono { font-family: monospace; font-size: 11px; color: var(--dim); }
-  </style>
-</head>
-<body>
-
-  <!-- شاشة تسجيل الدخول -->
-  <div class="main-container" id="loginScreen">
-    <div class="login-box">
-      <h2>لوحة تحكم السيرفرات الحية</h2>
-      <p style="color:var(--dim); margin-bottom:20px;">أدخل كود المالك (تجربة: owner_h4_2026)</p>
-      <input type="password" id="ownerCode" placeholder="أدخل كود المالك السري..."><br>
-      <button class="btn btn-accent" style="padding:10px 30px;" onclick="tryLogin()">دخول للوحة</button>
-    </div>
-  </div>
-
-  <!-- لوحة إدارة اللاعبين الحقيقية -->
-  <div class="main-container" id="dashboardScreen" style="display:none;">
-    <div class="header">
-      <h2>إدارة اللاعبين والعقوبات المباشرة (فايفام)</h2>
-      <button class="btn btn-ban" onclick="closeUI()">إغلاق اللوحة (ESC)</button>
-    </div>
-    <table>
-      <thead>
-        <tr>
-          <th>اللاعب / ID</th>
-          <th>الرخصة (License)</th>
-          <th>ديسكورد ID</th>
-          <th>ستيم ID</th>
-          <th>إجراءات الكيك والباند الفعلي</th>
-        </tr>
-      </thead>
-      <tbody id="playersTableBody">
-        <tr><td colspan="5" style="text-align:center; color:var(--dim);">جاري التحميل...</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <script>
-    let activeCode = "";
-
-    window.addEventListener('message', function(event) {
-      let item = event.data;
-      if (item.action === "togglePanel") {
-        if (item.status) {
-          document.body.style.display = "flex";
-          if(activeCode !== "") {
-            fetch(`https://h4-admin/requestRefresh`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ code: activeCode })
-            });
-          }
-        } else {
-          document.body.style.display = "none";
-        }
-      } else if (item.action === "updatePlayers") {
-        let html = "";
-        if(item.players.length === 0) {
-          html = `<tr><td colspan="5" style="text-align:center; color:var(--dim);">لا يوجد لاعبين متصلين حالياً</td></tr>`;
-        } else {
-          item.players.forEach(p => {
-            html += `<tr>
-              <td><b>${p.name}</b><br><span class="mono">ID: #${p.id}</span></td>
-              <td><span class="mono">${p.license}</span></td>
-              <td><span class="mono">${p.discord}</span></td>
-              <td><span class="mono">${p.steam}</span></td>
-              <td>
-                <div style="display:flex; gap:8px;">
-                  <button class="btn btn-warn" onclick="kickPlayer(${p.id}, '${p.name}')">كيك (طرد)</button>
-                  <button class="btn btn-ban" onclick="banPlayer(${p.id}, '${p.name}')">باند (حظر)</button>
-                </div>
-              </td>
-            </tr>`;
-          });
-        }
-        document.getElementById('playersTableBody').innerHTML = html;
-      }
-    });
-
-    function tryLogin() {
-      let code = document.getElementById('ownerCode').value.trim();
-      if(code === "owner_h4_2026" || code === "owner_falcon_99") {
-        activeCode = code;
-        document.getElementById('loginScreen').style.display = "none";
-        document.getElementById('dashboardScreen').style.display = "block";
-        
-        fetch(`https://h4-admin/requestRefresh`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code: activeCode })
-        });
-      } else {
-        alert("كود المالك غير صحيح!");
-      }
-    }
-
-    function kickPlayer(id, name) {
-      let reason = prompt(`أدخل سبب طرد اللاعب (${name}):`, "مخالفة القوانين");
-      if(reason !== null) {
-        fetch(`https://h4-admin/kickPlayer`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: id, reason: reason })
-        });
-      }
-    }
-
-    function banPlayer(id, name) {<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>h4 store - لوحة إدارة سيرفرات FiveM المتكاملة</title>
+  <title>h4 store - إدارة السيرفرات المتعددة والصلاحيات</title>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -155,7 +22,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
     body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; overflow-x: hidden; }
 
-    /* شاشة تسجيل الدخول للموقع */
+    /* شاشة تسجيل الدخول */
     .login-overlay { position: fixed; inset: 0; background: rgba(11, 15, 25, 0.95); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
     .login-card { background: var(--panel); border: 1px solid var(--border); padding: 40px; border-radius: 20px; width: 100%; max-width: 440px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
     .login-card h2 { color: var(--accent); margin-bottom: 8px; font-size: 26px; font-weight: 900; }
@@ -165,8 +32,9 @@
 
     /* القائمة الجانبية */
     .sidebar { width: 260px; background: var(--panel); border-left: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; position: fixed; height: 100vh; z-index: 10; }
-    .sidebar-header { padding: 24px; border-bottom: 1px solid var(--border); text-align: center; }
-    .sidebar-header h1 { font-size: 20px; font-weight: 900; color: var(--accent); letter-spacing: 1px; }
+    .sidebar-header { padding: 24px; border-bottom: 1px solid var(--border); text-align: center; display: flex; align-items: center; gap: 10px; justify-content: center; }
+    .sidebar-logo { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
+    .sidebar-header h1 { font-size: 18px; font-weight: 900; color: var(--accent); }
     .sidebar-menu { padding: 16px; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; flex: 1; }
     .menu-section-title { font-size: 11px; color: var(--text-dim); text-transform: uppercase; margin: 12px 10px 4px; font-weight: 700; }
     .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-radius: 10px; color: var(--text-dim); cursor: pointer; transition: .2s; font-weight: 500; font-size: 13.5px; }
@@ -176,7 +44,7 @@
     
     .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: space-between; }
     .user-box { display: flex; align-items: center; gap: 10px; }
-    .user-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 15px; color: #fff; }
+    .user-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1px solid var(--accent); }
     .user-info b { display: block; font-size: 13px; color: #fff; }
     .user-info span { font-size: 11px; color: var(--text-dim); }
 
@@ -211,20 +79,12 @@
     .btn-ban:hover { background: var(--ban); color: #fff; }
     .btn-warn { background: rgba(245, 158, 11, 0.15); color: var(--warn); border: 1px solid rgba(245, 158, 11, 0.3); }
     .btn-warn:hover { background: var(--warn); color: #fff; }
-    .btn-monitor { background: rgba(16, 185, 129, 0.15); color: var(--online); border: 1px solid rgba(16, 185, 129, 0.3); }
-    .btn-monitor:hover { background: var(--online); color: #fff; }
     .btn-sm { padding: 4px 8px; font-size: 11px; }
 
     .form-group { margin-bottom: 16px; text-align: right; }
     .form-group label { display: block; font-size: 12.5px; color: var(--text-dim); margin-bottom: 6px; font-weight: 600; }
     .form-control { width: 100%; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 13px; outline: none; }
     .form-control:focus { border-color: var(--accent); }
-
-    /* نافذة مراقبة الشاشة */
-    .screen-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 3000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-    .screen-card { background: var(--panel); border: 1px solid var(--border); width: 80%; max-width: 800px; border-radius: 16px; padding: 24px; box-shadow: 0 25px 50px rgba(0,0,0,0.7); }
-    .screen-viewer { width: 100%; height: 400px; background: #000; border-radius: 10px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; margin-top: 15px; }
-    .screen-live-sim { width: 100%; height: 100%; background: radial-gradient(circle, #1e293b 0%, #070a12 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); gap: 10px; font-size: 14px; }
 
     .toast-wrap { position: fixed; bottom: 24px; left: 24px; z-index: 4000; display: flex; flex-direction: column; gap: 10px; }
     .toast { background: var(--panel); border: 1px solid var(--border); padding: 12px 18px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; }
@@ -235,28 +95,47 @@
 </head>
 <body>
 
-  <!-- شاشة تسجيل الدخول -->
+  <!-- شاشة تسجيل الدخول أو إنشاء سيرفر -->
   <div class="login-overlay" id="loginOverlay">
     <div class="login-card">
-      <h2 id="loginTitle">نظام إدارة السيرفرات</h2>
-      <p>أدخل كود المالك الخاص بسيرفرك للتحكم باللاعبين والمراقبة<br><span style="color:var(--accent); font-size:11px;">(أكواد التجربة: owner_h4_2026 أو owner_falcon_99)</span></p>
-      <input type="password" id="secretCodeInput" class="login-input" placeholder="أدخل كود المالك السري...">
-      <button class="btn btn-accent" style="width:100%; justify-content:center; padding: 12px;" onclick="attemptLogin()">دخول لوحة السيرفر</button>
+      <h2>نظام إدارة السيرفرات</h2>
+      <p>أدخل كود سيرفرك السري للتحكم، أو قم بإنشاء سيرفر جديد خاص بك!</p>
+      
+      <input type="password" id="secretCodeInput" class="login-input" placeholder="أدخل كود السيرفر السري...">
+      <button class="btn btn-accent" style="width:100%; justify-content:center; padding: 12px; margin-bottom: 15px;" onclick="attemptLogin()">دخول للسيرفر</button>
+      
+      <hr style="border-color: var(--border); margin: 15px 0;">
+      
+      <button class="btn btn-warn" style="width:100%; justify-content:center; padding: 10px;" onclick="openCreateServerModal()">+ إنشاء سيرفر جديد</button>
     </div>
   </div>
 
-  <!-- نافذة مراقبة الشاشة -->
-  <div class="screen-modal" id="screenModal">
-    <div class="screen-card">
-      <div class="card-header" style="margin-bottom:0;">
-        <h3 id="modalPlayerTitle">مراقبة شاشة اللاعب: -</h3>
-        <button class="btn btn-sm btn-ban" onclick="closeScreenModal()">إغلاق المراقبة</button>
+  <!-- نافذة إنشاء سيرفر جديد -->
+  <div class="login-overlay" id="createServerModal" style="display: none;">
+    <div class="login-card" style="text-align: right;">
+      <h2 style="text-align: center; color: var(--warn);">إنشاء سيرفر جديد</h2>
+      <p style="text-align: center;">أنشئ هويتك الخاصة وحدد كود دخولك السري</p>
+      
+      <div class="form-group">
+        <label>اسم السيرفر</label>
+        <input type="text" id="newServerName" class="form-control" placeholder="مثال: Falcon RP">
       </div>
-      <div class="screen-viewer">
-        <div class="screen-live-sim">
-          <div style="font-size: 18px; font-weight: 700; color: #fff;">بث مباشر لشاشة اللاعب داخل FiveM</div>
-          <p>جاري الاتصال بكاميرا المراقب المباشر...</p>
-        </div>
+      <div class="form-group">
+        <label>كود الدخول السري (كلمة المرور الخاصة بك)</label>
+        <input type="text" id="newServerCode" class="form-control mono" placeholder="مثال: my_secret_123">
+      </div>
+      <div class="form-group">
+        <label>اسم المالك</label>
+        <input type="text" id="newOwnerName" class="form-control" placeholder="اسمك داخل السيرفر">
+      </div>
+      <div class="form-group">
+        <label>رابط شعار السيرفر (صورة من ديسكورد)</label>
+        <input type="text" id="newServerAvatar" class="form-control mono" placeholder="https://cdn.discordapp.com/attachments/...">
+      </div>
+      
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button class="btn btn-accent" style="flex:1; justify-content:center;" onclick="saveNewServer()">حفظ وإنشاء السيرفر</button>
+        <button class="btn btn-ban" style="flex:1; justify-content:center;" onclick="closeCreateServerModal()">إلغاء</button>
       </div>
     </div>
   </div>
@@ -264,7 +143,10 @@
   <!-- القائمة الجانبية -->
   <div class="sidebar">
     <div>
-      <div class="sidebar-header"><h1 id="sidebarServerName">h4 store</h1></div>
+      <div class="sidebar-header">
+        <img src="" id="sidebarLogoImg" class="sidebar-logo" alt="Logo">
+        <h1 id="sidebarServerName">h4 store</h1>
+      </div>
       <div class="sidebar-menu">
         <div class="menu-section-title">لوحة القيادة</div>
         <div class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard', this)"><span>الرئيسية وحالة السيرفر</span></div>
@@ -275,13 +157,12 @@
 
         <div class="menu-section-title">الإدارة والصلاحيات</div>
         <div class="nav-item" data-page="staff" onclick="switchPage('staff', this)"><span>مشرفو السيرفر</span><span class="nav-badge" id="nav-staff-count">0</span></div>
-        <div class="nav-item" data-page="config" onclick="switchPage('config', this)"><span>إعدادات السيرفر والـ API</span></div>
       </div>
     </div>
     <div class="sidebar-footer">
       <div class="user-box">
-        <div class="user-avatar" id="footerAvatar">P</div>
-        <div class="user-info"><b id="footerOwnerName">مالك السيرفر</b><span id="footerServerKey">معرف السيرفر</span></div>
+        <img src="" id="footerAvatarImg" class="user-avatar" alt="User">
+        <div class="user-info"><b id="footerOwnerName">مالك السيرفر</b><span id="footerUserRole">رتبتك: مالك</span></div>
       </div>
       <button class="btn btn-sm btn-ban" onclick="logout()">خروج</button>
     </div>
@@ -312,7 +193,7 @@
         </div>
         <div class="card">
           <div class="card-header"><h3 id="welcomeServerTitle">مرحباً بك في لوحة تحكم سيرفرك</h3></div>
-          <p style="color: var(--text-dim); font-size: 13.5px; margin-bottom: 15px;">من هنا يمكنك متابعة تفاصيل اللاعبين بالكامل وتنفيذ إجراءات الباند والكيك ومراقبة الشاشات بشكل فوري.</p>
+          <p style="color: var(--text-dim); font-size: 13.5px; margin-bottom: 15px;">من هنا يمكنك متابعة اللاعبين وإدارة فريق العمل حسب رتبتك وصلاحياتك الخاصة بسيرفرك فقط.</p>
           <button class="btn btn-accent" onclick="triggerImmediateUpdate()">تحديث بيانات السيرفر الآن</button>
         </div>
       </div>
@@ -352,18 +233,18 @@
         </div>
       </div>
 
-      <!-- 4. الموظفين -->
+      <!-- 4. الموظفين وصلاحياتهم -->
       <div class="page" id="page-staff">
         <div class="card">
           <div class="card-header">
-            <h3>مشرفو سيرفرك المصرح لهم</h3>
-            <button class="btn btn-accent btn-sm" onclick="openAddStaffModal()">+ إضافة مشرف لسيرفرك</button>
+            <h3>مشرفو سيرفرك والصلاحيات</h3>
+            <button class="btn btn-accent btn-sm" id="addStaffBtn" onclick="openAddStaffModal()">+ إضافة مشرف لسيرفرك</button>
           </div>
           <div class="table-responsive">
             <table>
               <thead>
                 <tr>
-                  <th>اسم المشرف</th>
+                  <th>اسم المشرف / الموظف</th>
                   <th>الرتبة</th>
                   <th>الصلاحيات</th>
                   <th>الحالة</th>
@@ -375,67 +256,38 @@
           </div>
         </div>
       </div>
-
-      <!-- 5. الإعدادات -->
-      <div class="page" id="page-config">
-        <div class="card">
-          <div class="card-header"><h3>إعدادات سيرفرك الخاص</h3></div>
-          <div class="form-group">
-            <label>اسم السيرفر الظاهر في اللوحة</label>
-            <input type="text" id="cfgServerName" class="form-control">
-          </div>
-          <div class="form-group">
-            <label>رابط الـ API الخاص بريسورس سيرفرك</label>
-            <input type="text" id="cfgApiEndpoint" class="form-control mono">
-          </div>
-          <button class="btn btn-accent" onclick="saveServerConfig()">حفظ إعدادات السيرفر</button>
-        </div>
-      </div>
     </div>
   </div>
 
   <div class="toast-wrap" id="toastWrap"></div>
 
   <script>
-    const serversDatabase = {
+    // قاعدة بيانات السيرفرات (يتم تخزينها وحفظها في المتصفح تلقائياً)
+    let serversDatabase = JSON.parse(localStorage.getItem('h4_all_servers_db')) || {
       "owner_h4_2026": {
-        serverId: "srv_h4_01",
         serverName: "h4 store",
         ownerName: "p5dv",
-        avatarLetter: "P",
+        avatar: "https://cdn.discordapp.com/embed/avatars/0.png",
+        userRole: "مالك السيرفر",
+        canManageStaff: true,
         players: [
           { id: 1, name: "p5dv (المالك)", license: "license:998877665544", discord: "11223344", steam: "steam:11000010abcdef1" },
-          { id: 2, name: "eyad (مطور h4)", license: "license:112233445566", discord: "55667788", steam: "steam:11000010abcdef2" },
-          { id: 3, name: "Saud", license: "license:334455667788", discord: "99001122", steam: "steam:11000010abcdef3" }
+          { id: 2, name: "eyad (مطور h4)", license: "license:112233445566", discord: "55667788", steam: "steam:11000010abcdef2" }
         ],
         staff: [
-          { name: "p5dv", role: "مالك السيرفر", perm: "تحكم كامل", canDelete: false },
-          { name: "eyad", role: "مطور تقني", perm: "إدارة السكريبتات", canDelete: true }
-        ],
-        apiUrl: "https://h4store-default-rtdb.firebaseio.com/live.json"
-      },
-      "owner_falcon_99": {
-        serverId: "srv_falcon_02",
-        serverName: "Falcon RP",
-        ownerName: "Raf (راف)",
-        avatarLetter: "R",
-        players: [
-          { id: 10, name: "Raf (المالك)", license: "license:111122223333", discord: "99887766", steam: "steam:11000010fa1c1" },
-          { id: 11, name: "Hamza", license: "license:444455556666", discord: "44332211", steam: "steam:11000010fa1c2" }
-        ],
-        staff: [
-          { name: "Raf", role: "مالك فلكون", perm: "صلاحيات مطلقة", canDelete: false },
-          { name: "Hamza", role: "مشرف عام", perm: "مراقبة اللاعبين", canDelete: true }
-        ],
-        apiUrl: "https://falcon-rp-default-rtdb.firebaseio.com/live.json"
+          { name: "p5dv", role: "مالك السيرفر", perm: "تحكم كامل وحذف الموظفين", canDelete: false },
+          { name: "eyad", role: "مشرف عام", perm: "إدارة اللاعبين فقط", canDelete: true }
+        ]
       }
     };
 
+    let currentServerCode = null;
     let currentServer = null;
 
     window.addEventListener('DOMContentLoaded', () => {
       const savedCode = localStorage.getItem('h4_active_owner_code');
       if(savedCode && serversDatabase[savedCode]) {
+        currentServerCode = savedCode;
         currentServer = serversDatabase[savedCode];
         initDashboard();
       }
@@ -444,13 +296,58 @@
     function attemptLogin() {
       const code = document.getElementById('secretCodeInput').value.trim();
       if(serversDatabase[code]) {
+        currentServerCode = code;
         currentServer = serversDatabase[code];
         localStorage.setItem('h4_active_owner_code', code);
         initDashboard();
-        showToast(`مرحباً بك مجدداً في إدارة سيرفر: ${currentServer.serverName}`, 'success');
+        showToast(`مرحباً بك في إدارة سيرفر: ${currentServer.serverName}`, 'success');
       } else {
-        showToast('كود مالك السيرفر غير صحيح!', 'error');
+        showToast('كود السيرفر غير صحيح أو غير مسجل!', 'error');
       }
+    }
+
+    function openCreateServerModal() {
+      document.getElementById('createServerModal').style.display = 'flex';
+    }
+
+    function closeCreateServerModal() {
+      document.getElementById('createServerModal').style.display = 'none';
+    }
+
+    function saveNewServer() {
+      const name = document.getElementById('newServerName').value.trim();
+      const code = document.getElementById('newServerCode').value.trim();
+      const owner = document.getElementById('newOwnerName').value.trim();
+      const avatar = document.getElementById('newServerAvatar').value.trim();
+
+      if(!name || !code || !owner) {
+        alert('الرجاء تعبئة اسم السيرفر، كود الدخول، واسم المالك على الأقل!');
+        return;
+      }
+
+      if(serversDatabase[code]) {
+        alert('هذا الكود مستخدم مسبقاً، اختر كوداً سرياً آخر!');
+        return;
+      }
+
+      serversDatabase[code] = {
+        serverName: name,
+        ownerName: owner,
+        avatar: avatar || "https://cdn.discordapp.com/embed/avatars/1.png",
+        userRole: "مالك السيرفر",
+        canManageStaff: true,
+        players: [
+          { id: 1, name: owner + " (المالك)", license: "license:owner_custom_11", discord: "99887766", steam: "steam:11000010custom" }
+        ],
+        staff: [
+          { name: owner, role: "مالك السيرفر", perm: "صلاحيات مطلقة وتحكم كامل", canDelete: false }
+        ]
+      };
+
+      localStorage.setItem('h4_all_servers_db', JSON.stringify(serversDatabase));
+      closeCreateServerModal();
+      showToast('تم إنشاء السيرفر بنجاح! أدخل كودك السري للدخول.', 'success');
+      document.getElementById('secretCodeInput').value = code;
     }
 
     function initDashboard() {
@@ -458,11 +355,18 @@
       document.getElementById('sidebarServerName').innerText = currentServer.serverName;
       document.getElementById('welcomeServerTitle').innerText = `مرحباً بك في لوحة تحكم سيرفر (${currentServer.serverName})`;
       document.getElementById('footerOwnerName').innerText = currentServer.ownerName;
-      document.getElementById('footerServerKey').innerText = currentServer.serverName;
-      document.getElementById('footerAvatar').innerText = currentServer.avatarLetter;
+      document.getElementById('footerUserRole').innerText = `رتبتك: ${currentServer.userRole || 'مالك السيرفر'}`;
+      
+      const avatarImg = currentServer.avatar || "https://cdn.discordapp.com/embed/avatars/0.png";
+      document.getElementById('sidebarLogoImg').src = avatarImg;
+      document.getElementById('footerAvatarImg').src = avatarImg;
 
-      document.getElementById('cfgServerName').value = currentServer.serverName;
-      document.getElementById('cfgApiEndpoint').value = currentServer.apiUrl;
+      // ضبط الصلاحيات حسب الرتبة (اذا لم يكن مالكاً يتم تقييد بعض الخيارات)
+      if(currentServer.userRole && currentServer.userRole !== "مالك السيرفر") {
+        document.getElementById('addStaffBtn').style.display = 'none';
+      } else {
+        document.getElementById('addStaffBtn').style.display = 'inline-flex';
+      }
 
       renderPlayers();
       renderStaff();
@@ -490,7 +394,6 @@
           <td><span class="mono">${p.steam}</span></td>
           <td>
             <div style="display:flex; gap:6px; flex-wrap:wrap;">
-              <button class="btn btn-sm btn-monitor" onclick="openScreenModal('${p.name}')">مراقبة الشاشة</button>
               <button class="btn btn-sm btn-warn" onclick="playerAction('كيك (طرد)', ${idx}, '${p.name}')">كيك</button>
               <button class="btn btn-sm btn-ban" onclick="playerAction('باند نهائي', ${idx}, '${p.name}')">باند</button>
             </div>
@@ -505,15 +408,16 @@
     function renderStaff() {
       let html = '';
       currentServer.staff.forEach((st, index) => {
-        const actionBtn = st.canDelete 
-          ? `<button class="btn btn-sm btn-ban" onclick="removeStaff(${index})">حذف</button>` 
+        const isOwner = st.role.includes("مالك");
+        const actionBtn = (!isOwner && (currentServer.userRole === "مالك السيرفر" || !currentServer.userRole))
+          ? `<button class="btn btn-sm btn-ban" onclick="removeStaff(${index})">إزالة</button>` 
           : `-`;
 
         html += `<tr>
           <td><b>${st.name}</b></td>
           <td><span class="pill" style="background:rgba(59,130,246,0.15); color:var(--accent);">${st.role}</span></td>
           <td>${st.perm}</td>
-          <td style="color: var(--online)">نشط</td>
+          <td style="color: var(--online)">متصل</td>
           <td>${actionBtn}</td>
         </tr>`;
       });
@@ -523,36 +427,32 @@
     }
 
     function openAddStaffModal() {
-      const name = prompt("أدخل اسم المشرف الجديد في سيرفرك:");
+      const name = prompt("أدخل اسم المشرف/الموظف الجديد في سيرفرك:");
       if(!name || !name.trim()) return;
-      const role = prompt("أدخل رتبة المشرف:");
+      const role = prompt("أدخل رتبة الموظف (مثال: إداري، مشرف عام):");
       
       currentServer.staff.push({
         name: name.trim(),
         role: role ? role.trim() : 'مشرف',
-        perm: 'إدارة السيرفر المعتادة',
+        perm: 'صلاحيات إدارية محدودة',
         canDelete: true
       });
 
+      saveCurrentServerState();
       renderStaff();
-      showToast('تمت إضافة المشرف بنجاح إلى سيرفرك', 'success');
+      showToast('تمت إضافة المشرف بنجاح لسيرفرك', 'success');
     }
 
     function removeStaff(index) {
       currentServer.staff.splice(index, 1);
+      saveCurrentServerState();
       renderStaff();
-      showToast('تمت إزالة المشرف بنجاح', 'info');
+      showToast('تمت إزالة الموظف بنجاح', 'info');
     }
 
-    function saveServerConfig() {
-      const name = document.getElementById('cfgServerName').value.trim();
-      const api = document.getElementById('cfgApiEndpoint').value.trim();
-      if(name) currentServer.serverName = name;
-      if(api) currentServer.apiUrl = api;
-      
-      document.getElementById('sidebarServerName').innerText = currentServer.serverName;
-      document.getElementById('footerServerKey').innerText = currentServer.serverName;
-      showToast('تم حفظ إعدادات سيرفرك بنجاح', 'success');
+    function saveCurrentServerState() {
+      serversDatabase[currentServerCode] = currentServer;
+      localStorage.setItem('h4_all_servers_db', JSON.stringify(serversDatabase));
     }
 
     function triggerImmediateUpdate() {
@@ -562,20 +462,10 @@
     }
 
     function playerAction(actionType, index, playerName) {
-      if(actionType.includes('باند') || actionType.includes('كيك')) {
-        currentServer.players.splice(index, 1);
-        renderPlayers();
-      }
-      showToast(`تم تطبيق إجراء (${actionType}) بنجاح على اللاعب: ${playerName}`, actionType.includes('باند') ? 'error' : 'warn');
-    }
-
-    function openScreenModal(playerName) {
-      document.getElementById('modalPlayerTitle').innerText = `مراقبة شاشة اللاعب: ${playerName}`;
-      document.getElementById('screenModal').style.display = 'flex';
-    }
-
-    function closeScreenModal() {
-      document.getElementById('screenModal').style.display = 'none';
+      currentServer.players.splice(index, 1);
+      renderPlayers();
+      saveCurrentServerState();
+      showToast(`تم تطبيق (${actionType}) على اللاعب: ${playerName}`, 'error');
     }
 
     function sendAdminChat() {
@@ -584,10 +474,10 @@
       if(!val) return;
       
       const chatBox = document.getElementById('chatBoxContainer');
-      chatBox.innerHTML += `<div class="chat-msg" style="background:var(--panel); border:1px solid var(--border); padding:10px 14px; border-radius:10px; font-size:13px;"><b>[مالك السيرفر] ${currentServer.ownerName}:</b> ${val}</div>`;
+      chatBox.innerHTML += `<div class="chat-msg" style="background:var(--panel); border:1px solid var(--border); padding:10px 14px; border-radius:10px; font-size:13px;"><b>[إدارة ${currentServer.serverName}] ${currentServer.ownerName}:</b> ${val}</div>`;
       input.value = '';
       chatBox.scrollTop = chatBox.scrollHeight;
-      showToast('تم إرسال الرسالة لشات سيرفرك فقط', 'success');
+      showToast('تم إرسال الرسالة بنجاح', 'success');
     }
 
     function showToast(msg, type = 'info') {
@@ -597,23 +487,6 @@
       toast.innerHTML = `<span>${msg}</span>`;
       wrap.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
-    }
-  </script>
-</body>
-</html>
-      let reason = prompt(`أدخل سبب الحظر النهائي (Ban) للاعب (${name}):`, "هاك / تخريب");
-      if(reason !== null) {
-        fetch(`https://h4-admin/banPlayer`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: id, reason: reason })
-        });
-      }
-    }
-
-    function closeUI() {
-      fetch(`https://h4-admin/closeUI`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
-      document.body.style.display = "none";
     }
   </script>
 </body>
