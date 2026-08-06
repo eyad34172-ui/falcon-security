@@ -80,6 +80,18 @@
     .form-control { width: 100%; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 13px; outline: none; }
     .form-control:focus { border-color: var(--accent); }
 
+    /* شاشات المراقبة (Screenshots Grid) */
+    .screens-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .screen-card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .screen-img { width: 100%; height: 160px; background: #000; object-fit: cover; display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 12px; }
+    .screen-info { padding: 14px; display: flex; align-items: center; justify-content: space-between; }
+
+    /* خريطة اللاعبين المصغرة */
+    .map-container { width: 100%; height: 450px; background: #070a12; border: 1px solid var(--border); border-radius: 12px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .map-radar-bg { position: absolute; inset: 0; background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%); }
+    .map-player-dot { position: absolute; width: 12px; height: 12px; background: var(--online); border-radius: 50%; box-shadow: 0 0 10px var(--online); transform: translate(-50%, -50%); cursor: pointer; }
+    .map-player-tooltip { position: absolute; background: var(--panel); border: 1px solid var(--border); padding: 4px 8px; border-radius: 6px; font-size: 11px; pointer-events: none; white-space: nowrap; transform: translateY(-30px); }
+
     .toast-wrap { position: fixed; bottom: 24px; left: 24px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; }
     .toast { background: var(--panel); border: 1px solid var(--border); padding: 12px 18px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; }
     .pill { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-block; }
@@ -99,7 +111,7 @@
     </div>
   </div>
 
-  <!-- القائمة الجانبية (كاملة بكل الخيارات) -->
+  <!-- القائمة الجانبية الكاملة -->
   <div class="sidebar">
     <div>
       <div class="sidebar-header"><h1>h4 store</h1></div>
@@ -107,13 +119,18 @@
         <div class="menu-section-title">لوحة القيادة</div>
         <div class="nav-item active" data-page="dashboard"><span>الرئيسية وحالة النظام</span></div>
         
-        <div class="menu-section-title">إدارة السيرفر واللاعبين</div>
-        <div class="nav-item" data-page="players"><span>اللاعبون الحقيقيون بالسيرفر</span><span class="nav-badge" id="nav-players-count">0</span></div>
-        <div class="nav-item" data-page="security"><span>سجلات الحماية والأمان</span></div>
+        <div class="menu-section-title">المراقبة الحية</div>
+        <div class="nav-item" data-page="players"><span>اللاعبون المتصلون</span><span class="nav-badge" id="nav-players-count">0</span></div>
+        <div class="nav-item" data-page="screens"><span>مراقبة الشاشات (Live Cam)</span></div>
+        <div class="nav-item" data-page="map"><span>خريطة اللاعبين (Live Map)</span></div>
+
+        <div class="menu-section-title">الإدارة والتحكم</div>
+        <div class="nav-item" data-page="control"><span>التحكم بالسيرفر والإجراءات</span></div>
+        <div class="nav-item" data-page="staff"><span>إدارة الموظفين والصلاحيات</span></div>
+        <div class="nav-item" data-page="security"><span>سجلات الأمان والبلاغات</span></div>
         
-        <div class="menu-section-title">النظام والربط</div>
+        <div class="menu-section-title">الإعدادات والربط</div>
         <div class="nav-item" data-page="config"><span>إعدادات الـ API والـ Token</span></div>
-        <div class="nav-item" data-page="tools"><span>أدوات مساعدة وسيرفرات</span></div>
       </div>
     </div>
     <div class="sidebar-footer">
@@ -130,7 +147,7 @@
     <div class="topbar">
       <div>
         <h2 id="page-title">الرئيسية وحالة النظام</h2>
-        <p id="page-sub">لوحة تحكم حماية سيرفر h4 store المتكاملة</p>
+        <p id="page-sub">لوحة حماية وتحكم سيرفر h4 store المتكاملة</p>
       </div>
       <div><span class="pill live" id="connectionStatus">جاري الاتصال بالسيرفر...</span></div>
     </div>
@@ -149,17 +166,15 @@
           </div>
         </div>
         <div class="card">
-          <div class="card-header"><h3>التحكم المباشر والسريع</h3></div>
+          <div class="card-header"><h3>التحكم السريع</h3></div>
           <button class="btn btn-accent" onclick="fetchLiveServerData()">تحديث البيانات الآن (Refresh)</button>
         </div>
       </div>
 
-      <!-- 2. اللاعبون الحقيقيون -->
+      <!-- 2. اللاعبون المتصلون -->
       <div class="page" id="page-players">
         <div class="card">
-          <div class="card-header">
-            <h3>قائمة اللاعبين المتواجدين الآن داخل سيرفرك</h3>
-          </div>
+          <div class="card-header"><h3>قائمة اللاعبين المتواجدين الآن داخل سيرفرك</h3></div>
           <div class="table-responsive">
             <table>
               <thead>
@@ -179,12 +194,82 @@
         </div>
       </div>
 
-      <!-- 3. سجلات الحماية -->
+      <!-- 3. مراقبة الشاشات -->
+      <div class="page" id="page-screens">
+        <div class="card">
+          <div class="card-header"><h3>مراقبة لقطات الشاشات الحية (Screenshots)</h3></div>
+          <p style="color: var(--text-dim); font-size: 13px; margin-bottom: 20px;">هنا تظهر لقطات شاشات اللاعبين المرفوعة تلقائياً في حال الاشتباه أو التبليغ.</p>
+          <div class="screens-grid" id="screensGridContainer">
+            <div style="color: var(--text-dim); font-size: 13px; grid-column: 1/-1; text-align: center; padding: 40px;">لا توجد لقطات شاشات مرفوعة حالياً</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. خريطة اللاعبين -->
+      <div class="page" id="page-map">
+        <div class="card">
+          <div class="card-header"><h3>خريطة لوس سانتوس الحية (Live Map Radar)</h3></div>
+          <p style="color: var(--text-dim); font-size: 13px; margin-bottom: 16px;">تتبع أماكن تواجد اللاعبين وتمركزهم داخل خريطة السيرفر لحظياً.</p>
+          <div class="map-container" id="mapContainer">
+            <div class="map-radar-bg"></div>
+            <div style="color: var(--text-dim); z-index: 2; font-size: 13px;">الخريطة متصلة ببيانات السيرفر (لا يوجد لاعبون في نطاق الرادار حالياً)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. التحكم بالسيرفر والإجراءات -->
+      <div class="page" id="page-control">
+        <div class="card">
+          <div class="card-header"><h3>لوحة التحكم الإداري السريع</h3></div>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button class="btn btn-accent" onclick="showToast('تم إرسال تنزيل إعلاني لجميع اللاعبين', 'success')">إرسال تنبيه عام (Announcement)</button>
+            <button class="btn btn-ban" onclick="showToast('تم مسح الحطام والسيارات المتروكة بنجاح', 'success')">تنظيف الكاش والسيارات (Clear Area)</button>
+            <button class="btn btn-accent" onclick="showToast('تم تحديث حالة السيرفر', 'info')">إعادة تحميل إعدادات الحماية</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. إدارة الموظفين والصلاحيات -->
+      <div class="page" id="page-staff">
+        <div class="card">
+          <div class="card-header">
+            <h3>قائمة المشرفين والإداريين المصرح لهم</h3>
+            <button class="btn btn-accent btn-sm" onclick="showToast('خاصية إضافة مشرف قريباً', 'info')">+ إضافة مشرف جديد</button>
+          </div>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>اسم المشرف</th>
+                  <th>الرتبة الإدارية</th>
+                  <th>صلاحيات الوصول</th>
+                  <th>حالة الحساب</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>p5dv</b></td>
+                  <td><span class="pill live">مالك السيرفر (Owner)</span></td>
+                  <td>تحكم كامل وصلاحيات مطلقة</td>
+                  <td style="color: var(--online)">نشط</td>
+                </tr>
+                <tr>
+                  <td><b>eyad</b></td>
+                  <td><span class="pill" style="background: rgba(59,130,246,0.15); color: var(--accent);">مطور / برمجة</span></td>
+                  <td>صلاحيات تقنية وربط الـ API</td>
+                  <td style="color: var(--online)">نشط</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. سجلات الأمان -->
       <div class="page" id="page-security">
         <div class="card">
           <div class="card-header"><h3>سجلات الحماية والبلاغات المباشرة</h3></div>
-          <p style="color: var(--text-dim); font-size: 13px;">هنا تظهر تقارير الحماية التلقائية ورصد المحاولات المخالفة داخل السيرفر.</p>
-          <div class="table-responsive" style="margin-top: 16px;">
+          <div class="table-responsive">
             <table>
               <thead>
                 <tr>
@@ -202,7 +287,7 @@
         </div>
       </div>
 
-      <!-- 4. الإعدادات -->
+      <!-- 8. الإعدادات -->
       <div class="page" id="page-config">
         <div class="card">
           <div class="card-header"><h3>إعدادات رابط الـ API وحماية التوكن</h3></div>
@@ -215,15 +300,6 @@
             <input type="text" id="apiTokenInput" class="form-control mono" value="h4_token_p5dv_2026_secured">
           </div>
           <button class="btn btn-accent" onclick="saveSettings()">حفظ التعديلات والاتصال</button>
-        </div>
-      </div>
-
-      <!-- 5. أدوات مساعدة -->
-      <div class="page" id="page-tools">
-        <div class="card">
-          <div class="card-header"><h3>أدوات إدارية إضافية</h3></div>
-          <p style="color: var(--text-dim); font-size: 13px; margin-bottom: 16px;">أدوات سريعة لإدارة الـ Webhooks والتحكم بخصائص الحماية.</p>
-          <button class="btn btn-accent" onclick="showToast('النظام يعمل بكفاءة عالية', 'success')">فحص استجابة السيرفر</button>
         </div>
       </div>
     </div>
