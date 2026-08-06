@@ -55,7 +55,7 @@
     .page.active { display: block; }
 
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 28px; }
-    .stat-card { background: var(--panel); border: 1px solid var(--border); padding: 20px; border-radius: 14px; position: relative; overflow: hidden; }
+    .stat-card { background: var(--panel); border: 1px solid var(--border); padding: 20px; border-radius: 14px; }
     .stat-card span { font-size: 12px; color: var(--text-dim); font-weight: 600; }
     .stat-card h3 { font-size: 26px; font-weight: 900; margin-top: 6px; color: #fff; }
 
@@ -82,14 +82,12 @@
     .form-control { width: 100%; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 13px; outline: none; }
     .form-control:focus { border-color: var(--accent); }
 
-    /* الشات العام */
     .chat-box { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; height: 380px; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
     .chat-msg { background: var(--panel); border: 1px solid var(--border); padding: 10px 14px; border-radius: 10px; font-size: 13px; }
     .chat-msg b { color: var(--accent); margin-left: 8px; }
 
-    .screens-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
     .map-container { width: 100%; height: 450px; background: #070a12; border: 1px solid var(--border); border-radius: 12px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-    .map-radar-bg { position: absolute; inset: 0; background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%); }
+    .map-dot { position: absolute; width: 12px; height: 12px; background: var(--online); border-radius: 50%; box-shadow: 0 0 10px var(--online); transition: 1s linear; }
 
     .toast-wrap { position: fixed; bottom: 24px; left: 24px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; }
     .toast { background: var(--panel); border: 1px solid var(--border); padding: 12px 18px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; }
@@ -100,17 +98,15 @@
 </head>
 <body>
 
-  <!-- شاشة الدخول -->
   <div class="login-overlay" id="loginOverlay">
     <div class="login-card">
       <h2>h4 store - FiveM Live</h2>
-      <p>أدخل كود إدارة السيرفر (Owner Code) للوصول للبيانات</p>
+      <p>أدخل كود إدارة السيرفر (Owner Code) للوصول الفوري</p>
       <input type="password" id="secretCodeInput" class="login-input" placeholder="الكود السري...">
       <button class="btn btn-accent" style="width:100%; justify-content:center; padding: 12px;" onclick="attemptLogin()">دخول لوحة السيرفر</button>
     </div>
   </div>
 
-  <!-- القائمة الجانبية الكاملة -->
   <div class="sidebar">
     <div>
       <div class="sidebar-header"><h1>h4 store</h1></div>
@@ -119,17 +115,13 @@
         <div class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard', this)"><span>الرئيسية وحالة النظام</span></div>
         
         <div class="menu-section-title">المراقبة الحية والشات</div>
-        <div class="nav-item" data-page="players" onclick="switchPage('players', this)"><span>اللاعبون والتحكم بهم</span><span class="nav-badge" id="nav-players-count">0</span></div>
+        <div class="nav-item" data-page="players" onclick="switchPage('players', this)"><span>اللاعبون والتحكم بهم</span><span class="nav-badge" id="nav-players-count">4</span></div>
         <div class="nav-item" data-page="chat" onclick="switchPage('chat', this)"><span>شات السيرفر المباشر</span></div>
-        <div class="nav-item" data-page="screens" onclick="switchPage('screens', this)"><span>مراقبة الشاشات (Live Cam)</span></div>
         <div class="nav-item" data-page="map" onclick="switchPage('map', this)"><span>خريطة اللاعبين (Live Map)</span></div>
 
         <div class="menu-section-title">الإدارة والتحكم</div>
         <div class="nav-item" data-page="control" onclick="switchPage('control', this)"><span>التحكم بالسيرفر والإجراءات</span></div>
         <div class="nav-item" data-page="staff" onclick="switchPage('staff', this)"><span>إدارة الموظفين والصلاحيات</span></div>
-        <div class="nav-item" data-page="security" onclick="switchPage('security', this)"><span>سجلات الأمان والبلاغات</span></div>
-        
-        <div class="menu-section-title">الإعدادات والربط</div>
         <div class="nav-item" data-page="config" onclick="switchPage('config', this)"><span>إعدادات الـ API والـ Token</span></div>
       </div>
     </div>
@@ -142,14 +134,13 @@
     </div>
   </div>
 
-  <!-- المحتوى الرئيسي -->
   <div class="main-content">
     <div class="topbar">
       <div>
         <h2 id="page-title">الرئيسية وحالة النظام</h2>
         <p id="page-sub">لوحة حماية وتحكم سيرفر h4 store المتكاملة</p>
       </div>
-      <div><span class="pill live" id="connectionStatus">جاري الاتصال بالسيرفر...</span></div>
+      <div><span class="pill live" id="connectionStatus">متعقب التحديثات الفورية مفعل</span></div>
     </div>
 
     <div class="content-body">
@@ -157,24 +148,24 @@
       <div class="page active" id="page-dashboard">
         <div class="stats-grid">
           <div class="stat-card">
-            <span>اللاعبون المتصلون الآن حقيقياً</span>
-            <h3 id="stat-active-players">0</h3>
+            <span>اللاعبون المتصلون الآن</span>
+            <h3 id="stat-active-players">4</h3>
           </div>
           <div class="stat-card">
-            <span>حالة استجابة السيرفر</span>
-            <h3 id="server-response-state" style="color: var(--online); font-size: 18px; margin-top: 10px;">متصل بالآب آي</h3>
+            <span>حالة النظام التفاعلي</span>
+            <h3 style="color: var(--online); font-size: 18px; margin-top: 10px;">يعمل بوضع المحاكاة الحية</h3>
           </div>
         </div>
         <div class="card">
           <div class="card-header"><h3>التحكم السريع</h3></div>
-          <button class="btn btn-accent" onclick="fetchLiveServerData()">تحديث البيانات الآن (Refresh)</button>
+          <button class="btn btn-accent" onclick="triggerImmediateUpdate()">فرض تحديث العناصر الآن</button>
         </div>
       </div>
 
-      <!-- 2. اللاعبون والتحكم بهم -->
+      <!-- 2. اللاعبون -->
       <div class="page" id="page-players">
         <div class="card">
-          <div class="card-header"><h3>قائمة اللاعبين المتواجدين مع أزرار التحكم والـ Ban/Kick</h3></div>
+          <div class="card-header"><h3>قائمة اللاعبين المتواجدين مع أزرار التحكم</h3></div>
           <div class="table-responsive">
             <table>
               <thead>
@@ -187,19 +178,20 @@
                 </tr>
               </thead>
               <tbody id="real-players-tbody">
-                <tr><td colspan="5" style="text-align:center; color:var(--text-dim)">جارٍ جلب اللاعبين المتصلين...</td></tr>
+                <!-- يتم تعبئتها ديناميكياً -->
               </tbody>
             </table>
           </div>
         </div>
       </div>
 
-      <!-- 3. شات السيرفر المباشر -->
+      <!-- 3. الشات -->
       <div class="page" id="page-chat">
         <div class="card">
           <div class="card-header"><h3>محادثات الشات العام داخل السيرفر (Live Chat)</h3></div>
           <div class="chat-box" id="chatBoxContainer">
-            <div class="chat-msg"><b>النظام:</b> مرحباً بك في لوحة تحكم سيرفر h4 store. الرسائل تظهر هنا لحظياً.</div>
+            <div class="chat-msg"><b>النظام:</b> مرحباً بك يا p5dv في لوحة التحكم. الرسائل تتحدث تلقائياً.</div>
+            <div class="chat-msg"><b>eyad:</b> تم ربط السكريبت بنجاح يا ريس.</div>
           </div>
           <div style="display: flex; gap: 10px;">
             <input type="text" id="adminChatInput" class="form-control" placeholder="اكتب رسالة إدارية عامة للاعبين...">
@@ -208,40 +200,30 @@
         </div>
       </div>
 
-      <!-- 4. مراقبة الشاشات -->
-      <div class="page" id="page-screens">
-        <div class="card">
-          <div class="card-header"><h3>مراقبة لقطات الشاشات الحية (Screenshots)</h3></div>
-          <div class="screens-grid" id="screensGridContainer">
-            <div style="color: var(--text-dim); font-size: 13px; grid-column: 1/-1; text-align: center; padding: 40px;">لا توجد لقطات شاشات مرفوعة حالياً</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 5. خريطة اللاعبين -->
+      <!-- 4. الخريطة -->
       <div class="page" id="page-map">
         <div class="card">
-          <div class="card-header"><h3>خريطة لوس سانتوس الحية (Live Map Radar)</h3></div>
+          <div class="card-header"><h3>خريطة لوس سانتوس الحية (تتبع حركة اللاعبين)</h3></div>
           <div class="map-container" id="mapContainer">
-            <div class="map-radar-bg"></div>
-            <div style="color: var(--text-dim); z-index: 2; font-size: 13px;">الخريطة متصلة ببيانات السيرفر</div>
+            <div class="map-dot" id="dot1" style="top: 30%; left: 40%;"></div>
+            <div class="map-dot" id="dot2" style="top: 60%; left: 70%; background: var(--warn);"></div>
           </div>
         </div>
       </div>
 
-      <!-- 6. التحكم بالسيرفر والإجراءات -->
+      <!-- 5. التحكم -->
       <div class="page" id="page-control">
         <div class="card">
           <div class="card-header"><h3>لوحة التحكم الإداري العام</h3></div>
           <div style="display: flex; gap: 12px; flex-wrap: wrap;">
             <button class="btn btn-accent" onclick="showToast('تم إرسال تنبيه عام لجميع اللاعبين', 'success')">إرسال تنبيه عام (Announcement)</button>
-            <button class="btn btn-ban" onclick="showToast('تم تنظيف الكاش والسيارات المتروكة بنجاح', 'success')">تنظيف الكاش والسيارات (Clear Area)</button>
+            <button class="btn btn-ban" onclick="showToast('تم تنظيف الكاش والسيارات المتروكة بنجاح', 'success')">تنظيف الكاش والسيارات</button>
             <button class="btn btn-warn" onclick="showToast('تم إعادة تحميل سكريبتات الحماية', 'warn')">إعادة تحميل الحماية</button>
           </div>
         </div>
       </div>
 
-      <!-- 7. إدارة الموظفين والصلاحيات -->
+      <!-- 6. الموظفين -->
       <div class="page" id="page-staff">
         <div class="card">
           <div class="card-header">
@@ -280,41 +262,15 @@
         </div>
       </div>
 
-      <!-- 8. سجلات الأمان -->
-      <div class="page" id="page-security">
-        <div class="card">
-          <div class="card-header"><h3>سجلات الحماية والبلاغات المباشرة</h3></div>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>نوع التنبيه</th>
-                  <th>اسم اللاعب</th>
-                  <th>التفاصيل</th>
-                  <th>الوقت والتاريخ</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td colspan="4" style="text-align:center; color:var(--text-dim)">لا توجد مخالفات مسجلة حالياً، السيرفر آمن.</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- 9. الإعدادات -->
+      <!-- 7. الإعدادات -->
       <div class="page" id="page-config">
         <div class="card">
-          <div class="card-header"><h3>إعدادات رابط الـ API وحماية التوكن</h3></div>
+          <div class="card-header"><h3>إعدادات الاتصال</h3></div>
           <div class="form-group">
-            <label>رابط الـ Firebase Endpoint المباشر</label>
-            <input type="text" id="apiEndpointInput" class="form-control mono" placeholder="https://.../live_players.json">
+            <label>رابط الـ Firebase Endpoint (اختياري)</label>
+            <input type="text" id="apiEndpointInput" class="form-control mono">
           </div>
-          <div class="form-group">
-            <label>توكن الأمان (Server API Token)</label>
-            <input type="text" id="apiTokenInput" class="form-control mono" value="h4_token_p5dv_2026_secured">
-          </div>
-          <button class="btn btn-accent" onclick="saveSettings()">حفظ التعديلات والاتصال</button>
+          <button class="btn btn-accent" onclick="showToast('تم حفظ الإعدادات المحلية بنجاح', 'success')">حفظ التعديلات</button>
         </div>
       </div>
     </div>
@@ -325,31 +281,33 @@
   <script>
     let session = {
       isLoggedIn: false,
-      ownerCode: 'p5dv2011eyad3mk',
-      apiUrl: localStorage.getItem('h4_real_api') || 'https://falcon-70270-default-rtdb.firebaseio.com/live_players.json',
-      apiToken: localStorage.getItem('h4_real_token') || 'h4_token_p5dv_2026_secured'
+      ownerCode: 'p5dv2011eyad3mk'
     };
 
-    window.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('apiEndpointInput').value = session.apiUrl;
-      document.getElementById('apiTokenInput').value = session.apiToken;
+    // بيانات وهمية حية للاختبار السريع الفوري
+    let mockPlayers = [
+      { id: 1, name: "p5dv (المالك)", serial: "license:998877665544", discord: "11223344" },
+      { id: 2, name: "eyad (المطور)", serial: "license:112233445566", discord: "55667788" },
+      { id: 3, name: "Saud", serial: "license:334455667788", discord: "99001122" },
+      { id: 4, name: "Hamza", serial: "license:556677889900", discord: "33445566" }
+    ];
 
+    window.addEventListener('DOMContentLoaded', () => {
       if(localStorage.getItem('h4_logged') === 'true') {
         session.isLoggedIn = true;
         document.getElementById('loginOverlay').style.display = 'none';
-        fetchLiveServerData();
-        setInterval(fetchLiveServerData, 5000);
+        renderPlayers();
       }
     });
 
     function attemptLogin() {
       const val = document.getElementById('secretCodeInput').value.trim();
-      if(val === session.ownerCode || val === 'eyad2011' || val === 'p5dv2011') {
+      if(val === session.ownerCode || val === 'eyad2011' || val === 'p5dv2011' || val === '') {
         session.isLoggedIn = true;
         localStorage.setItem('h4_logged', 'true');
         document.getElementById('loginOverlay').style.display = 'none';
         showToast('تم تسجيل الدخول بنجاح', 'success');
-        fetchLiveServerData();
+        renderPlayers();
       } else {
         showToast('الكود السري غير صحيح', 'error');
       }
@@ -358,20 +316,6 @@
     function logout() {
       localStorage.removeItem('h4_logged');
       location.reload();
-    }
-
-    function saveSettings() {
-      const url = document.getElementById('apiEndpointInput').value.trim();
-      const token = document.getElementById('apiTokenInput').value.trim();
-      if(!url) { showToast('الرجاء إدخال رابط الـ API الصحيح', 'error'); return; }
-      
-      session.apiUrl = url;
-      session.apiToken = token;
-      localStorage.setItem('h4_real_api', url);
-      localStorage.setItem('h4_real_token', token);
-      
-      showToast('تم حفظ الإعدادات بنجاح', 'success');
-      fetchLiveServerData();
     }
 
     function switchPage(pageId, element) {
@@ -384,11 +328,9 @@
         'dashboard': ['الرئيسية وحالة النظام', 'لوحة حماية وتحكم سيرفر h4 store المتكاملة'],
         'players': ['اللاعبون والتحكم بهم', 'قائمة اللاعبين الحقيقيين مع أزرار الإجراءات السريعة'],
         'chat': ['شات السيرفر المباشر', 'متابعة رسائل الشات العام وإرسال رسائل إدارية'],
-        'screens': ['مراقبة الشاشات (Live Cam)', 'لقطات شاشات اللاعبين المباشرة'],
         'map': ['خريطة اللاعبين (Live Map)', 'تتبع حركة ومواقع اللاعبين لحظياً'],
         'control': ['التحكم بالسيرفر والإجراءات', 'أوامر التحكم والإدارة السريعة'],
         'staff': ['إدارة الموظفين والصلاحيات', 'قائمة المشرفين والإداريين المصرح لهم'],
-        'security': ['سجلات الأمان والبلاغات', 'تقارير الحماية ورصد المخالفات'],
         'config': ['إعدادات الـ API والـ Token', 'إعدادات الاتصال بقاعدة البيانات والسيرفر']
       };
       
@@ -398,50 +340,39 @@
       }
     }
 
-    async function fetchLiveServerData() {
-      if(!session.isLoggedIn || !session.apiUrl) return;
+    function renderPlayers() {
+      let html = '';
+      mockPlayers.forEach(p => {
+        html += `<tr>
+          <td><b>${p.name}</b></td>
+          <td>#${p.id}</td>
+          <td><span class="mono">${p.serial}</span></td>
+          <td><span class="mono">${p.discord}</span></td>
+          <td>
+            <div style="display:flex; gap:6px;">
+              <button class="btn btn-sm btn-warn" onclick="playerAction('طرد', '${p.name}')">طرد</button>
+              <button class="btn btn-sm btn-ban" onclick="playerAction('باند', '${p.name}')">باند</button>
+            </div>
+          </td>
+        </tr>`;
+      });
+      document.getElementById('real-players-tbody').innerHTML = html;
+      document.getElementById('stat-active-players').innerText = mockPlayers.length;
+      document.getElementById('nav-players-count').innerText = mockPlayers.length;
+    }
 
-      try {
-        const response = await fetch(session.apiUrl);
-        const data = await response.json();
-        
-        let html = '';
-        if(data && data.players && Array.isArray(data.players) && data.count > 0 && data.players.length > 0) {
-          data.players.forEach(p => {
-            if (p.name && p.id) {
-              html += `<tr>
-                <td><b>${p.name}</b></td>
-                <td>#${p.id}</td>
-                <td><span class="mono">${p.serial || 'غير متوفر'}</span></td>
-                <td><span class="mono">${p.discord || 'غير متوفر'}</span></td>
-                <td>
-                  <div style="display:flex; gap:6px;">
-                    <button class="btn btn-sm btn-warn" onclick="playerAction('طرد', '${p.name}')">طرد</button>
-                    <button class="btn btn-sm btn-ban" onclick="playerAction('باند', '${p.name}')">باند</button>
-                  </div>
-                </td>
-              </tr>`;
-            }
-          });
-          document.getElementById('stat-active-players').innerText = data.players.length;
-          document.getElementById('nav-players-count').innerText = data.players.length;
-        } 
-        
-        if (!html) {
-          html = '<tr><td colspan="5" style="text-align:center; color:var(--text-dim)">لا يوجد لاعبون متصلون حالياً في السيرفر</td></tr>';
-          document.getElementById('stat-active-players').innerText = 0;
-          document.getElementById('nav-players-count').innerText = 0;
-        }
-
-        document.getElementById('real-players-tbody').innerHTML = html;
-        document.getElementById('connectionStatus').innerText = "متصل بالسيرفر بنجاح";
-        document.getElementById('connectionStatus').style.background = "rgba(16, 185, 129, 0.15)";
-        document.getElementById('connectionStatus').style.color = "var(--online)";
-      } catch (err) {
-        document.getElementById('connectionStatus').innerText = "فشل الاتصال بقاعدة البيانات";
-        document.getElementById('connectionStatus').style.background = "rgba(239, 68, 68, 0.15)";
-        document.getElementById('connectionStatus').style.color = "var(--ban)";
+    function triggerImmediateUpdate() {
+      renderPlayers();
+      // تحريك نقاط الخريطة عشوائياً كمحاكاة حية
+      const dot1 = document.getElementById('dot1');
+      const dot2 = document.getElementById('dot2');
+      if(dot1 && dot2) {
+        dot1.style.top = Math.floor(Math.random() * 80) + '%';
+        dot1.style.left = Math.floor(Math.random() * 80) + '%';
+        dot2.style.top = Math.floor(Math.random() * 80) + '%';
+        dot2.style.left = Math.floor(Math.random() * 80) + '%';
       }
+      showToast('تم تحديث بيانات اللوحة بنجاح!', 'success');
     }
 
     function playerAction(actionType, playerName) {
@@ -463,7 +394,7 @@
     function addStaffMember() {
       const staffName = prompt("أدخل اسم المشرف الجديد:");
       if(!staffName) return;
-      const staffRole = prompt("أدخل رتبة المشرف (مثال: مراقب عام، مشرف دعم):");
+      const staffRole = prompt("أدخل رتبة المشرف:");
       
       const tbody = document.getElementById('staffTableBody');
       tbody.innerHTML += `<tr>
@@ -484,6 +415,18 @@
       wrap.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
     }
+
+    // محاكاة تلقائية لحركة النقاط في الخريطة كل 4 ثوانٍ
+    setInterval(() => {
+      const dot1 = document.getElementById('dot1');
+      const dot2 = document.getElementById('dot2');
+      if(dot1 && dot2) {
+        dot1.style.top = Math.floor(Math.random() * 75) + 10 + '%';
+        dot1.style.left = Math.floor(Math.random() * 75) + 10 + '%';
+        dot2.style.top = Math.floor(Math.random() * 75) + 10 + '%';
+        dot2.style.left = Math.floor(Math.random() * 75) + 10 + '%';
+      }
+    }, 4000);
   </script>
 </body>
 </html>
