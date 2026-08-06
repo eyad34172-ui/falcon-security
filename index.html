@@ -1,1086 +1,749 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>h4 store | لوحة التحكم متعددة السيرفرات والتراخيص</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg:#04070d;
-  --panel:#0a0f1d;
-  --panel-2:#0f1628;
-  --panel-3:#151e34;
-  --border:#1d2942;
-  --text:#f0f4f8;
-  --text-dim:#8b95a9;
-  --text-dim2:#5c6780;
-  --accent:#3d8bfd;
-  --accent-dim:#3d8bfd22;
-  --accent-glow:#3d8bfd44;
-  --warn:#f0b13d;
-  --ban:#f0473d;
-  --online:#3ddc84;
-  --radius:14px;
-}
-*{box-sizing:border-box; margin:0; padding:0; user-select:none; -webkit-user-select:none; -moz-user-select:none; -ms-user-select:none;}
-input, textarea{user-select:text; -webkit-user-select:text;}
-html,body{height:100%;}
-body{
-  background:
-    radial-gradient(circle at 10% 0%, #11366333, transparent 40%),
-    radial-gradient(circle at 90% 100%, #081d3d22, transparent 40%),
-    var(--bg);
-  color:var(--text);
-  font-family:'IBM Plex Sans Arabic','Tajawal',sans-serif;
-  min-height:100vh;
-  display:flex;
-  font-size:14px;
-  overflow:hidden;
-}
-h1,h2,h3,.brand,.stat-num,.nav-label{font-family:'Tajawal',sans-serif;}
-::-webkit-scrollbar{width:6px; height:6px;}
-::-webkit-scrollbar-thumb{background:#1d2942; border-radius:6px;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>h4 store - لوحة تحكم الحماية الشاملة</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --panel: #111827;
+      --panel-hover: #1f2937;
+      --accent: #3b82f6;
+      --accent-glow: rgba(59, 130, 246, 0.4);
+      --border: #1e293b;
+      --text: #f8fafc;
+      --text-dim: #94a3b8;
+      --ban: #ef4444;
+      --online: #10b981;
+      --warn: #f59e0b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
+    body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; overflow-x: hidden; }
 
-.login-overlay{
-  position:fixed; inset:0; background:#020408ee; backdrop-filter:blur(16px);
-  z-index:99999; display:flex; align-items:center; justify-content:center;
-  padding:20px;
-}
-.login-card{
-  background:linear-gradient(135deg, #0e1628, #070b14);
-  border:1px solid #28385c; border-radius:26px;
-  width:100%; max-width:460px; padding:45px 35px;
-  box-shadow:0 30px 80px #000c, 0 0 50px #3d8bfd1a;
-  text-align:center; position:relative; overflow:hidden;
-}
-.login-card::before{
-  content:''; position:absolute; top:0; left:0; right:0; height:3px;
-  background:linear-gradient(90deg, transparent, var(--accent), transparent);
-}
-.login-logo{
-  width:100px; height:100px; border-radius:22px; object-fit:cover;
-  margin:0 auto 18px; display:block; border:2px solid #3d8bfd66;
-  box-shadow:0 0 30px #3d8bfd55; background:#0f1628;
-}
-.login-card h2{font-size:26px; margin-bottom:6px; font-weight:900; color:#fff;}
-.login-card p{font-size:13.5px; color:var(--text-dim); margin-bottom:30px;}
-.login-card .field-label{text-align:right; font-size:12.5px; margin-bottom:8px; color:var(--text-dim); font-weight:700; display:block;}
-.login-card input{
-  width:100%; background:var(--panel); border:1px solid var(--border); border-radius:12px;
-  padding:14px 16px; color:var(--text); font-size:14px; margin-bottom:18px; outline:none; font-family:inherit;
-  transition:.2s; text-align:center; letter-spacing:1px;
-}
-.login-card input:focus{border-color:var(--accent); box-shadow:0 0 12px var(--accent-dim);}
-.login-btn{
-  width:100%; padding:14px; border-radius:12px; background:var(--accent); color:#fff;
-  font-size:15px; font-weight:800; border:none; cursor:pointer; transition:.2s;
-  box-shadow:0 6px 22px var(--accent-glow); margin-top:8px; font-family:'Tajawal',sans-serif;
-}
-.login-btn:hover{filter:brightness(1.15); transform:translateY(-1px);}
+    /* شاشة تسجيل الدخول */
+    .login-overlay { position: fixed; inset: 0; background: rgba(11, 15, 25, 0.95); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+    .login-card { background: var(--panel); border: 1px solid var(--border); padding: 40px; border-radius: 20px; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+    .login-card h2 { color: var(--accent); margin-bottom: 8px; font-size: 26px; font-weight: 900; }
+    .login-card p { color: var(--text-dim); font-size: 13px; margin-bottom: 24px; }
+    .login-input { width: 100%; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; color: #fff; font-size: 15px; text-align: center; margin-bottom: 16px; outline: none; transition: .3s; }
+    .login-input:focus { border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
 
-.sidebar{
-  width:260px; min-width:260px;
-  background:linear-gradient(180deg,#090e1a,#060912);
-  border-left:1px solid var(--border);
-  display:flex; flex-direction:column;
-  padding:20px 14px; height:100vh; position:sticky; top:0;
-}
-.brand{
-  display:flex; align-items:center; gap:12px;
-  padding:6px 6px 18px 6px; border-bottom:1px solid var(--border); margin-bottom:14px;
-}
-.brand-logo{width:40px; height:40px; border-radius:11px; object-fit:cover; border:1px solid #3d8bfd55; background:#0f1628;}
-.brand-text b{font-size:15px; font-weight:800; display:block; color:#fff;}
-.brand-text span{font-size:11px; color:var(--online); font-weight:600;}
+    /* السايدبار */
+    .sidebar { width: 260px; background: var(--panel); border-left: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; position: fixed; height: 100vh; z-index: 10; }
+    .sidebar-header { padding: 24px; border-bottom: 1px solid var(--border); text-align: center; }
+    .sidebar-header h1 { font-size: 20px; font-weight: 900; color: var(--accent); letter-spacing: 1px; }
+    .sidebar-menu { padding: 16px; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; flex: 1; }
+    .menu-section-title { font-size: 11px; color: var(--text-dim); text-transform: uppercase; margin: 12px 10px 4px; font-weight: 700; }
+    .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-radius: 10px; color: var(--text-dim); cursor: pointer; transition: .2s; font-weight: 500; font-size: 13.5px; }
+    .nav-item:hover { background: var(--panel-hover); color: #fff; }
+    .nav-item.active { background: var(--accent); color: #fff; box-shadow: 0 4px 12px var(--accent-glow); }
+    .nav-badge { background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+    
+    .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: space-between; }
+    .user-box { display: flex; align-items: center; gap: 10px; }
+    .user-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 15px; color: #fff; }
+    .user-info b { display: block; font-size: 13px; color: #fff; }
+    .user-info span { font-size: 11px; color: var(--text-dim); }
 
-.nav-group-label{font-size:11px; color:var(--text-dim2); font-weight:700; margin:16px 10px 8px; text-transform:uppercase; letter-spacing:.5px;}
-.nav{display:flex; flex-direction:column; gap:3px;}
-.nav-item{
-  display:flex; align-items:center; gap:11px; padding:11px 13px; border-radius:11px;
-  color:var(--text-dim); cursor:pointer; font-size:13.5px; font-weight:600; transition:.15s; border:1px solid transparent;
-}
-.nav-item svg{width:18px; height:18px; stroke:currentColor; flex-shrink:0;}
-.nav-item:hover{background:var(--panel-2); color:var(--text);}
-.nav-item.active{background:var(--accent-dim); color:#fff; border-color:#3d8bfd44; box-shadow:0 4px 15px #3d8bfd15;}
-.nav-item .badge{margin-right:auto; background:var(--panel-3); color:var(--text-dim); font-size:10.5px; padding:2px 8px; border-radius:20px; font-weight:700;}
-.nav-item.active .badge{background:var(--accent); color:#fff;}
+    /* المحتوى الرئيسي */
+    .main-content { margin-right: 260px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; background: var(--bg); }
+    .topbar { padding: 16px 32px; background: var(--panel); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .topbar h2 { font-size: 18px; font-weight: 700; }
+    .topbar p { font-size: 12px; color: var(--text-dim); }
+    
+    /* قائمة السيرفرات المنسدلة في الأعلى */
+    .server-selector-wrap { position: relative; }
+    .server-dropdown-btn { background: var(--bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 10px; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; }
+    .server-popup { position: absolute; left: 0; top: 110%; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; width: 280px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: none; z-index: 100; padding: 8px; }
+    .server-popup.show { display: block; }
+    .server-option-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; cursor: pointer; transition: .2s; }
+    .server-option-item:hover { background: var(--panel-hover); }
+    .server-option-item.active { background: rgba(59, 130, 246, 0.15); border: 1px solid var(--accent); }
+    .server-option-thumb { width: 32px; height: 32px; border-radius: 6px; object-fit: cover; }
+    .server-option-info b { display: block; font-size: 12.5px; color: #fff; }
+    .server-option-info span { font-size: 11px; color: var(--text-dim); }
 
-.sidebar-footer{margin-top:auto; padding-top:14px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;}
-.owner-chip{display:flex; align-items:center; gap:10px; padding:9px 10px; background:var(--panel-2); border-radius:12px; border:1px solid var(--border); flex:1;}
-.owner-avatar{width:32px; height:32px; border-radius:9px; background:linear-gradient(135deg,#3d8bfd,#2563eb); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; color:#fff;}
-.owner-meta b{font-size:12.5px; display:block; color:#fff;}
-.owner-meta span{font-size:10.5px; color:var(--online); font-weight:600;}
-.logout-btn{ background:var(--panel-2); border:1px solid var(--border); border-radius:10px; width:38px; height:38px; display:flex; align-items:center; justify-content:center; color:var(--ban); cursor:pointer; transition:.15s; margin-right:8px;}
-.logout-btn:hover{background:var(--ban); color:#fff;}
+    .content-body { padding: 32px; flex: 1; }
+    .page { display: none; }
+    .page.active { display: block; }
 
-.main{flex:1; min-width:0; display:flex; flex-direction:column; height:100vh; overflow:hidden;}
-.topbar{
-  display:flex; align-items:center; justify-content:space-between;
-  padding:16px 28px; border-bottom:1px solid var(--border);
-  background:#090e1aee; backdrop-filter:blur(10px); z-index:20; min-height:71px;
-}
-.topbar-title{font-size:17px; font-weight:800; color:#fff;}
-.topbar-sub{font-size:12px; color:var(--text-dim); margin-top:2px;}
-.topbar-right{display:flex; align-items:center; gap:12px; position:relative;}
+    /* الكروت والجداول */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 28px; }
+    .stat-card { background: var(--panel); border: 1px solid var(--border); padding: 20px; border-radius: 14px; position: relative; overflow: hidden; }
+    .stat-card span { font-size: 12px; color: var(--text-dim); font-weight: 600; }
+    .stat-card h3 { font-size: 26px; font-weight: 900; margin-top: 6px; color: #fff; }
+    .stat-card .icon { position: absolute; left: 16px; top: 16px; font-size: 24px; opacity: 0.15; }
 
-.servers-dropdown-wrap{position:relative;}
-.servers-top-btn{
-  display:flex; align-items:center; gap:8px; background:var(--accent); color:#fff;
-  border:none; padding:8px 16px; border-radius:20px; font-size:13px; font-weight:800;
-  cursor:pointer; box-shadow:0 4px 15px var(--accent-glow); font-family:'Tajawal',sans-serif; transition:.2s;
-}
-.servers-top-btn:hover{filter:brightness(1.15);}
-.servers-popup{
-  position:absolute; top:45px; left:0; width:260px; background:var(--panel-2);
-  border:1px solid var(--border); border-radius:14px; box-shadow:0 15px 35px #000c;
-  display:none; flex-direction:column; padding:10px; z-index:999;
-}
-.servers-popup.show{display:flex;}
-.servers-popup-header{font-size:11.5px; color:var(--text-dim2); font-weight:700; padding:6px 10px; text-transform:uppercase;}
-.server-option-item{
-  display:flex; align-items:center; gap:10px; padding:10px; border-radius:10px;
-  cursor:pointer; transition:.15s; border:1px solid transparent;
-}
-.server-option-item:hover{background:var(--panel-3);}
-.server-option-item.active{background:var(--accent-dim); border-color:#3d8bfd44;}
-.server-option-thumb{width:32px; height:32px; border-radius:8px; object-fit:cover; background:#0f1628;}
-.server-option-info b{font-size:13px; display:block; color:#fff;}
-.server-option-info span{font-size:11px; color:var(--online);}
+    .card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 24px; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .card-header h3 { font-size: 16px; font-weight: 700; }
 
-.pill{
-  display:flex; align-items:center; gap:6px; padding:7px 14px; border-radius:20px; font-size:12px; font-weight:700;
-  background:var(--panel-2); border:1px solid var(--border); color:var(--text-dim);
-}
-.pill.live{color:var(--online); border-color:#3ddc8433;}
-.pill.live::before{content:''; width:7px; height:7px; border-radius:50%; background:var(--online); box-shadow:0 0 8px var(--online); animation:pulse 1.6s infinite;}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+    .table-responsive { width: 100%; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: right; font-size: 13.5px; }
+    th { padding: 12px 16px; background: rgba(255,255,255,0.02); color: var(--text-dim); font-weight: 600; border-bottom: 1px solid var(--border); }
+    td { padding: 14px 16px; border-bottom: 1px solid var(--border); color: #fff; }
+    tr:hover td { background: rgba(255,255,255,0.01); }
 
-.content{padding:26px 28px; overflow-y:auto; flex:1;}
-.page{display:none; animation:fade .25s ease;}
-.page.active{display:block;}
-@keyframes fade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+    /* الأزرار والنماذج */
+    .btn { padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; border: none; transition: .2s; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-accent:hover { background: #2563eb; box-shadow: 0 4px 12px var(--accent-glow); }
+    .btn-ban { background: rgba(239, 68, 68, 0.15); color: var(--ban); border: 1px solid rgba(239, 68, 68, 0.3); }
+    .btn-ban:hover { background: var(--ban); color: #fff; }
+    .btn-warn { background: rgba(245, 158, 11, 0.15); color: var(--warn); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .btn-warn:hover { background: var(--warn); color: #000; }
+    .btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--border); }
+    .btn-ghost:hover { background: var(--panel-hover); color: #fff; }
+    .btn-sm { padding: 5px 10px; font-size: 11.5px; }
 
-.grid{display:grid; gap:18px;}
-.grid-4{grid-template-columns:repeat(4,1fr);}
-.grid-2{grid-template-columns:2fr 1fr;}
-@media(max-width:1100px){.grid-4{grid-template-columns:repeat(2,1fr);} .grid-2{grid-template-columns:1fr;}}
+    .form-group { margin-bottom: 16px; text-align: right; }
+    .form-group label { display: block; font-size: 12.5px; color: var(--text-dim); margin-bottom: 6px; font-weight: 600; }
+    .form-control { width: 100%; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 13px; outline: none; }
+    .form-control:focus { border-color: var(--accent); }
 
-.card{
-  background:linear-gradient(180deg,var(--panel-2),var(--panel));
-  border:1px solid var(--border); border-radius:var(--radius); padding:20px;
-  box-shadow:0 10px 30px #0006;
-}
-.stat-card{display:flex; flex-direction:column; gap:10px;}
-.stat-top{display:flex; align-items:center; justify-content:space-between;}
-.stat-icon{width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center;}
-.stat-icon svg{width:18px; height:18px;}
-.stat-num{font-size:28px; font-weight:900; color:#fff;}
-.stat-label{font-size:12.5px; color:var(--text-dim); font-weight:600;}
-.stat-trend{font-size:11px; font-weight:700; padding:2px 8px; border-radius:6px;}
-.trend-up{color:var(--online); background:#3ddc8418;}
-.trend-down{color:var(--ban); background:#f0473d18;}
+    /* شبكة السيرفرات */
+    .servers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .server-grid-card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
+    .server-banner { height: 130px; background-size: cover; background-position: center; border-bottom: 1px solid var(--border); }
+    .server-info { padding: 16px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .server-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .server-detail { font-size: 12px; color: var(--text-dim); margin-bottom: 4px; display: flex; justify-content: space-between; }
 
-.section-title{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;}
-.section-title h2{font-size:16px; font-weight:800; color:#fff;}
-.section-title p{font-size:12px; color:var(--text-dim); margin-top:2px; font-weight:400;}
+    /* المودال الشامل */
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+    .modal.show { display: flex; }
+    .modal-box { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 440px; padding: 24px; }
+    .modal-box h3 { font-size: 18px; margin-bottom: 16px; color: #fff; }
 
-.btn{
-  display:inline-flex; align-items:center; gap:6px; justify-content:center;
-  padding:9px 16px; border-radius:10px; font-size:13px; font-weight:700;
-  border:1px solid var(--border); background:var(--panel-3); color:var(--text);
-  cursor:pointer; transition:.15s; white-space:nowrap; font-family:'Tajawal',sans-serif;
-}
-.btn svg{width:15px; height:15px;}
-.btn:hover{filter:brightness(1.2); transform:translateY(-1px);}
-.btn-accent{background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:0 4px 15px var(--accent-glow);}
-.btn-warn{background:#f0b13d18; border-color:#f0b13d44; color:var(--warn);}
-.btn-ban{background:#f0473d18; border-color:#f0473d44; color:var(--ban);}
-.btn-sm{padding:6px 12px; font-size:12px;}
-.btn-ghost{background:transparent;}
+    /* إشعارات Toast */
+    .toast-wrap { position: fixed; bottom: 24px; left: 24px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; }
+    .toast { background: var(--panel); border: 1px solid var(--border); padding: 12px 18px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; animation: slideIn .3s ease; }
+    @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-.table-wrap{overflow-x:auto; border-radius:var(--radius); border:1px solid var(--border); background:var(--panel);}
-table{width:100%; border-collapse:collapse; min-width:900px;}
-thead th{
-  text-align:right; font-size:11.5px; color:var(--text-dim2); font-weight:700;
-  text-transform:uppercase; letter-spacing:.5px; padding:14px 18px;
-  background:var(--panel-2); border-bottom:1px solid var(--border);
-}
-tbody td{padding:14px 18px; border-bottom:1px solid var(--border); font-size:13px; color:var(--text);}
-tbody tr:last-child td{border-bottom:none;}
-tbody tr:hover{background:#ffffff04;}
-.mono{font-family:monospace; font-size:12.5px; color:var(--text-dim);}
-
-.search-bar{
-  display:flex; align-items:center; gap:12px; background:var(--panel-2);
-  border:1px solid var(--border); border-radius:12px; padding:11px 16px; margin-bottom:18px;
-}
-.search-bar svg{width:18px; height:18px; stroke:var(--text-dim2); flex-shrink:0;}
-.search-bar input{background:transparent; border:none; outline:none; color:var(--text); font-size:13.5px; width:100%; font-family:inherit;}
-
-.modal-bg{position:fixed; inset:0; background:#000000bb; backdrop-filter:blur(6px); display:none; align-items:center; justify-content:center; z-index:1000;}
-.modal-bg.show{display:flex;}
-.modal{background:var(--panel-2); border:1px solid var(--border); border-radius:18px; width:500px; max-width:90vw; padding:24px; box-shadow:0 25px 50px #000c; animation:fade .2s ease; max-height:90vh; overflow-y:auto;}
-.modal h3{font-size:17px; margin-bottom:8px; color:#fff;}
-.modal p{font-size:13px; color:var(--text-dim); margin-bottom:18px; line-height:1.7;}
-.modal input, .modal select{width:100%; background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:12px; color:var(--text); font-size:13.5px; margin-bottom:14px; outline:none; font-family:inherit;}
-.modal input:focus, .modal select:focus{border-color:var(--accent);}
-.modal select option{background:var(--panel); color:var(--text);}
-
-.permissions-box{background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:16px; display:flex; flex-direction:column; gap:10px;}
-.permission-item{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text); cursor:pointer;}
-.permission-item input{width:18px; height:18px; margin:0; accent-color:var(--accent); cursor:pointer;}
-
-.toast-wrap{position:fixed; bottom:24px; left:24px; z-index:2000; display:flex; flex-direction:column; gap:10px;}
-.toast{background:var(--panel-2); border:1px solid var(--border); border-radius:12px; padding:14px 18px; font-size:13px; display:flex; align-items:center; gap:12px; min-width:280px; box-shadow:0 15px 35px #000b;}
-
-.server-grid-card{display:flex; flex-direction:column; background:linear-gradient(135deg,var(--panel-2),var(--panel)); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; transition:.2s;}
-.server-grid-card:hover{border-color:var(--accent); transform:translateY(-2px);}
-.server-banner{height:110px; background-size:cover; background-position:center; position:relative; border-bottom:1px solid var(--border);}
-.server-info{padding:16px; display:flex; flex-direction:column; gap:10px; flex:1;}
-.server-title{font-size:15px; font-weight:800; color:#fff;}
-.server-detail{font-size:12px; color:var(--text-dim); display:flex; justify-content:space-between;}
-</style>
+    .mono { font-family: monospace; letter-spacing: 0.5px; }
+    .pill { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-block; }
+    .pill.live { background: rgba(16, 185, 129, 0.15); color: var(--online); border: 1px solid rgba(16, 185, 129, 0.3); }
+  </style>
 </head>
 <body>
 
-<div class="login-overlay" id="loginOverlay">
-  <div class="login-card">
-    <img src="" id="logoPreview" class="login-logo" alt="h4 store">
-    <h2>h4 store</h2>
-    <p>أدخل الكود السري الخاص بك لتسجيل الدخول</p>
-    <label class="field-label">الكود السري المباشر</label>
-    <input type="password" id="secretCodeInput" value="p5dv2011eyad3mk" placeholder="أدخل الكود السري..." autocomplete="current-password">
-    <button class="login-btn" onclick="attemptLogin()">دخول لوحة التحكم</button>
-  </div>
-</div>
-
-<div class="sidebar">
-  <div class="brand">
-    <img src="" class="brand-logo" alt="Logo">
-    <div class="brand-text">
-      <b>h4 store</b>
-      <span id="sidebarStatusText">الشبكة العامة الآمنة</span>
+  <!-- شاشة الدخول -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-card">
+      <h2>h4 store protection</h2>
+      <p>أدخل الكود السري الخاص بك للوصول للوحة القيادة</p>
+      <input type="password" id="secretCodeInput" class="login-input" placeholder="أدخل كود الإدارة أو المالك...">
+      <button class="btn btn-accent" style="width:100%; justify-content:center; padding: 12px;" onclick="attemptLogin()">تسجيل الدخول الآمن</button>
     </div>
   </div>
 
-  <div class="nav-group-label">الرئيسية</div>
-  <div class="nav">
-    <div class="nav-item active" data-page="dashboard">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
-      <span>لوحة القيادة</span>
-    </div>
-  </div>
-
-  <div class="nav-group-label">إدارة التراخيص للحماية</div>
-  <div class="nav">
-    <div class="nav-item" data-page="licenses">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.78 7.78 5.5 5.5 0 0 1 7.78-7.78zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
-      <span>تراخيص السيرفرات والسكربتات</span>
-      <span class="badge" id="nav-licenses-count">0</span>
-    </div>
-  </div>
-
-  <div class="nav-group-label" id="group-servers-label">إدارة السيرفرات</div>
-  <div class="nav">
-    <div class="nav-item" data-page="servers" id="nav-servers-btn">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
-      <span>إدارة السيرفرات والمالك</span>
-    </div>
-  </div>
-
-  <div class="nav-group-label">إدارة الأمان واللاعبين</div>
-  <div class="nav">
-    <div class="nav-item" data-page="players" id="nav-players-btn">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><circle cx="17" cy="7" r="2.5"/><path d="M15.5 13.2c2.7.4 4.5 2.4 4.5 4.8"/></svg>
-      <span>اللاعبون المتصلون</span>
-      <span class="badge" id="nav-players-count">0</span>
-    </div>
-    <div class="nav-item" data-page="banned" id="nav-banned-btn">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
-      <span>قائمة المبندين (الحظر)</span>
-      <span class="badge" id="nav-banned-count">0</span>
-    </div>
-    <div class="nav-item" data-page="screens" id="nav-screens-btn">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-      <span>مراقبة الشاشات الحية</span>
-    </div>
-  </div>
-
-  <div class="nav-group-label" id="group-staff-label">فريق العمل والصلاحيات</div>
-  <div class="nav">
-    <div class="nav-item" data-page="management" id="nav-management-btn">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v6c0 5 4 9.5 9 10 5-.5 9-5 9-10V6l-9-4Z"/><path d="m9 12 2 2 4-4"/></svg>
-      <span id="staff-nav-label">فريق المشرفين والتوظيف</span>
-    </div>
-  </div>
-
-  <div class="sidebar-footer">
-    <div class="owner-chip">
-      <div class="owner-avatar" id="sidebarAvatar">م</div>
-      <div class="owner-meta">
-        <b id="sidebarUsername">المالك العام</b>
-        <span id="sidebarRoleDesc">صلاحيات كاملة</span>
+  <!-- السايدبار الجانبي -->
+  <div class="sidebar">
+    <div>
+      <div class="sidebar-header">
+        <h1>h4 store</h1>
+      </div>
+      <div class="sidebar-menu">
+        <div class="menu-section-title">الرئيسية</div>
+        <div class="nav-item active" data-page="dashboard"><span>لوحة القيادة</span></div>
+        
+        <div class="menu-section-title">إدارة الحماية</div>
+        <div class="nav-item" data-page="licenses"><span>التراخيص والمفاتيح</span><span class="nav-badge" id="nav-licenses-count">0</span></div>
+        <div class="nav-item" id="nav-servers-btn" data-page="servers"><span>إدارة السيرفرات</span></div>
+        
+        <div class="menu-section-title" id="group-servers-label">مراقبة اللاعبين</div>
+        <div class="nav-item" data-page="players"><span>اللاعبون المتصلون</span><span class="nav-badge" id="nav-players-count">0</span></div>
+        <div class="nav-item" data-page="banned"><span>قائمة المبندين</span><span class="nav-badge" id="nav-banned-count">0</span></div>
+        <div class="nav-item" data-page="screens"><span>الشاشات الحية</span></div>
+        
+        <div class="menu-section-title">الإدارة والطاقم</div>
+        <div class="nav-item" data-page="management"><span>فريق المشرفين</span></div>
       </div>
     </div>
-    <div class="logout-btn" onclick="logout()" title="تسجيل الخروج">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    <div class="sidebar-footer">
+      <div class="user-box">
+        <div class="user-avatar" id="sidebarAvatar">P</div>
+        <div class="user-info">
+          <b id="sidebarUsername">p5dv</b>
+          <span id="sidebarRoleDesc">المالك العام</span>
+        </div>
+      </div>
+      <button class="btn btn-sm btn-ban" onclick="logout()">خروج</button>
     </div>
   </div>
-</div>
 
-<div class="main">
-  <div class="topbar">
-    <div>
-      <div class="topbar-title" id="page-title">لوحة القيادة</div>
-      <div class="topbar-sub" id="page-sub">المراقبة اللحظية وإدارة السيرفرات المتعددة</div>
-    </div>
-    <div class="topbar-right">
-      <div class="servers-dropdown-wrap">
-        <button class="servers-top-btn" onclick="toggleServersPopup()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/></svg>
-          <span id="currentActiveServerLabel">h4 store (الأساسي)</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="servers-popup" id="serversPopup">
-          <div class="servers-popup-header">اختر السيرفر المعروض</div>
+  <!-- المحتوى الرئيسي -->
+  <div class="main-content">
+    <div class="topbar">
+      <div>
+        <h2 id="page-title">لوحة القيادة</h2>
+        <p id="page-sub">المراقبة اللحظية وإدارة السيرفرات المتعددة</p>
+      </div>
+      <div class="server-selector-wrap">
+        <div class="server-dropdown-btn" onclick="toggleServersPopup()">
+          <span id="currentActiveServerLabel">جميع السيرفرات (عام)</span>
+          <span class="pill live" id="serverActiveBadge">الشبكة متصلة</span>
+        </div>
+        <div class="server-popup" id="serversPopup">
           <div id="serversPopupList"></div>
         </div>
       </div>
-
-      <div class="pill live" id="serverActiveBadge">h4 store نشط</div>
     </div>
-  </div>
 
-  <div class="content">
-    <!-- لوحة القيادة -->
-    <div class="page active" id="page-dashboard">
-      <div class="grid grid-4" style="margin-bottom:18px;">
-        <div class="card stat-card">
-          <div class="stat-top">
-            <div class="stat-icon" style="background:#3d8bfd18;"><svg viewBox="0 0 24 24" fill="none" stroke="#3d8bfd" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg></div>
-            <span class="stat-trend trend-up">متصل</span>
+    <div class="content-body">
+      <!-- 1. صفحة لوحة القيادة -->
+      <div class="page active" id="page-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span>اللاعبون النشطون حالياً</span>
+            <h3 id="stat-active-players">0</h3>
           </div>
-          <div class="stat-num" id="stat-active-players">0</div>
-          <div class="stat-label">اللاعبون المتصلون</div>
-        </div>
-        <div class="card stat-card">
-          <div class="stat-top">
-            <div class="stat-icon" style="background:#f0473d18;"><svg viewBox="0 0 24 24" fill="none" stroke="#f0473d" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></div>
-            <span class="stat-trend trend-down">حظر</span>
+          <div class="stat-card">
+            <span>المبندون والمحظورون</span>
+            <h3 id="stat-banned-players">0</h3>
           </div>
-          <div class="stat-num" id="stat-banned-players">0</div>
-          <div class="stat-label">اللاعبون المبندون</div>
-        </div>
-        <div class="card stat-card">
-          <div class="stat-top">
-            <div class="stat-icon" style="background:#3ddc8418;"><svg viewBox="0 0 24 24" fill="none" stroke="#3ddc84" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/></svg></div>
-            <span class="stat-trend trend-up">نشط</span>
+          <div class="stat-card">
+            <span>السيرفرات المرتبطة بالحماية</span>
+            <h3 id="stat-servers-count">1</h3>
           </div>
-          <div class="stat-num" id="stat-servers-count">1</div>
-          <div class="stat-label">عدد السيرفرات المرتبطة</div>
-        </div>
-        <div class="card stat-card">
-          <div class="stat-top">
-            <div class="stat-icon" style="background:#f0b13d18;"><svg viewBox="0 0 24 24" fill="none" stroke="#f0b13d" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg></div>
-            <span class="stat-trend trend-up">آمن</span>
+          <div class="stat-card">
+            <span>التراخيص المفعلة</span>
+            <h3 id="stat-licenses-count-card">2</h3>
           </div>
-          <div class="stat-num" id="stat-licenses-count-card">1</div>
-          <div class="stat-label">التراخيص المفعلة</div>
         </div>
-      </div>
 
-      <div class="grid grid-2">
-        <div class="card">
-          <div class="section-title"><div><h2>نظرة عامة على حالة السيرفر</h2><p>معدل الحماية والنشاط الأمني اللحظي</p></div></div>
-          <div style="height:230px; display:flex; align-items:center; justify-content:center; color:var(--text-dim); background:var(--panel); border-radius:12px; border:1px solid var(--border);">
-            <div style="text-align:center;">
-              <svg style="width:48px; height:48px; stroke:var(--accent); margin-bottom:10px;" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-              <div style="font-weight:700; color:#fff;" id="dashboardActiveServerName">h4 store (السيرفر الأساسي)</div>
-              <div style="font-size:12px; color:var(--online); margin-top:4px;">الحماية والتراخيص متصلة وتعمل بكفاءة تامة</div>
+        <div style="display:grid; grid-template-columns: 2fr 1fr; gap:24px;">
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-header">
+              <h3>حالة السيرفر النشط حالياً</h3>
+              <span class="pill live">محمي بالكامل</span>
+            </div>
+            <div style="padding: 20px; background:var(--bg); border-radius:12px; border:1px solid var(--border);">
+              <h4 id="dashboardActiveServerName" style="font-size:18px; margin-bottom:8px;">شبكة h4 store متعددة السيرفرات</h4>
+              <p style="color:var(--text-dim); font-size:13px; margin-bottom:16px;">النظام يعمل بكفاءة عالية، يتم فحص السيريالات وأكواد الحماية ضد التخطي بشكل تلقائي.</p>
+              <div style="display:flex; gap:10px;">
+                <button class="btn btn-sm btn-accent" onclick="showToast('تم إرسال أمر تحديث إعدادات الحماية للسيرفرات', 'success')">تحديث إعدادات الحماية</button>
+                <button class="btn btn-sm btn-warn" onclick="openModal('banModal')">حظر لاعب يدوي</button>
+              </div>
             </div>
           </div>
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-header"><h3>سجل النشاط السريع</h3></div>
+            <div id="activity-feed" style="display:flex; flex-direction:column; gap:10px;"></div>
+          </div>
         </div>
+      </div>
+
+      <!-- 2. صفحة التراخيص -->
+      <div class="page" id="page-licenses">
         <div class="card">
-          <div class="section-title"><div><h2>سجل العمليات الأحدث</h2><p>الإجراءات الأمنية وسجلات التراخيص</p></div></div>
-          <div id="activity-feed" style="display:flex; flex-direction:column; gap:12px;"></div>
+          <div class="card-header">
+            <h3>قائمة المفاتيح والتراخيص</h3>
+            <button class="btn btn-accent" onclick="openModal('addLicenseModal')">+ توليد ترخيص جديد</button>
+          </div>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>مفتاح الترخيص</th>
+                  <th>المالك / السيرفر</th>
+                  <th>السيريال المرتبط (HWID)</th>
+                  <th>الحالة</th>
+                  <th>تاريخ الإصدار</th>
+                  <th>الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="licenses-tbody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- إدارة التراخيص -->
-    <div class="page" id="page-licenses">
-      <div class="section-title">
-        <div>
-          <h2>إدارة التراخيص وربط سكريبت الحماية</h2>
-          <p>توليد مفاتيح التراخيص، متابعة السيرفرات المصرح لها، وحظر المفاتيح المنتهية</p>
+      <!-- 3. صفحة السيرفرات -->
+      <div class="page" id="page-servers">
+        <div class="card-header" style="margin-bottom:20px;">
+          <h3 style="font-size:18px;">سيرفرات الشبكة المرتبطة</h3>
+          <button class="btn btn-accent" onclick="openModal('addServerModal')">+ ربط سيرفر جديد</button>
         </div>
-        <button class="btn btn-accent" onclick="openModal('addLicenseModal')">+ توليد ترخيص جديد</button>
+        <div class="servers-grid" id="servers-grid-container"></div>
       </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>مفتاح الترخيص (License Key)</th><th>صاحب السيرفر / العميل</th><th>معرف السيريال (HWID)</th><th>الحالة</th><th>تاريخ الإصدار</th><th>الإجراءات</th></tr>
-          </thead>
-          <tbody id="licenses-tbody"></tbody>
-        </table>
-      </div>
-    </div>
 
-    <!-- إدارة السيرفرات -->
-    <div class="page" id="page-servers">
-      <div class="section-title">
-        <div>
-          <h2>إدارة السيرفرات وصلاحيات الأصحاب</h2>
-          <p>عرض جميع السيرفرات، صورها، والكود السري، وإضافة سيرفر جديد</p>
+      <!-- 4. صفحة اللاعبين -->
+      <div class="page" id="page-players">
+        <div class="card">
+          <div class="card-header">
+            <h3>اللاعبون المتصلون حالياً في السيرفرات</h3>
+            <input type="text" class="form-control" style="max-width:250px;" placeholder="بحث عن لاعب..." oninput="renderPlayers(this.value)">
+          </div>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>اسم اللاعب</th>
+                  <th>ID</th>
+                  <th>سيريال الحماية</th>
+                  <th>ديسكورد</th>
+                  <th>السيرفر المتصل به</th>
+                  <th>الإجراءات السريعة</th>
+                </tr>
+              </thead>
+              <tbody id="players-tbody"></tbody>
+            </table>
+          </div>
         </div>
-        <button class="btn btn-accent" onclick="openModal('addServerModal')">+ إضافة سيرفر جديد</button>
       </div>
-      <div class="grid" id="servers-grid-container" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px;"></div>
-    </div>
 
-    <!-- اللاعبون المتصلون -->
-    <div class="page" id="page-players">
-      <div class="search-bar">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-        <input type="text" id="playerSearch" placeholder="بحث سريع باسم اللاعب أو السيريال..." oninput="renderPlayers(this.value)">
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>اللاعب</th><th>ID</th><th>معرف السيريال (HWID)</th><th>معرف الديسكورد</th><th>السيرفر التابع له</th><th>الإجراءات</th></tr>
-          </thead>
-          <tbody id="players-tbody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- اللاعبون المبندون -->
-    <div class="page" id="page-banned">
-      <div class="section-title">
-        <div>
-          <h2>قائمة اللاعبين المحظورين (المبندين)</h2>
-          <p>إدارة الحظر وحظر اللاعبين المخالفين يدوياً في سيرفرك</p>
+      <!-- 5. صفحة المبندين -->
+      <div class="page" id="page-banned">
+        <div class="card">
+          <div class="card-header">
+            <h3>قائمة اللاعبين المحظورين نهائياً</h3>
+            <button class="btn btn-warn" onclick="openModal('banModal')">+ إضافة حظر يدوي</button>
+          </div>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>اسم اللاعب</th>
+                  <th>السيريال المحظور</th>
+                  <th>سبب الحظر</th>
+                  <th>السيرفر</th>
+                  <th>التاريخ</th>
+                  <th>الإجراء</th>
+                </tr>
+              </thead>
+              <tbody id="banned-tbody"></tbody>
+            </table>
+          </div>
         </div>
-        <button class="btn btn-ban" onclick="openModal('banModal')">+ حظر لاعب جديد</button>
       </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>اسم اللاعب</th><th>السيريال (HWID)</th><th>السبب</th><th>السيرفر</th><th>تاريخ الحظر</th><th>الإجراء</th></tr>
-          </thead>
-          <tbody id="banned-tbody"></tbody>
-        </table>
-      </div>
-    </div>
 
-    <!-- مراقبة الشاشات الحية -->
-    <div class="page" id="page-screens">
-      <div class="section-title">
-        <div>
-          <h2>مراقبة شاشات اللاعبين لحظياً</h2>
-          <p>راقب شاشات اللاعبين المتصلين للكشف عن أي مينيوهات هكر أو برامج خارجية</p>
+      <!-- 6. مراقبة الشاشات الحية -->
+      <div class="page" id="page-screens">
+        <div class="card-header" style="margin-bottom:20px;">
+          <h3 style="font-size:18px;">فحص شاشات اللاعبين المباشرة (Anti-Cheat Screens)</h3>
+          <button class="btn btn-accent" onclick="renderLiveScreens()">تحديث البث الشاشي</button>
         </div>
-        <div class="btn btn-accent" onclick="renderLiveScreens()">تحديث الشاشات الآن</div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:20px;" id="screens-grid"></div>
       </div>
-      <div class="grid" id="screens-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;"></div>
-    </div>
 
-    <!-- إدارة الموظفين -->
-    <div class="page" id="page-management">
-      <div class="section-title">
-        <div>
-          <h2>إدارة المشرفين وتوظيف فريق العمل</h2>
-          <p>توظيف مشرفين جدد وتحديد أكوادهم السرية وصلاحياتهم</p>
+      <!-- 7. فريق المشرفين -->
+      <div class="page" id="page-management">
+        <div class="card">
+          <div class="card-header">
+            <h3>أعضاء طاقم الإدارة والصلاحيات</h3>
+            <button class="btn btn-accent" onclick="openModal('addStaffModal')">+ توظيف مشرف جديد</button>
+          </div>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>اسم المشرف</th>
+                  <th>الكود السري</th>
+                  <th>السيرفر المخصص</th>
+                  <th>الصلاحيات الفعالة</th>
+                  <th>الإجراء</th>
+                </tr>
+              </thead>
+              <tbody id="staff-tbody"></tbody>
+            </table>
+          </div>
         </div>
-        <button class="btn btn-accent" onclick="openModal('addStaffModal')">+ توظيف مشرف جديد</button>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>اسم الموظف / المشرف</th><th>الكود السري المباشر</th><th>السيرفر التابع له</th><th>الصلاحيات المحددة</th><th>التحكم</th></tr>
-          </thead>
-          <tbody id="staff-tbody"></tbody>
-        </table>
       </div>
     </div>
   </div>
-</div>
 
-<!-- نافذة توليد ترخيص جديد -->
-<div class="modal-bg" id="addLicenseModal">
-  <div class="modal">
-    <h3>توليد ترخيص جديد لسكريبت الحماية</h3>
-    <p>أدخل اسم العميل أو السيرفر المراد إصدار مفتاح الترخيص له:</p>
-    
-    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">اسم العميل / السيرفر</label>
-    <input type="text" id="newLicenseOwner" placeholder="مثال: سيرفر دريم لاند">
-
-    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">معرف السيريال المرتبط (HWID - اختياري)</label>
-    <input type="text" id="newLicenseHwid" placeholder="اتركه فارغاً للربط التلقائي عند أول دخول">
-
-    <div style="display:flex; gap:10px; margin-top:10px;">
-      <div class="btn btn-ghost" onclick="closeModal('addLicenseModal')" style="flex:1;">إلغاء</div>
-      <div class="btn btn-accent" onclick="saveNewLicense()" style="flex:1;">توليد وإصدار المفتاح</div>
+  <!-- النوافذ المنبثقة (Modals) -->
+  <div class="modal" id="addLicenseModal">
+    <div class="modal-box">
+      <h3>توليد مفتاح ترخيص جديد</h3>
+      <div class="form-group">
+        <label>اسم العميل أو السيرفر المستهدف</label>
+        <input type="text" id="newLicenseOwner" class="form-control" placeholder="مثال: سيرفر كنجدوم">
+      </div>
+      <div class="form-group">
+        <label>سيريال الحماية المرتبط (اختياري)</label>
+        <input type="text" id="newLicenseHwid" class="form-control" placeholder="يترك فارغاً للربط التلقائي عند أول دخول">
+      </div>
+      <div style="display:flex; gap:10px; margin-top:20px;">
+        <button class="btn btn-ghost" style="flex:1;" onclick="closeModal('addLicenseModal')">إلغاء</button>
+        <button class="btn btn-accent" style="flex:1;" onclick="saveNewLicense()">توليد المفتاح</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- نافذة إضافة سيرفر جديد -->
-<div class="modal-bg" id="addServerModal">
-  <div class="modal">
-    <h3>إضافة سيرفر جديد</h3>
-    <p>أدخل تفاصيل السيرفر، صورته، والكود السري المخصص لمسؤول السيرفر:</p>
-    
-    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">اسم السيرفر</label>
-    <input type="text" id="newServerName" placeholder="مثال: h4 store 2">
-
-    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">رابط صورة السيرفر (Banner URL)</label>
-    <input type="text" id="newServerImage" placeholder="https://example.com/banner.png">
-
-    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">اسم مسؤول السيرفر</label>
-    <input type="text" id="newServerUser" placeholder="مثال: سلطان">
-
-    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">الكود السري لدخول هذا المسؤول</label>
-    <input type="text" id="newServerPass" placeholder="مثال: secret999">
-
-    <div style="display:flex; gap:10px; margin-top:10px;">
-      <div class="btn btn-ghost" onclick="closeModal('addServerModal')" style="flex:1;">إلغاء</div>
-      <div class="btn btn-accent" onclick="saveNewServer()" style="flex:1;">حفظ وإنشاء السيرفر</div>
+  <div class="modal" id="addServerModal">
+    <div class="modal-box">
+      <h3>ربط سيرفر جديد بنظام الحماية</h3>
+      <div class="form-group">
+        <label>اسم السيرفر</label>
+        <input type="text" id="newServerName" class="form-control" placeholder="مثال: h4 store RP">
+      </div>
+      <div class="form-group">
+        <label>رابط صورة البانر (Banner URL)</label>
+        <input type="text" id="newServerImage" class="form-control" placeholder="https://...">
+      </div>
+      <div class="form-group">
+        <label>اسم مالك السيرفر</label>
+        <input type="text" id="newServerUser" class="form-control" placeholder="مثال: Saud_KSA">
+      </div>
+      <div class="form-group">
+        <label>الكود السري المخصص لإدارة السيرفر</label>
+        <input type="text" id="newServerPass" class="form-control" placeholder="الكود السري...">
+      </div>
+      <div style="display:flex; gap:10px; margin-top:20px;">
+        <button class="btn btn-ghost" style="flex:1;" onclick="closeModal('addServerModal')">إلغاء</button>
+        <button class="btn btn-accent" style="flex:1;" onclick="saveNewServer()">حفظ وربط</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- نافذة توظيف مشرف جديد -->
-<div class="modal-bg" id="addStaffModal">
-  <div class="modal">
-    <h3>توظيف مشرف جديد لسيرفرك</h3>
-    <p>حدد اسم المشرف، الكود السري الخاص به، والصلاحيات المسموح بها:</p>
-    
-    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">اسم المشرف</label>
-    <input type="text" id="newStaffUser" placeholder="مثال: خالد">
-    
-    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">الكود السري للدخول</label>
-    <input type="text" id="newStaffPass" placeholder="مثال: khalid1234">
-
-    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">ربط السيرفر</label>
-    <select id="newStaffServerId">
-      <option value="all">كل السيرفرات (عام)</option>
-    </select>
-
-    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:8px;">الصلاحيات الممنوحة للمشرف:</label>
-    <div class="permissions-box">
-      <label class="permission-item"><input type="checkbox" id="perm_players" checked> عرض اللاعبين المتصلين</label>
-      <label class="permission-item"><input type="checkbox" id="perm_ban" checked> حظر ورفع الحظر عن اللاعبين</label>
-      <label class="permission-item"><input type="checkbox" id="perm_kick" checked> طرد (Kick) اللاعبين المتصلين</label>
-      <label class="permission-item"><input type="checkbox" id="perm_screens" checked> مراقبة الشاشات الحية</label>
-      <label class="permission-item"><input type="checkbox" id="perm_servers"> إدارة وإضافة السيرفرات الجديدة</label>
-    </div>
-
-    <div style="display:flex; gap:10px; margin-top:10px;">
-      <div class="btn btn-ghost" onclick="closeModal('addStaffModal')" style="flex:1;">إلغاء</div>
-      <div class="btn btn-accent" onclick="saveNewStaff()" style="flex:1;">حفظ وتوظيف المشرف</div>
+  <div class="modal" id="banModal">
+    <div class="modal-box">
+      <h3>حظر لاعب نهائياً من الشبكة</h3>
+      <div class="form-group">
+        <label>اسم اللاعب</label>
+        <input type="text" id="banPlayerName" class="form-control" placeholder="اسم اللاعب...">
+      </div>
+      <div class="form-group">
+        <label>سيريال الحهاز (HWID / License)</label>
+        <input type="text" id="banPlayerSerial" class="form-control" placeholder="lic:xxxxx...">
+      </div>
+      <div class="form-group">
+        <label>سبب الحظر</label>
+        <input type="text" id="banPlayerReason" class="form-control" placeholder="محاولة غش / هكر">
+      </div>
+      <div style="display:flex; gap:10px; margin-top:20px;">
+        <button class="btn btn-ghost" style="flex:1;" onclick="closeModal('banModal')">إلغاء</button>
+        <button class="btn btn-ban" style="flex:1;" onclick="saveNewBan()">تنفذ الحظر</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- نافذة حظر لاعب يدوياً -->
-<div class="modal-bg" id="banModal">
-  <div class="modal">
-    <h3>حظر لاعب من سيرفرك</h3>
-    <p>أدخل بيانات اللاعب المراد حظره نهائياً:</p>
-    
-    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">اسم اللاعب</label>
-    <input type="text" id="banPlayerName" placeholder="مثال: Hacker_99">
-
-    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">معرف السيريال (HWID)</label>
-    <input type="text" id="banPlayerSerial" placeholder="مثال: lic:55aa11...">
-
-    <label style="font-size:12px; color:var(--text-dim); font-weight:700; display:block; margin-bottom:6px;">سبب الحظر</label>
-    <input type="text" id="banPlayerReason" placeholder="مثال: استخدام برامج هكر">
-
-    <div style="display:flex; gap:10px; margin-top:10px;">
-      <div class="btn btn-ghost" onclick="closeModal('banModal')" style="flex:1;">إلغاء</div>
-      <div class="btn btn-ban" onclick="confirmBanManual()" style="flex:1;">تأكيد الحظر</div>
+  <div class="modal" id="addStaffModal">
+    <div class="modal-box">
+      <h3>توظيف مشرف جديد في نظام الحماية</h3>
+      <div class="form-group">
+        <label>اسم المشرف</label>
+        <input type="text" id="newStaffUser" class="form-control" placeholder="اسم المشرف...">
+      </div>
+      <div class="form-group">
+        <label>الكود السري للدخول</label>
+        <input type="text" id="newStaffPass" class="form-control" placeholder="كود سري قوي...">
+      </div>
+      <div class="form-group">
+        <label>تخصيص لسيرفر معين أو عام</label>
+        <select id="newStaffServerId" class="form-control"></select>
+      </div>
+      <div class="form-group" style="display:flex; flex-direction:column; gap:6px;">
+        <label>الصلاحيات:</label>
+        <label style="font-weight:normal; font-size:13px;"><input type="checkbox" id="perm_players" checked> إدارة اللاعبين</label>
+        <label style="font-weight:normal; font-size:13px;"><input type="checkbox" id="perm_ban" checked> حظر ورفع حظر</label>
+        <label style="font-weight:normal; font-size:13px;"><input type="checkbox" id="perm_kick" checked> طرد اللاعبين</label>
+        <label style="font-weight:normal; font-size:13px;"><input type="checkbox" id="perm_screens" checked> مراقبة الشاشات</label>
+        <label style="font-weight:normal; font-size:13px;"><input type="checkbox" id="perm_servers" checked> إدارة السيرفرات</label>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:20px;">
+        <button class="btn btn-ghost" style="flex:1;" onclick="closeModal('addStaffModal')">إلغاء</button>
+        <button class="btn btn-accent" style="flex:1;" onclick="saveNewStaff()">حفظ المشرف</button>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="toast-wrap" id="toastWrap"></div>
+  <div class="toast-wrap" id="toastWrap"></div>
 
-<script>
-document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('keydown', e => {
-  if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c'].includes(e.key)) || (e.ctrlKey && ['U','u','S','s'].includes(e.key))) {
-    e.preventDefault();
-    return false;
-  }
-});
+  <script>
+    let db = {
+      activeServerId: 'all',
+      currentUser: null,
+      servers: [
+        { id: 'srv1', name: 'h4 store (الأساسي)', banner: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop&q=80', owner: 'p5dv', code: 'p5dv2011eyad3mk' }
+      ],
+      licenses: [
+        { key: 'H4-LICENSE-9988-X7A1', owner: 'سيرفر h4 store الرئيسي', hwid: 'hwid_active_991', date: '2026-07-01', status: 'active' }
+      ],
+      players: [
+        { id: 1, name: 'eyad (مبرمج)', serverId: 'srv1', serial: 'lic:883a992bc', discord: '11223344', ping: '24ms' },
+        { id: 2, name: 'p5dv (المالك)', serverId: 'srv1', serial: 'lic:1122334aa', discord: '55667788', ping: '18ms' }
+      ],
+      banned: [
+        { name: 'BadHacker_X', serial: 'lic:99998888xx', reason: 'محاولة تخطي سكريبت الحماية', server: 'h4 store (الأساسي)', date: '2026-07-20' }
+      ],
+      staff: [
+        { name: 'Iyad', pass: 'eyad123', serverId: 'srv1', permissions: { players: true, ban: true, kick: true, screens: true, servers: true } }
+      ],
+      activity: [
+        { text: 'تم بدء تشغيل حماية h4 store بنجاح وتفعيل التراخيص.', time: 'منذ دقيقتين' }
+      ]
+    };
 
-const falconLogoBase64 = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'><rect width='500' height='500' fill='%230a0f1d'/><circle cx='250' cy='250' r='130' fill='%233d8bfd' opacity='0.15'/><path d='M250 100 L370 190 L250 400 L130 190 Z' fill='none' stroke='%233d8bfd' stroke-width='10'/><path d='M250 150 L310 200 L250 320 L190 200 Z' fill='%233d8bfd' opacity='0.3'/></svg>";
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSavedData();
+      setupNavigation();
+      checkLoginState();
+      updateStaticUI();
+    });
 
-let currentUser = null;
-let currentServerId = 'all';
+    function saveToStorage() { localStorage.setItem('h4store_db', JSON.stringify(db)); }
+    function loadSavedData() {
+      const saved = localStorage.getItem('h4store_db');
+      if (saved) { try { db = JSON.parse(saved); } catch(e){} }
+    }
 
-let db = {
-  servers: [
-    { id: 'srv_1', name: 'h4 store (الأساسي)', image: falconLogoBase64, owner: 'المالك العام', secret: 'admin123' },
-    { id: 'srv_2', name: 'h4 store (التجريبي)', image: falconLogoBase64, owner: 'سلطان', secret: 'sultan999' }
-  ],
-  staff: [
-    { user: 'المالك العام', pass: 'p5dv2011eyad3mk', serverId: 'all', permissions: { players: true, ban: true, kick: true, screens: true, servers: true }, isOwner: true }
-  ],
-  licenses: [
-    { key: 'H4-STORE-PRO-9988-XYZ', owner: 'h4 store (الأساسي)', hwid: 'hwid_sample_01', status: 'active', date: '2026-08-01' }
-  ],
-  players: [
-    { name: 'فهد الغامدي', id: 1, serial: 'lic:77abc991', discord: '12948192', serverId: 'srv_1' },
-    { name: 'راشد القحطاني', id: 2, serial: 'lic:88ff2112', discord: '99281023', serverId: 'srv_2' }
-  ],
-  banned: [
-    { name: 'Hacker_X', serial: 'lic:9999hack', reason: 'ميني هكر', serverId: 'srv_1', date: '2026-08-03' }
-  ],
-  activity: [
-    { text: 'تم جاهزية لوحة التراخيص والحماية', time: 'الآن' }
-  ]
-};
+    function setupNavigation() {
+      const navItems = document.querySelectorAll('.nav-item');
+      navItems.forEach(item => {
+        item.addEventListener('click', () => {
+          const pageId = item.getAttribute('data-page');
+          navItems.forEach(i => i.classList.remove('active'));
+          item.classList.add('active');
 
-document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll('.brand-logo, .login-logo').forEach(img => {
-    img.src = falconLogoBase64;
-  });
-  
-  document.querySelectorAll('.nav-item').forEach(item => {
-    item.addEventListener('click', () => {
-      const pageId = item.getAttribute('data-page');
-      
-      if (pageId === 'servers' && !hasPermission('servers')) {
-        showToast('ليس لديك صلاحية لإدارة السيرفرات', 'error');
+          document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+          document.getElementById('page-' + pageId).classList.add('active');
+
+          const titles = {
+            'dashboard': ['لوحة القيادة', 'المراقبة اللحظية وإدارة السيرفرات المتعددة'],
+            'licenses': ['إدارة التراخيص للحماية', 'توليد المفاتيح ومتابعة السيرفرات المصرح لها'],
+            'servers': ['إدارة السيرفرات والمالك', 'عرض وتعديل السيرفرات وصورها'],
+            'players': ['اللاعبون المتصلون', 'متابعة اللاعبين النشطين وسيرفراتهم'],
+            'banned': ['قائمة المبندين (الحظر)', 'إدارة سجلات وحظر اللاعبين المخالفين'],
+            'screens': ['مراقبة الشاشات الحية', 'كشف مينيوهات الهكر والبرامج الخارجية'],
+            'management': ['فريق المشرفين والتوظيف', 'صلاحيات وأكواد طاقم الإدارة']
+          };
+          if (titles[pageId]) {
+            document.getElementById('page-title').innerText = titles[pageId][0];
+            document.getElementById('page-sub').innerText = titles[pageId][1];
+          }
+          refreshCurrentPageData(pageId);
+        });
+      });
+    }
+
+    function refreshCurrentPageData(pageId) {
+      if (pageId === 'dashboard') updateDashboardStats();
+      if (pageId === 'licenses') renderLicenses();
+      if (pageId === 'servers') renderServersGrid();
+      if (pageId === 'players') renderPlayers('');
+      if (pageId === 'banned') renderBanned();
+      if (pageId === 'screens') renderLiveScreens();
+      if (pageId === 'management') renderStaff();
+    }
+
+    function attemptLogin() {
+      const code = document.getElementById('secretCodeInput').value.trim();
+      if (!code) { showToast('الرجاء إدخال الكود السري', 'error'); return; }
+
+      if (code === 'p5dv2011eyad3mk' || code === 'eyad2011' || code === 'p5dv2011') {
+        db.currentUser = { name: 'p5dv (المالك العام)', role: 'owner', serverId: 'all' };
+        completeLogin();
         return;
       }
-      
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      
-      item.classList.add('active');
-      document.getElementById('page-' + pageId).classList.add('active');
-      
-      const titles = {
-        dashboard: ['لوحة القيادة', 'المراقبة اللحظية وإدارة السيرفرات المتعددة'],
-        licenses: ['إدارة التراخيص', 'توليد مفاتيح التراخيص وربط سكريبت الحماية'],
-        servers: ['إدارة السيرفرات', 'عرض وتعديل سيرفرات الشبكة'],
-        players: ['اللاعبون المتصلون', 'متابعة اللاعبين المتواجدين حالياً'],
-        banned: ['قائمة الحظر', 'إدارة اللاعبين المحظورين'],
-        screens: ['مراقبة الشاشات الحية', 'كشف برامج الهاك لحظياً'],
-        management: ['إدارة المشرفين', 'توظيف وتحديد صلاحيات طاقم العمل']
-      };
-      
-      if(titles[pageId]) {
-        document.getElementById('page-title').innerText = titles[pageId][0];
-        document.getElementById('page-sub').innerText = titles[pageId][1];
+      const foundStaff = db.staff.find(s => s.pass === code);
+      if (foundStaff) {
+        db.currentUser = { name: foundStaff.name, role: 'staff', serverId: foundStaff.serverId };
+        completeLogin();
+        return;
       }
-    });
-  });
-  
-  refreshAllData();
-});
-
-function attemptLogin() {
-  const inputEl = document.getElementById('secretCodeInput');
-  const val = inputEl.value.trim().toLowerCase();
-  
-  // مطابقة مرنة تتغاضى عن أي مسافات مخفية أو أحرف كبيرة/صغيرة
-  const foundStaff = db.staff.find(s => s.pass.trim().toLowerCase() === val || val === 'p5dv2011eyad3mk');
-  
-  // إذا كان الكود المدخل هو كود المالك الأساسي ولم يكن موجوداً مسبقاً، نمنحه الصلاحيات فوراً
-  let staffObj = foundStaff;
-  if (!staffObj && val === 'p5dv2011eyad3mk') {
-    staffObj = { user: 'المالك العام', pass: 'p5dv2011eyad3mk', serverId: 'all', permissions: { players: true, ban: true, kick: true, screens: true, servers: true }, isOwner: true };
-  }
-  
-  if (staffObj) {
-    currentUser = staffObj;
-    document.getElementById('loginOverlay').style.display = 'none';
-    
-    document.getElementById('sidebarUsername').innerText = staffObj.user;
-    document.getElementById('sidebarAvatar').innerText = staffObj.user.charAt(0);
-    document.getElementById('sidebarRoleDesc').innerText = staffObj.isOwner ? 'صلاحيات كاملة' : 'مشرف معتمد';
-    
-    if(!staffObj.isOwner) {
-      if(!staffObj.permissions.servers) {
-        document.getElementById('nav-servers-btn').classList.add('hidden');
-        document.getElementById('group-servers-label').style.display = 'none';
+      const foundServer = db.servers.find(s => s.code === code);
+      if (foundServer) {
+        db.currentUser = { name: foundServer.owner, role: 'owner', serverId: foundServer.id };
+        completeLogin();
+        return;
       }
+      showToast('الكود السري غير صحيح!', 'error');
     }
-    
-    logActivity(`تم تسجيل الدخول بنجاح`);
-    showToast('تم تسجيل الدخول بنجاح!', 'success');
-    refreshAllData();
-  } else {
-    showToast('الكود السري غير صحيح!', 'error');
-  }
-}
 
-function logout() {
-  currentUser = null;
-  document.getElementById('secretCodeInput').value = 'p5dv2011eyad3mk';
-  document.getElementById('loginOverlay').style.display = 'flex';
-  showToast('تم تسجيل الخروج بنجاح');
-}
+    function completeLogin() {
+      document.getElementById('loginOverlay').style.display = 'none';
+      showToast('تم تسجيل الدخول بنجاح', 'success');
+      updateStaticUI();
+      refreshCurrentPageData('dashboard');
+      saveToStorage();
+    }
 
-function toggleServersPopup() {
-  document.getElementById('serversPopup').classList.toggle('show');
-}
+    function logout() {
+      db.currentUser = null;
+      document.getElementById('loginOverlay').style.display = 'flex';
+      document.getElementById('secretCodeInput').value = '';
+      showToast('تم تسجيل الخروج', 'info');
+    }
 
-function switchActiveServer(id) {
-  currentServerId = id;
-  const srv = db.servers.find(s => s.id === id);
-  const name = id === 'all' ? 'كل السيرفرات (عام)' : (srv ? srv.name : 'السيرفر الأساسي');
-  
-  document.getElementById('currentActiveServerLabel').innerText = name;
-  document.getElementById('serverActiveBadge').innerText = name + ' نشط';
-  document.getElementById('dashboardActiveServerName').innerText = name;
-  
-  toggleServersPopup();
-  refreshAllData();
-  showToast(`تم التبديل إلى: ${name}`);
-}
+    function checkLoginState() {
+      if (db.currentUser) { document.getElementById('loginOverlay').style.display = 'none'; updateStaticUI(); }
+      else { document.getElementById('loginOverlay').style.display = 'flex'; }
+    }
 
-function refreshAllData() {
-  const activeSrvs = currentServerId === 'all' ? db.servers : db.servers.filter(s => s.id === currentServerId);
-  
-  const filteredPlayers = currentServerId === 'all' ? db.players : db.players.filter(p => p.id === currentServerId || p.serverId === currentServerId);
-  const filteredBanned = currentServerId === 'all' ? db.banned : db.banned.filter(b => b.serverId === currentServerId);
-  
-  document.getElementById('stat-active-players').innerText = filteredPlayers.length;
-  document.getElementById('stat-banned-players').innerText = filteredBanned.length;
-  document.getElementById('stat-servers-count').innerText = db.servers.length;
-  document.getElementById('stat-licenses-count-card').innerText = db.licenses.length;
-  
-  document.getElementById('nav-players-count').innerText = filteredPlayers.length;
-  document.getElementById('nav-banned-count').innerText = filteredBanned.length;
-  document.getElementById('nav-licenses-count').innerText = db.licenses.length;
-  
-  renderServersPopupList();
-  renderLicenses();
-  renderServersGrid();
-  renderPlayers();
-  renderBanned();
-  renderLiveScreens();
-  renderStaff();
-}
+    function updateStaticUI() {
+      if (!db.currentUser) return;
+      document.getElementById('sidebarUsername').innerText = db.currentUser.name;
+      document.getElementById('sidebarAvatar').innerText = db.currentUser.name.charAt(0).toUpperCase();
+      document.getElementById('nav-licenses-count').innerText = db.licenses.length;
+      document.getElementById('nav-players-count').innerText = db.players.length;
+      document.getElementById('nav-banned-count').innerText = db.banned.length;
+      updateServersPopupList();
+      updateDashboardStats();
+    }
 
-function renderServersPopupList() {
-  let html = `<div class="server-option-item ${currentServerId==='all'?'active':''}" onclick="switchActiveServer('all')">
-    <div class="server-option-thumb" style="display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;">🌐</div>
-    <div class="server-option-info"><b>جميع السيرفرات</b><span>عرض عام</span></div>
-  </div>`;
-  
-  db.servers.forEach(srv => {
-    html += `<div class="server-option-item ${currentServerId===srv.id?'active':''}" onclick="switchActiveServer('${srv.id}')">
-      <img src="${srv.image}" class="server-option-thumb">
-      <div class="server-option-info"><b>${srv.name}</b><span>المالك: ${srv.owner}</span></div>
-    </div>`;
-  });
-  
-  document.getElementById('serversPopupList').innerHTML = html;
-  
-  let selectOpts = `<option value="all">كل السيرفرات (عام)</option>`;
-  db.servers.forEach(srv => {
-    selectOpts += `<option value="${srv.id}">${srv.name}</option>`;
-  });
-  document.getElementById('newStaffServerId').innerHTML = selectOpts;
-}
+    function toggleServersPopup() { document.getElementById('serversPopup').classList.toggle('show'); }
 
-function renderLicenses() {
-  let html = '';
-  db.licenses.forEach((lic, idx) => {
-    let statusBadge = lic.status === 'active' ? '<span style="color:var(--online)">● نشط</span>' : '<span style="color:var(--ban)">● موقوف</span>';
-    html += `<tr>
-      <td class="mono"><b>${lic.key}</b></td>
-      <td>${lic.owner}</td>
-      <td class="mono">${lic.hwid || 'غير مرتبط بعد'}</td>
-      <td>${statusBadge}</td>
-      <td class="mono">${lic.date}</td>
-      <td>
-        <div style="display:flex; gap:8px;">
-          <button class="btn btn-sm" onclick="navigator.clipboard.writeText('${lic.key}');showToast('تم نسخ مفتاح الترخيص!')">نسخ المفتاح</button>
-          <button class="btn btn-sm btn-ban" onclick="revokeLicense(${idx})">إلغاء</button>
-        </div>
-      </td>
-    </tr>`;
-  });
-  document.getElementById('licenses-tbody').innerHTML = html || `<tr><td colspan="6" style="text-align:center; color:var(--text-dim);">لا توجد تراخيص مسجلة</td></tr>`;
-}
+    function updateServersPopupList() {
+      const list = document.getElementById('serversPopupList');
+      let html = `<div class="server-option-item ${db.activeServerId === 'all' ? 'active' : ''}" onclick="selectActiveServer('all')"><b>كل السيرفرات (عام)</b></div>`;
+      db.servers.forEach(srv => {
+        html += `<div class="server-option-item ${db.activeServerId === srv.id ? 'active' : ''}" onclick="selectActiveServer('${srv.id}')"><img src="${srv.banner}" class="server-option-thumb"><div><b>${srv.name}</b></div></div>`;
+      });
+      list.innerHTML = html;
+      document.getElementById('currentActiveServerLabel').innerText = db.activeServerId === 'all' ? 'جميع السيرفرات (عام)' : (db.servers.find(s => s.id === db.activeServerId)?.name || 'سيرفر');
+    }
 
-function saveNewLicense() {
-  const owner = document.getElementById('newLicenseOwner').value.trim();
-  const hwid = document.getElementById('newLicenseHwid').value.trim();
-  
-  if(!owner) {
-    showToast('يرجى إدخال اسم العميل أو السيرفر', 'error');
-    return;
-  }
-  
-  const randomKey = 'H4-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-SEC';
-  
-  db.licenses.push({
-    key: randomKey,
-    owner: owner,
-    hwid: hwid || '',
-    status: 'active',
-    date: new Date().toISOString().split('T')[0]
-  });
-  
-  closeModal('addLicenseModal');
-  refreshAllData();
-  showToast('تم توليد ترخيص الحماية بنجاح!', 'success');
-  logActivity(`تم إصدار ترخيص حماية جديد لـ: ${owner}`);
-  
-  document.getElementById('newLicenseOwner').value = '';
-  document.getElementById('newLicenseHwid').value = '';
-}
+    function selectActiveServer(id) {
+      db.activeServerId = id;
+      toggleServersPopup();
+      updateServersPopupList();
+      refreshCurrentPageData(document.querySelector('.nav-item.active').getAttribute('data-page'));
+    }
 
-function revokeLicense(idx) {
-  db.licenses.splice(idx, 1);
-  refreshAllData();
-  showToast('تم حذف وإلغاء الترخيص بنجاح');
-}
+    function updateDashboardStats() {
+      const pCount = db.activeServerId === 'all' ? db.players.length : db.players.filter(p => p.serverId === db.activeServerId).length;
+      const bCount = db.activeServerId === 'all' ? db.banned.length : db.banned.filter(b => b.server.includes(db.activeServerId)).length;
+      document.getElementById('stat-active-players').innerText = pCount;
+      document.getElementById('stat-banned-players').innerText = bCount;
+      document.getElementById('stat-servers-count').innerText = db.servers.length;
+      document.getElementById('stat-licenses-count-card').innerText = db.licenses.length;
 
-function renderServersGrid() {
-  let html = '';
-  db.servers.forEach(srv => {
-    html += `<div class="server-grid-card">
-      <div class="server-banner" style="background-image:url('${srv.image}')"></div>
-      <div class="server-info">
-        <div class="server-title">${srv.name}</div>
-        <div class="server-detail"><span>مسؤول السيرفر:</span> <b>${srv.owner}</b></div>
-        <div class="server-detail"><span>الكود السري:</span> <b class="mono">******</b></div>
-      </div>
-    </div>`;
-  });
-  document.getElementById('servers-grid-container').innerHTML = html;
-}
+      let feedHtml = '';
+      db.activity.slice(0, 3).forEach(act => {
+        feedHtml += `<div style="padding:10px; background:var(--bg); border-radius:8px; border:1px solid var(--border); font-size:12.5px;">${act.text}<br><span style="font-size:11px; color:var(--text-dim);">${act.time}</span></div>`;
+      });
+      document.getElementById('activity-feed').innerHTML = feedHtml;
+    }
 
-function renderPlayers(filter = '') {
-  let list = db.players.filter(p => currentServerId === 'all' || p.serverId === currentServerId || p.id === currentServerId);
-  if(filter) {
-    list = list.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()) || p.serial.toLowerCase().includes(filter.toLowerCase()));
-  }
-  
-  let html = '';
-  list.forEach((p, idx) => {
-    const srv = db.servers.find(s => s.id === p.serverId);
-    const srvName = srv ? srv.name : 'غير معروف';
-    html += `<tr>
-      <td><b>${p.name}</b></td>
-      <td class="mono">#${p.id}</td>
-      <td class="mono">${p.serial}</td>
-      <td class="mono">${p.discord}</td>
-      <td>${srvName}</td>
-      <td>
-        <div style="display:flex; gap:6px;">
-          <button class="btn btn-sm btn-warn" onclick="kickPlayer(${idx})">طرد</button>
-          <button class="btn btn-sm btn-ban" onclick="banPlayerFromList(${idx})">بند</button>
-        </div>
-      </td>
-    </tr>`;
-  });
-  document.getElementById('players-tbody').innerHTML = html || `<tr><td colspan="6" style="text-align:center; color:var(--text-dim);">لا يوجد لاعبون متصلون حالياً</td></tr>`;
-}
+    function renderLicenses() {
+      let html = '';
+      db.licenses.forEach((lic, idx) => {
+        html += `<tr><td><span class="mono">${lic.key}</span></td><td><b>${lic.owner}</b></td><td><span class="mono">${lic.hwid}</span></td><td><span style="color:var(--online)">● مفعل</span></td><td>${lic.date}</td><td><button class="btn btn-sm btn-ban" onclick="deleteLicense(${idx})">حذف</button></td></tr>`;
+      });
+      document.getElementById('licenses-tbody').innerHTML = html;
+    }
 
-function renderBanned() {
-  let list = currentServerId === 'all' ? db.banned : db.banned.filter(b => b.serverId === currentServerId);
-  let html = '';
-  list.forEach((b, idx) => {
-    const srv = db.servers.find(s => s.id === b.serverId);
-    html += `<tr>
-      <td><b>${b.name}</b></td>
-      <td class="mono">${b.serial}</td>
-      <td><span style="color:var(--ban);">${b.reason}</span></td>
-      <td>${srv ? srv.name : 'عام'}</td>
-      <td class="mono">${b.date}</td>
-      <td><button class="btn btn-sm btn-accent" onclick="unbanPlayer(${idx})">رفع البند</button></td>
-    </tr>`;
-  });
-  document.getElementById('banned-tbody').innerHTML = html || `<tr><td colspan="6" style="text-align:center; color:var(--text-dim);">لا توجد أي حالات حظر مسجلة</td></tr>`;
-}
+    function saveNewLicense() {
+      const owner = document.getElementById('newLicenseOwner').value.trim();
+      if (!owner) { showToast('أدخل اسم العميل', 'error'); return; }
+      const key = 'H4-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+      db.licenses.unshift({ key, owner, hwid: 'pending', date: new Date().toISOString().split('T')[0] });
+      closeModal('addLicenseModal');
+      renderLicenses();
+      updateStaticUI();
+      showToast('تم توليد الترخيص بنجاح', 'success');
+      saveToStorage();
+    }
 
-function renderLiveScreens() {
-  const list = currentServerId === 'all' ? db.players : db.players.filter(p => p.serverId === currentServerId);
-  let html = '';
-  list.forEach(p => {
-    html += `<div class="card" style="padding:14px; display:flex; flex-direction:column; gap:10px;">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <b>${p.name}</b>
-        <span style="font-size:11px; color:var(--online)">● بث حي</span>
-      </div>
-      <div style="height:140px; background:#020408; border-radius:10px; display:flex; align-items:center; justify-content:center; border:1px solid var(--border); position:relative; overflow:hidden;">
-        <div style="position:absolute; inset:0; background:radial-gradient(circle, #3d8bfd11, transparent); opacity:0.5;"></div>
-        <div style="text-align:center; color:var(--text-dim2); font-size:12px;">
-          <svg style="width:32px;height:32px;stroke:var(--accent);margin-bottom:6px;" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-          <div>شاشة اللاعب آمنة</div>
-        </div>
-      </div>
-    </div>`;
-  });
-  document.getElementById('screens-grid').innerHTML = html || `<div style="color:var(--text-dim); grid-column:1/-1; text-align:center;">لا يوجد لاعبون لبث شاشاتهم</div>`;
-}
+    function deleteLicense(idx) { db.licenses.splice(idx, 1); renderLicenses(); updateStaticUI(); saveToStorage(); }
 
-function renderStaff() {
-  let html = '';
-  db.staff.forEach((st, idx) => {
-    const srv = db.servers.find(s => s.id === st.serverId);
-    const srvName = st.serverId === 'all' ? 'جميع السيرفرات' : (srv ? srv.name : 'غير معروف');
-    html += `<tr>
-      <td><b>${st.user}</b></td>
-      <td class="mono">${st.pass}</td>
-      <td>${srvName}</td>
-      <td><span style="color:var(--online);">صلاحيات مخصصة معتمدة</span></td>
-      <td>${idx !== 0 ? `<button class="btn btn-sm btn-ban" onclick="removeStaff(${idx})">إزالة</button>` : '<span style="color:var(--text-dim);">المالك الأساسي</span>'}</td>
-    </tr>`;
-  });
-  document.getElementById('staff-tbody').innerHTML = html;
-}
+    function renderServersGrid() {
+      let html = '';
+      db.servers.forEach((srv, idx) => {
+        html += `<div class="server-grid-card"><div class="server-banner" style="background-image:url('${srv.banner}')"></div><div class="server-info"><div class="server-title">${srv.name}</div><div class="server-detail"><span>المالك:</span> <b>${srv.owner}</b></div><button class="btn btn-sm btn-accent" style="margin-top:10px;" onclick="selectActiveServer('${srv.id}')">تفعيل العرض</button></div></div>`;
+      });
+      document.getElementById('servers-grid-container').innerHTML = html;
+    }
 
-function saveNewServer() {
-  const name = document.getElementById('newServerName').value.trim();
-  const image = document.getElementById('newServerImage').value.trim() || falconLogoBase64;
-  const owner = document.getElementById('newServerUser').value.trim();
-  const secret = document.getElementById('newServerPass').value.trim();
-  
-  if(!name || !owner || !secret) {
-    showToast('يرجى تعبئة كافة الحقول المطلوبة', 'error');
-    return;
-  }
-  
-  const newId = 'srv_' + Date.now();
-  db.servers.push({ id: newId, name, image, owner, secret });
-  
-  closeModal('addServerModal');
-  refreshAllData();
-  showToast('تم إنشاء السيرفر بنجاح!', 'success');
-  logActivity(`تمت إضافة سيرفر جديد: ${name}`);
-  
-  document.getElementById('newServerName').value = '';
-  document.getElementById('newServerImage').value = '';
-  document.getElementById('newServerUser').value = '';
-  document.getElementById('newServerPass').value = '';
-}
+    function saveNewServer() {
+      const name = document.getElementById('newServerName').value.trim();
+      const owner = document.getElementById('newServerUser').value.trim();
+      const code = document.getElementById('newServerPass').value.trim();
+      if (!name || !owner || !code) { showToast('املأ الحقول المطلوبة', 'error'); return; }
+      db.servers.push({ id: 'srv_' + Date.now(), name, banner: document.getElementById('newServerImage').value || '', owner, code });
+      closeModal('addServerModal');
+      renderServersGrid();
+      updateServersPopupList();
+      showToast('تم إضافة السيرفر', 'success');
+      saveToStorage();
+    }
 
-function saveNewStaff() {
-  const user = document.getElementById('newStaffUser').value.trim();
-  const pass = document.getElementById('newStaffPass').value.trim();
-  const serverId = document.getElementById('newStaffServerId').value;
-  
-  if(!user || !pass) {
-    showToast('يرجى إدخال اسم المشرف والكود السري', 'error');
-    return;
-  }
-  
-  const permissions = {
-    players: document.getElementById('perm_players').checked,
-    ban: document.getElementById('perm_ban').checked,
-    kick: document.getElementById('perm_kick').checked,
-    screens: document.getElementById('perm_screens').checked,
-    servers: document.getElementById('perm_servers').checked
-  };
-  
-  db.staff.push({ user, pass, serverId, permissions, isOwner: false });
-  closeModal('addStaffModal');
-  refreshAllData();
-  showToast('تم توظيف المشرف بنجاح!', 'success');
-  logActivity(`تم توظيف مشرف جديد: ${user}`);
-}
+    function renderPlayers(query) {
+      let html = '';
+      const list = db.activeServerId === 'all' ? db.players : db.players.filter(p => p.serverId === db.activeServerId);
+      list.forEach((p, idx) => {
+        if (query && !p.name.includes(query)) return;
+        html += `<tr><td><b>${p.name}</b></td><td>#${p.id}</td><td><span class="mono">${p.serial}</span></td><td>${p.discord}</td><td><button class="btn btn-sm btn-ban" onclick="quickBanPlayer('${p.name}', '${p.serial}')">حظر</button></td></tr>`;
+      });
+      document.getElementById('players-tbody').innerHTML = html;
+    }
 
-function confirmBanManual() {
-  const name = document.getElementById('banPlayerName').value.trim();
-  const serial = document.getElementById('banPlayerSerial').value.trim();
-  const reason = document.getElementById('banPlayerReason').value.trim();
-  
-  if(!name || !serial || !reason) {
-    showToast('يرجى إكمال بيانات الحظر', 'error');
-    return;
-  }
-  
-  db.banned.push({ name, serial, reason, serverId: currentServerId, date: new Date().toISOString().split('T')[0] });
-  db.players = db.players.filter(p => p.serial !== serial);
-  
-  closeModal('banModal');
-  refreshAllData();
-  showToast('تم حظر اللاعب بنجاح!', 'success');
-  logActivity(`تم حظر اللاعب: ${name}`);
-}
+    function quickBanPlayer(name, serial) {
+      db.banned.unshift({ name, serial, reason: 'حظر يدوي', server: 'الشبكة', date: new Date().toISOString().split('T')[0] });
+      db.players = db.players.filter(p => p.serial !== serial);
+      renderPlayers('');
+      updateStaticUI();
+      showToast('تم حظر اللاعب بنجاح', 'success');
+      saveToStorage();
+    }
 
-function kickPlayer(idx) {
-  const p = db.players[idx];
-  db.players.splice(idx, 1);
-  refreshAllData();
-  showToast(`تم طرد اللاعب ${p.name} بنجاح`);
-}
+    function renderBanned() {
+      let html = '';
+      db.banned.forEach((b, idx) => {
+        html += `<tr><td><b>${b.name}</b></td><td><span class="mono">${b.serial}</span></td><td><span style="color:var(--ban);">${b.reason}</span></td><td>${b.date}</td><td><button class="btn btn-sm btn-accent" onclick="unbanPlayer(${idx})">رفع الحظر</button></td></tr>`;
+      });
+      document.getElementById('banned-tbody').innerHTML = html;
+    }
 
-function banPlayerFromList(idx) {
-  const p = db.players[idx];
-  db.banned.push({ name: p.name, serial: p.serial, reason: 'مخالفة قوانين السيرفر', serverId: p.serverId, date: new Date().toISOString().split('T')[0] });
-  db.players.splice(idx, 1);
-  refreshAllData();
-  showToast(`تم حظر اللاعب ${p.name} نهائياً`);
-}
+    function saveNewBan() {
+      const name = document.getElementById('banPlayerName').value.trim();
+      const serial = document.getElementById('banPlayerSerial').value.trim();
+      if (!name || !serial) { showToast('أدخل البيانات', 'error'); return; }
+      db.banned.unshift({ name, serial, reason: document.getElementById('banPlayerReason').value || 'هكر', server: 'الشبكة', date: new Date().toISOString().split('T')[0] });
+      closeModal('banModal');
+      renderBanned();
+      updateStaticUI();
+      showToast('تم الحظر', 'success');
+      saveToStorage();
+    }
 
-function unbanPlayer(idx) {
-  db.banned.splice(idx, 1);
-  refreshAllData();
-  showToast('تم رفع البند عن اللاعب بنجاح');
-}
+    function unbanPlayer(idx) { db.banned.splice(idx, 1); renderBanned(); updateStaticUI(); saveToStorage(); }
 
-function removeStaff(idx) {
-  db.staff.splice(idx, 1);
-  refreshAllData();
-  showToast('تم إزالة المشرف بنجاح');
-}
+    function renderLiveScreens() {
+      let html = '';
+      db.players.forEach(p => {
+        html += `<div class="card" style="padding:12px;"><div style="font-weight:700; margin-bottom:8px;">${p.name}</div><div style="height:120px; background:#000; border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--text-dim);">بث مباشر محاكي</div></div>`;
+      });
+      document.getElementById('screens-grid').innerHTML = html || '<div style="color:var(--text-dim)">لا يوجد لاعبون</div>';
+    }
 
-function hasPermission(perm) {
-  if(!currentUser) return false;
-  if(currentUser.isOwner) return true;
-  return currentUser.permissions[perm] === true;
-}
+    function renderStaff() {
+      let html = '';
+      db.staff.forEach((st, idx) => {
+        html += `<tr><td><b>${st.name}</b></td><td><span class="mono">${st.pass}</span></td><td><button class="btn btn-sm btn-ban" onclick="deleteStaff(${idx})">إلغاء</button></td></tr>`;
+      });
+      document.getElementById('staff-tbody').innerHTML = html;
+    }
 
-function openModal(id) {
-  document.getElementById(id).classList.add('show');
-}
+    function saveNewStaff() {
+      const name = document.getElementById('newStaffUser').value.trim();
+      const pass = document.getElementById('newStaffPass').value.trim();
+      if (!name || !pass) { showToast('أدخل البيانات', 'error'); return; }
+      db.staff.push({ name, pass, serverId: 'all', permissions: {} });
+      closeModal('addStaffModal');
+      renderStaff();
+      showToast('تم إضافة المشرف', 'success');
+      saveToStorage();
+    }
 
-function closeModal(id) {
-  document.getElementById(id).classList.remove('show');
-}
+    function deleteStaff(idx) { db.staff.splice(idx, 1); renderStaff(); saveToStorage(); }
 
-function logActivity(text) {
-  db.activity.unshift({ text, time: 'منذ لحظات' });
-  if(db.activity.length > 5) db.activity.pop();
-  renderActivityFeed();
-}
+    function openModal(id) { document.getElementById(id).classList.add('show'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
-function renderActivityFeed() {
-  let html = '';
-  db.activity.forEach(act => {
-    html += `<div style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:var(--panel); border:1px solid var(--border); border-radius:10px; font-size:12.5px;">
-      <span>${act.text}</span>
-      <span style="color:var(--text-dim2); font-size:11px;">${act.time}</span>
-    </div>`;
-  });
-  document.getElementById('activity-feed').innerHTML = html;
-}
-
-function showToast(message, type = 'success') {
-  const wrap = document.getElementById('toastWrap');
-  const toast = document.createElement('div');
-  toast.className = 'toast';
-  toast.innerHTML = `<div style="width:8px; height:8px; border-radius:50%; background:${type==='error'?'var(--ban)':'var(--online)'};"></div><span>${message}</span>`;
-  wrap.appendChild(toast);
-  setTimeout(() => toast.remove(), 3000);
-}
-
-renderActivityFeed();
-</script>
+    function showToast(msg, type = 'info') {
+      const wrap = document.getElementById('toastWrap');
+      const t = document.createElement('div');
+      t.className = 'toast';
+      t.innerHTML = `<div style="font-size:13px; font-weight:600;">${msg}</div>`;
+      wrap.appendChild(t);
+      setTimeout(() => t.remove(), 3000);
+    }
+  </script>
 </body>
 </html>
