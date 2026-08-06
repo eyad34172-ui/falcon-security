@@ -124,7 +124,7 @@
     <div class="topbar">
       <div>
         <h2 id="page-title">حالة الربط والاتصال</h2>
-        <p id="page-sub">جلب بيانات اللاعبين الحقيقيين من سيرفر فايف أم مباشرة</p>
+        <p id="page-sub">جلب بيانات اللاعبين الحقيقيين من قاعدة البيانات السحابية مباشرة</p>
       </div>
       <div><span class="pill live" id="connectionStatus">جاري الاتصال بالسيرفر...</span></div>
     </div>
@@ -166,7 +166,7 @@
                 </tr>
               </thead>
               <tbody id="real-players-tbody">
-                <tr><td colspan="5" style="text-align:center; color:var(--text-dim)">جارٍ جلب اللاعبين من سيرفر FiveM...</td></tr>
+                <tr><td colspan="5" style="text-align:center; color:var(--text-dim)">جارٍ جلب اللاعبين المتصلين...</td></tr>
               </tbody>
             </table>
           </div>
@@ -178,8 +178,8 @@
         <div class="card">
           <div class="card-header"><h3>إعدادات رابط الـ API وحماية التوكن</h3></div>
           <div class="form-group">
-            <label>رابط الـ Endpoint الخاص بسيرفرك المباشر</label>
-            <input type="text" id="apiEndpointInput" class="form-control mono" placeholder="http://YOUR_SERVER_IP:30120/players">
+            <label>رابط الـ Firebase Endpoint المباشر</label>
+            <input type="text" id="apiEndpointInput" class="form-control mono" placeholder="https://.../live_players.json">
           </div>
           <div class="form-group">
             <label>توكن الأمان (Server API Token)</label>
@@ -197,7 +197,6 @@
     let session = {
       isLoggedIn: false,
       ownerCode: 'p5dv2011eyad3mk',
-      // ضع رابط الـ Firebase الخاص بك هنا مباشرة كرابط افتراضي للـ API:
       apiUrl: localStorage.getItem('h4_real_api') || 'https://falcon-70270-default-rtdb.firebaseio.com/live_players.json',
       apiToken: localStorage.getItem('h4_real_token') || 'h4_token_p5dv_2026_secured'
     };
@@ -250,37 +249,38 @@
       if(!session.isLoggedIn || !session.apiUrl) return;
 
       try {
-        const response = await fetch(session.apiUrl, {
-          headers: {
-            'Authorization': session.apiToken
-          }
-        });
+        const response = await fetch(session.apiUrl);
         const data = await response.json();
         
         let html = '';
-        if(data && data.players && data.players.length > 0) {
+        if(data && data.players && Array.isArray(data.players) && data.players.length > 0) {
           data.players.forEach(p => {
-            html += `<tr>
-              <td><b>${p.name}</b></td>
-              <td>#${p.id}</td>
-              <td><span class="mono">${p.serial}</span></td>
-              <td><span class="mono">${p.discord}</span></td>
-              <td><span class="pill live">متصل الآن</span></td>
-            </tr>`;
+            if (p.name && p.id) {
+              html += `<tr>
+                <td><b>${p.name}</b></td>
+                <td>#${p.id}</td>
+                <td><span class="mono">${p.serial || 'غير متوفر'}</span></td>
+                <td><span class="mono">${p.discord || 'غير متوفر'}</span></td>
+                <td><span class="pill live">متصل الآن</span></td>
+              </tr>`;
+            }
           });
           document.getElementById('stat-active-players').innerText = data.players.length;
           document.getElementById('nav-players-count').innerText = data.players.length;
-        } else {
+        } 
+        
+        if (!html) {
           html = '<tr><td colspan="5" style="text-align:center; color:var(--text-dim)">لا يوجد لاعبون متصلون حالياً في السيرفر</td></tr>';
           document.getElementById('stat-active-players').innerText = 0;
           document.getElementById('nav-players-count').innerText = 0;
         }
+
         document.getElementById('real-players-tbody').innerHTML = html;
-        document.getElementById('connectionStatus').innerText = "متصل بسيرفر FiveM حقيقي";
+        document.getElementById('connectionStatus').innerText = "متصل بالسيرفر بنجاح";
         document.getElementById('connectionStatus').style.background = "rgba(16, 185, 129, 0.15)";
         document.getElementById('connectionStatus').style.color = "var(--online)";
       } catch (err) {
-        document.getElementById('connectionStatus').innerText = "فشل الاتصال بالآب آي (تحقق من السيرفر)";
+        document.getElementById('connectionStatus').innerText = "فشل الاتصال بقاعدة البيانات";
         document.getElementById('connectionStatus').style.background = "rgba(239, 68, 68, 0.15)";
         document.getElementById('connectionStatus').style.color = "var(--ban)";
       }
