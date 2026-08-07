@@ -95,7 +95,7 @@
 </head>
 <body>
 
-  <!-- شاشة تسجيل الدخول أو إنشاء سيرفر -->
+  <!-- شاشة تسجيل الدخول -->
   <div class="login-overlay" id="loginOverlay">
     <div class="login-card">
       <h2>نظام إدارة السيرفرات</h2>
@@ -136,6 +136,32 @@
       <div style="display: flex; gap: 10px; margin-top: 20px;">
         <button class="btn btn-accent" style="flex:1; justify-content:center;" onclick="saveNewServer()">حفظ وإنشاء السيرفر</button>
         <button class="btn btn-ban" style="flex:1; justify-content:center;" onclick="closeCreateServerModal()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة إضافة مشرف/موظف جديد -->
+  <div class="login-overlay" id="addStaffModal" style="display: none;">
+    <div class="login-card" style="text-align: right;">
+      <h2 style="text-align: center; color: var(--accent);">إضافة مشرف جديد</h2>
+      <p style="text-align: center;">قم بتعيين موظف أو مشرف جديد في سيرفرك</p>
+      
+      <div class="form-group">
+        <label>اسم المشرف / الموظف</label>
+        <input type="text" id="staffNameInput" class="form-control" placeholder="مثال: Ahmed">
+      </div>
+      <div class="form-group">
+        <label>رتبة المشرف</label>
+        <input type="text" id="staffRoleInput" class="form-control" placeholder="مثال: إداري، مشرف عام">
+      </div>
+      <div class="form-group">
+        <label>الصلاحيات الممنوحة</label>
+        <input type="text" id="staffPermInput" class="form-control" placeholder="مثال: إدارة اللاعبين والكيك والباند">
+      </div>
+      
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button class="btn btn-accent" style="flex:1; justify-content:center;" onclick="saveNewStaff()">إضافة المشرف</button>
+        <button class="btn btn-ban" style="flex:1; justify-content:center;" onclick="closeAddStaffModal()">إلغاء</button>
       </div>
     </div>
   </div>
@@ -262,7 +288,6 @@
   <div class="toast-wrap" id="toastWrap"></div>
 
   <script>
-    // قاعدة بيانات السيرفرات (يتم تخزينها وحفظها في المتصفح تلقائياً)
     let serversDatabase = JSON.parse(localStorage.getItem('h4_all_servers_db')) || {
       "owner_h4_2026": {
         serverName: "h4 store",
@@ -361,13 +386,6 @@
       document.getElementById('sidebarLogoImg').src = avatarImg;
       document.getElementById('footerAvatarImg').src = avatarImg;
 
-      // ضبط الصلاحيات حسب الرتبة (اذا لم يكن مالكاً يتم تقييد بعض الخيارات)
-      if(currentServer.userRole && currentServer.userRole !== "مالك السيرفر") {
-        document.getElementById('addStaffBtn').style.display = 'none';
-      } else {
-        document.getElementById('addStaffBtn').style.display = 'inline-flex';
-      }
-
       renderPlayers();
       renderStaff();
     }
@@ -409,7 +427,7 @@
       let html = '';
       currentServer.staff.forEach((st, index) => {
         const isOwner = st.role.includes("مالك");
-        const actionBtn = (!isOwner && (currentServer.userRole === "مالك السيرفر" || !currentServer.userRole))
+        const actionBtn = (!isOwner) 
           ? `<button class="btn btn-sm btn-ban" onclick="removeStaff(${index})">إزالة</button>` 
           : `-`;
 
@@ -427,19 +445,36 @@
     }
 
     function openAddStaffModal() {
-      const name = prompt("أدخل اسم المشرف/الموظف الجديد في سيرفرك:");
-      if(!name || !name.trim()) return;
-      const role = prompt("أدخل رتبة الموظف (مثال: إداري، مشرف عام):");
-      
+      document.getElementById('addStaffModal').style.display = 'flex';
+    }
+
+    function closeAddStaffModal() {
+      document.getElementById('addStaffModal').style.display = 'none';
+      document.getElementById('staffNameInput').value = '';
+      document.getElementById('staffRoleInput').value = '';
+      document.getElementById('staffPermInput').value = '';
+    }
+
+    function saveNewStaff() {
+      const name = document.getElementById('staffNameInput').value.trim();
+      const role = document.getElementById('staffRoleInput').value.trim();
+      const perm = document.getElementById('staffPermInput').value.trim();
+
+      if(!name) {
+        alert('الرجاء إدخال اسم المشرف على الأقل!');
+        return;
+      }
+
       currentServer.staff.push({
-        name: name.trim(),
-        role: role ? role.trim() : 'مشرف',
-        perm: 'صلاحيات إدارية محدودة',
+        name: name,
+        role: role || 'مشرف',
+        perm: perm || 'صلاحيات إدارية',
         canDelete: true
       });
 
       saveCurrentServerState();
       renderStaff();
+      closeAddStaffModal();
       showToast('تمت إضافة المشرف بنجاح لسيرفرك', 'success');
     }
 
